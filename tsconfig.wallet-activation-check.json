@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "src/features/dashboards/wallet-activation/page/WalletActivation.tsx",
+    "src/features/dashboards/wallet-activation/components/AccountFlowChart.tsx",
+    "src/features/dashboards/wallet-activation/modals/WalletActivationModals.tsx",
+    "src/features/dashboards/wallet-activation/styles/walletActivation.module.css",
+    "src/features/dashboards/transaction-dashboard/shared/components/modals.tsx",
+    "src/features/dashboards/transaction-dashboard/shared/styles/appPage.module.css",
+    "src/features/Layouts/shell/data/shellData.ts",
+    "src/routeTree.gen.ts"
+  ]
+}

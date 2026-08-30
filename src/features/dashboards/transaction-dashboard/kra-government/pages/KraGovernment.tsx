@@ -1,25 +1,17 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
+import { type ReactNode, useEffect, useState } from "react";
 import KraGovernmentModals from "../components/KraGovernmentModals";
 import styles from "../styles/kraGovernment.module.css";
 
 /* ============================================================================
-   PayMo BaaS — KRA & Government Integration (legacy page 1.12)
-   React + TypeScript + TanStack Query, emerald-glass dashboard theme.
+   PayMo BaaS — KRA & Government Integration
+   Business-dashboard design language (navy/emerald, Sora + Inter, 16px cards).
    ========================================================================== */
 
 type BadgeTone = "badgeS" | "badgeW" | "badgeD" | "badgeI" | "badgeP";
-
-interface NavItem {
-	icon: string;
-	to: string;
-	label: string;
-	active?: boolean;
-	dot?: boolean;
-}
 
 interface SrItem {
 	icon: string;
@@ -28,7 +20,7 @@ interface SrItem {
 	title: string;
 	sub: string;
 	actionLabel: string;
-	actionTone?: "btnPmD" | "btnPmP";
+	actionTone?: "btnPmD";
 	modal: string;
 }
 
@@ -55,41 +47,34 @@ type Cell =
 	| { badge: string; tone: BadgeTone }
 	| { actions: CellAction[] };
 
-interface StatCardK {
-	key: string;
-	colClass: string;
-	label: string;
-	labelColor: string;
-	value: string;
-	valueSuffix?: string;
-	badge: { icon: string; text: string; tone: BadgeTone };
-	lines: string[];
-	progress?: { width: string; color: string; note: string };
-	bordered?: boolean;
+interface GovService {
+	icon: string;
+	iconBg: string;
+	iconColor: string;
+	provider: string;
+	title: string;
+	sub: string;
+	price: string;
+	actionLabel: string;
+	modal: string;
 }
 
 interface KraConfig {
-	nav: NavItem[];
-	headerTitle: string;
-	headerSub: string;
-	searchPlaceholder: string;
-	user: {
-		initials: string;
-		name: string;
-		role: string;
-		headerInitials: string;
-	};
-	breadcrumb: { parents: { label: string; to: string }[]; current: string };
-	pageCode: string;
-	pageTitle: string;
-	pageSub: string;
 	hero: {
 		live: string;
 		value: string;
 		detail: string;
-		buttons: { label: string; modal: string }[];
 	};
-	statCards: StatCardK[];
+	entities: { key: string; label: string; pin: string }[];
+	kpis: {
+		label: string;
+		value: string;
+		icon: string;
+		iconCls: string;
+		sub: string;
+		tone: BadgeTone;
+	}[];
+	obligations: { label: string; n: number; pct: string; c: string }[];
 	attention: SrItem[];
 	suggestions: SrItem[];
 	quickActions: QuickAction[];
@@ -102,6 +87,7 @@ interface KraConfig {
 		small?: boolean;
 	}[];
 	itaxActivity: { cols: TableCol[]; rows: Cell[][] };
+	clientPins: { cols: TableCol[]; rows: Cell[][] };
 	payMethods: {
 		title: string;
 		sub: string;
@@ -109,101 +95,80 @@ interface KraConfig {
 		actionLabel?: string;
 	}[];
 	scheduled: { title: string; sub: string; status: string; tone: BadgeTone }[];
-	clientPins: { cols: TableCol[]; rows: Cell[][] };
+	govServices: GovService[];
+	govActivity: { cols: TableCol[]; rows: Cell[][] };
 	activity: { cols: TableCol[]; rows: Cell[][] };
 }
 
 /* ---------- typed mock data (fallback + initial render) ---------- */
 const initialMockData: KraConfig = {
-	nav: [
-		{ icon: "bi-house", to: "/dashboard", label: "Dashboard" },
-		{ icon: "bi-grid-3x3-gap", to: "/select-dashboard", label: "Hubs" },
-		{
-			icon: "bi-lightning-charge",
-			to: "/initiate-transfer",
-			label: "Transfers",
-		},
-		{
-			icon: "bi-bank2",
-			to: "/kra-government",
-			label: "KRA & Government",
-			active: true,
-			dot: true,
-		},
-		{ icon: "bi-receipt-cutoff", to: "/transactions", label: "Transactions" },
-		{ icon: "bi-geo-alt", to: "/locations", label: "Locations" },
-		{ icon: "bi-gear", to: "/settings", label: "Settings" },
-	],
-	headerTitle: "KRA & Government Integration",
-	headerSub: "iTax integration, tax payments, filings & compliance",
-	searchPlaceholder: "Search KRA PIN, tax types, obligations, returns...",
-	user: {
-		initials: "JK",
-		name: "James K.",
-		role: "Tax & Compliance Manager",
-		headerInitials: "MN",
-	},
-	breadcrumb: {
-		parents: [
-			{ label: "Home", to: "/" },
-			{ label: "Services Hub", to: "/select-dashboard" },
-		],
-		current: "KRA & Government",
-	},
-	pageCode: "",
-	pageTitle: "KRA & Government Integration",
-	pageSub:
-		"Link multiple KRA PINs, sync obligations, file returns, pay taxes, and manage client tax identities across countries and authorities.",
 	hero: {
 		live: "KRA integration live",
 		value: "4 KRA PINs linked",
 		detail:
 			"Personal, business, rental portfolio and investment company obligations managed with real-time iTax sync.",
-		buttons: [
-			{ label: "Pay Tax", modal: "payKRAModal" },
-			{ label: "File Return", modal: "fileReturnModal" },
-			{ label: "Health Check", modal: "complianceHealthModal" },
-		],
 	},
-	statCards: [
+	entities: [
+		{ key: "all", label: "All PINs", pin: "" },
+		{ key: "personal", label: "Personal", pin: "A012345678Y" },
+		{ key: "holdings", label: "JK Holdings", pin: "P987654321Z" },
+		{ key: "rental", label: "Rental Portfolio", pin: "R445566778X" },
+		{ key: "investments", label: "JK Investments", pin: "C112233445W" },
+	],
+	kpis: [
 		{
-			key: "due",
-			colClass: "col-lg-2 col-md-4 col-6",
-			label: "DUE IN 7 DAYS",
-			labelColor: "var(--pm-danger)",
+			label: "Due in 7 days",
 			value: "KES 184,200",
-			badge: { icon: "bi-clock", text: "5 obligations", tone: "badgeD" },
-			lines: [],
-			progress: {
-				width: "65%",
-				color: "var(--pm-danger)",
-				note: "PAYE, VAT, TOT, CGT, SHIF",
-			},
+			icon: "bi-clock",
+			iconCls: styles.kpiIconRed,
+			sub: "5 obligations · PAYE, VAT, TOT",
+			tone: "badgeD",
 		},
 		{
-			key: "score",
-			colClass: "col-lg-3 col-md-4 col-6",
-			label: "COMPLIANCE SCORE",
-			labelColor: "var(--pm-info)",
+			label: "Compliance score",
 			value: "94",
-			valueSuffix: "/100",
-			badge: { icon: "bi-shield-check", text: "Excellent", tone: "badgeS" },
-			lines: ["All returns filed on time", "Zero penalties in 18 months"],
+			icon: "bi-shield-check",
+			iconCls: styles.kpiIconGreen,
+			sub: "Excellent · 18 months clean",
+			tone: "badgeS",
 		},
 		{
-			key: "savings",
-			colClass: "col-lg-3 col-md-4",
-			label: "SAVINGS THIS YEAR",
-			labelColor: "var(--pm-accent)",
+			label: "Savings this year",
 			value: "KES 47,800",
-			badge: {
-				icon: "bi-piggy-bank",
-				text: "Via early filing + reliefs",
-				tone: "badgeS",
-			},
-			lines: ["PAYE relief: KES 31,200", "Investment deductions: KES 16,600"],
-			bordered: true,
+			icon: "bi-piggy-bank",
+			iconCls: styles.kpiIconGreen,
+			sub: "Early filing + reliefs",
+			tone: "badgeS",
 		},
+		{
+			label: "Open obligations",
+			value: "12",
+			icon: "bi-list-check",
+			iconCls: styles.kpiIconBlue,
+			sub: "Synced from iTax",
+			tone: "badgeI",
+		},
+		{
+			label: "Penalties (18m)",
+			value: "0",
+			icon: "bi-patch-check",
+			iconCls: styles.kpiIconSlate,
+			sub: "Zero late filings",
+			tone: "badgeS",
+		},
+		{
+			label: "Avg filing lead",
+			value: "6 days",
+			icon: "bi-hourglass-split",
+			iconCls: styles.kpiIconPurple,
+			sub: "Before deadline",
+			tone: "badgeI",
+		},
+	],
+	obligations: [
+		{ label: "Filed", n: 7, pct: "58%", c: "var(--pm-accent)" },
+		{ label: "Due soon", n: 3, pct: "25%", c: "var(--pm-warning)" },
+		{ label: "Overdue", n: 2, pct: "17%", c: "var(--pm-danger)" },
 	],
 	attention: [
 		{
@@ -211,7 +176,7 @@ const initialMockData: KraConfig = {
 			iconBg: "var(--pm-danger-soft)",
 			iconColor: "var(--pm-danger)",
 			title: "VAT return due in 2 days",
-			sub: "KRA PIN A012345678Y · KES 84,200",
+			sub: "KRA PIN P987654321Z · KES 84,200",
 			actionLabel: "File",
 			actionTone: "btnPmD",
 			modal: "fileReturnModal",
@@ -224,6 +189,15 @@ const initialMockData: KraConfig = {
 			sub: "KES 62,000 due 15 Jul",
 			actionLabel: "Pay",
 			modal: "payKRAModal",
+		},
+		{
+			icon: "bi-globe",
+			iconBg: "var(--pm-info-soft)",
+			iconColor: "var(--pm-info)",
+			title: "Passport renewal ready to pay",
+			sub: "P-449281 · KES 4,500",
+			actionLabel: "Pay",
+			modal: "payECitizenModal",
 		},
 	],
 	suggestions: [
@@ -244,6 +218,15 @@ const initialMockData: KraConfig = {
 			sub: "KES 124,000 unclaimed",
 			actionLabel: "Claim",
 			modal: "taxOptimizerModal",
+		},
+		{
+			icon: "bi-arrow-repeat",
+			iconBg: "var(--pm-info-soft)",
+			iconColor: "var(--pm-info)",
+			title: "Sync iTax for new obligations",
+			sub: "Last sync 27 Jun 09:14",
+			actionLabel: "Sync",
+			modal: "syncItaxModal",
 		},
 	],
 	quickActions: [
@@ -283,6 +266,18 @@ const initialMockData: KraConfig = {
 			color: "var(--pm-primary-light)",
 			modal: "complianceHealthModal",
 		},
+		{
+			icon: "bi-calendar-event",
+			label: "Schedule",
+			color: "var(--pm-info)",
+			modal: "scheduleTaxModal",
+		},
+		{
+			icon: "bi-download",
+			label: "Tax History",
+			color: "var(--pm-muted)",
+			modal: "taxHistoryModal",
+		},
 	],
 	kraPins: {
 		cols: [
@@ -315,11 +310,7 @@ const initialMockData: KraConfig = {
 				"KES 84,200",
 				{
 					actions: [
-						{
-							label: "File",
-							modal: "fileReturnModal",
-							tone: "btnPmD" as const,
-						},
+						{ label: "File", modal: "fileReturnModal", tone: "btnPmD" },
 						{ label: "Pay", modal: "payKRAModal" },
 					],
 				},
@@ -345,7 +336,7 @@ const initialMockData: KraConfig = {
 				"KES 62,000",
 				{
 					actions: [
-						{ label: "Pay", modal: "payKRAModal", tone: "btnPmD" as const },
+						{ label: "Pay", modal: "payKRAModal", tone: "btnPmD" },
 						{ label: "Dispute", modal: "disputeKRAModal" },
 					],
 				},
@@ -407,43 +398,11 @@ const initialMockData: KraConfig = {
 				{ badge: "Overdue", tone: "badgeD" },
 				"C:ITX-880117",
 				{
-					actions: [
-						{ label: "Pay", modal: "payKRAModal", tone: "btnPmD" as const },
-					],
+					actions: [{ label: "Pay", modal: "payKRAModal", tone: "btnPmD" }],
 				},
 			],
 		],
 	},
-	payMethods: [
-		{
-			title: "PayMo Wallet",
-			sub: "Balance: KES 124,500",
-			badge: { text: "Default", tone: "badgeS" },
-		},
-		{ title: "M-Pesa", sub: "0712***890", actionLabel: "Use" },
-		{ title: "Equity Bank", sub: "Acc ***4521", actionLabel: "Use" },
-		{ title: "KCB Bank", sub: "Acc ***7782", actionLabel: "Use" },
-	],
-	scheduled: [
-		{
-			title: "PAYE — Personal",
-			sub: "Monthly • 15th • Auto from Wallet",
-			status: "Active",
-			tone: "badgeS",
-		},
-		{
-			title: "VAT — JK Holdings",
-			sub: "Monthly • 5th • M-Pesa",
-			status: "Active",
-			tone: "badgeS",
-		},
-		{
-			title: "TOT — Rental Portfolio",
-			sub: "Quarterly • Next: 20 Jul",
-			status: "Paused",
-			tone: "badgeW",
-		},
-	],
 	clientPins: {
 		cols: [
 			{ key: "entity", label: "Client / Entity" },
@@ -511,6 +470,111 @@ const initialMockData: KraConfig = {
 			],
 		],
 	},
+	payMethods: [
+		{
+			title: "PayMo Wallet",
+			sub: "Balance: KES 124,500",
+			badge: { text: "Default", tone: "badgeS" },
+		},
+		{ title: "M-Pesa", sub: "0712***890", actionLabel: "Use" },
+		{ title: "Equity Bank", sub: "Acc ***4521", actionLabel: "Use" },
+		{ title: "KCB Bank", sub: "Acc ***7782", actionLabel: "Use" },
+	],
+	scheduled: [
+		{
+			title: "PAYE — Personal",
+			sub: "Monthly · 15th · Auto from Wallet",
+			status: "Active",
+			tone: "badgeS",
+		},
+		{
+			title: "VAT — JK Holdings",
+			sub: "Monthly · 5th · M-Pesa",
+			status: "Active",
+			tone: "badgeS",
+		},
+		{
+			title: "TOT — Rental Portfolio",
+			sub: "Quarterly · Next: 20 Jul",
+			status: "Paused",
+			tone: "badgeW",
+		},
+	],
+	govServices: [
+		{
+			icon: "bi-globe",
+			iconBg: "var(--pm-info-soft)",
+			iconColor: "var(--pm-info)",
+			provider: "eCitizen",
+			title: "National Government Services",
+			sub: "Passports, licences, certificates & registration",
+			price: "From KES 1,000",
+			actionLabel: "Pay Service",
+			modal: "payECitizenModal",
+		},
+		{
+			icon: "bi-building",
+			iconBg: "var(--pm-warning-soft)",
+			iconColor: "var(--pm-warning)",
+			provider: "County",
+			title: "County Revenue Services",
+			sub: "Business permits, land rates & health certificates",
+			price: "From KES 4,200",
+			actionLabel: "Pay County",
+			modal: "payCountyModal",
+		},
+		{
+			icon: "bi-map",
+			iconBg: "var(--pm-accent-soft)",
+			iconColor: "var(--pm-accent)",
+			provider: "Ardhisasa",
+			title: "Land Services",
+			sub: "Title deeds, stamp duty, leases & change of user",
+			price: "From KES 15,200",
+			actionLabel: "Pay Ardhisasa",
+			modal: "payArdhisasaModal",
+		},
+	],
+	govActivity: {
+		cols: [
+			{ key: "date", label: "Date" },
+			{ key: "service", label: "Service" },
+			{ key: "provider", label: "Provider" },
+			{ key: "amount", label: "Amount" },
+			{ key: "status", label: "Status" },
+			{ key: "ref", label: "Ref" },
+			{ key: "action", label: "Action" },
+		],
+		rows: [
+			[
+				"18 Jun",
+				"Passport Renewal",
+				"eCitizen",
+				"KES 4,500",
+				{ badge: "Processing", tone: "badgeI" },
+				"C:P-449281",
+				{ actions: [{ label: "Track", modal: "trackGovModal" }] },
+			],
+			[
+				"15 Jun",
+				"Land Rates",
+				"Nairobi County",
+				"KES 42,300",
+				{ badge: "Paid", tone: "badgeS" },
+				"C:CCN-772910",
+				{ actions: [{ label: "Receipt", modal: "govReceiptModal" }] },
+			],
+			[
+				"10 Jun",
+				"Title Deed Search",
+				"Ardhisasa",
+				"KES 1,200",
+				{ badge: "Paid", tone: "badgeS" },
+				"C:ARD-119204",
+				{ actions: [{ label: "Receipt", modal: "govReceiptModal" }] },
+			],
+		],
+	},
 	activity: {
 		cols: [
 			{ key: "date", label: "Date" },
@@ -569,10 +633,11 @@ const initialMockData: KraConfig = {
 
 /* ---------- TanStack Query fetcher (generic API placeholder) ---------- */
 async function fetchKra(): Promise<KraConfig> {
-	const res = await fetch("/api/kra-government");
-	if (!res.ok) throw new Error(`Request failed with ${res.status}`);
-	const json = (await res.json()) as Partial<KraConfig>;
-	return { ...initialMockData, ...json };
+	const res = await fetch("/api/kra-government", {
+		headers: { Accept: "application/json" },
+	});
+	if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+	return (await res.json()) as KraConfig;
 }
 
 /* ---------- cell renderer for data tables ---------- */
@@ -629,6 +694,7 @@ function CellValue({
 		<div className="d-flex" style={{ gap: 4 }}>
 			{cell.actions.map((a) => (
 				<button
+					type="button"
 					key={a.label}
 					className={`${styles.btnPm} ${styles.btnSm} ${a.tone ? styles[a.tone] : ""}`}
 					onClick={() => onOpen(a.modal)}
@@ -640,121 +706,33 @@ function CellValue({
 	);
 }
 
-/* ---------- section header (1.12.x pattern) ---------- */
-function SectionHead({
-	icon,
-	iconColor,
+/* ---------- numbered section heading (business-dashboard language) ---------- */
+function SectionHeading({
+	id,
+	index,
 	title,
-	sub,
-	actions,
-	onOpen,
-}: {
-	icon: string;
-	iconColor: string;
-	title: string;
-	sub: string;
-	actions: {
-		label: string;
-		icon?: string;
-		modal: string;
-		tone?: "btnPmP" | "btnPmD";
-	}[];
-	onOpen: (id: string) => void;
-}) {
-	return (
-		<div
-			className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-			style={{ gap: 8 }}
-		>
-			<div>
-				<h3 className={styles.st}>
-					<i className={`bi ${icon}`} style={{ color: iconColor }} />
-					{title}
-				</h3>
-				<p className={styles.ss}>{sub}</p>
-			</div>
-			<div className="d-flex" style={{ gap: 8 }}>
-				{actions.map((a) => (
-					<button
-						key={a.label}
-						className={`${styles.btnPm} ${styles.btnSm} ${a.tone ? styles[a.tone] : ""}`}
-						onClick={() => onOpen(a.modal)}
-					>
-						{a.icon && <i className={`bi ${a.icon}`} />} {a.label}
-					</button>
-				))}
-			</div>
-		</div>
-	);
-}
-
-/* ---------- inner card with title ---------- */
-function Ub({
-	title,
-	children,
+	description,
 	action,
 }: {
-	title?: string;
-	children: React.ReactNode;
-	action?: React.ReactNode;
+	id: string;
+	index: string;
+	title: string;
+	description: string;
+	action?: ReactNode;
 }) {
 	return (
-		<div className={styles.ub}>
-			{title && (
-				<div
-					className="d-flex justify-content-between align-items-center mb-3 flex-wrap"
-					style={{ gap: 8 }}
-				>
-					<h4 className={styles.ubTitle} style={{ margin: 0 }}>
-						{title}
-					</h4>
-					{action}
+		<div className={styles.sectionHeading}>
+			<div className={styles.sectionHeadingCopy}>
+				<span className={styles.sectionIndex} aria-hidden="true">
+					{index}
+				</span>
+				<div>
+					<h2 id={id}>{title}</h2>
+					<p>{description}</p>
 				</div>
-			)}
-			{children}
+			</div>
+			{action && <div className={styles.sectionAction}>{action}</div>}
 		</div>
-	);
-}
-
-function RingGauge({
-	pct,
-	color,
-	track,
-}: {
-	pct: number;
-	color: string;
-	track: string;
-}) {
-	const r = 20;
-	const c = 2 * Math.PI * r;
-	return (
-		<svg
-			width="52"
-			height="52"
-			viewBox="0 0 52 52"
-			className={styles.ring}
-			aria-hidden="true"
-		>
-			<circle
-				cx="26"
-				cy="26"
-				r={r}
-				fill="none"
-				stroke={track}
-				strokeWidth="5"
-			/>
-			<circle
-				cx="26"
-				cy="26"
-				r={r}
-				fill="none"
-				stroke={color}
-				strokeWidth="5"
-				strokeLinecap="round"
-				strokeDasharray={`${(pct / 100) * c} ${c}`}
-				transform="rotate(-90 26 26)"
-			/>
-		</svg>
 	);
 }
 
@@ -768,615 +746,842 @@ export default function KraGovernment() {
 	const config = data ?? initialMockData;
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+	const [entity, setEntity] = useState("all");
 
-	/* ---------- LEGACY BRIDGE: openM(id) / closeM() ---------- */
 	const openM = (id: string) => setActiveModal(id);
 	const closeM = () => setActiveModal(null);
+
+	useEffect(() => {
+		const params = new URLSearchParams(window.location.search);
+		const modalId = params.get("modal");
+		if (modalId) setActiveModal(modalId);
+	}, []);
+
+	const entityCfg = config.entities.find((e) => e.key === entity);
+	const scopeNote =
+		entity === "all"
+			? "All KRA PINs in view"
+			: `${entityCfg?.pin} · ${entityCfg?.label} in view`;
+
+	const filteredPins = config.kraPins.rows.filter(
+		(r) => entity === "all" || String(r[0]).includes(entityCfg?.pin ?? ""),
+	);
+	const filteredItax = config.itaxActivity.rows.filter(
+		(r) => entity === "all" || r[1] === entityCfg?.pin,
+	);
+	const filteredScheduled = config.scheduled.filter(
+		(s) =>
+			entity === "all" ||
+			s.title.toLowerCase().includes(entityCfg?.label.toLowerCase() ?? ""),
+	);
 
 	return (
 		<div className={styles.kraGovernmentPage}>
 			<div className={styles.main}>
-				{/* ======================= PAGE BAR ======================= */}
-				<div className={styles.pageBar}>
-					<div>
-						<div className={styles.breadcrumb}>
-							{config.breadcrumb.parents.map((p) => (
-								<span key={p.label}>
-									<Link to={p.to}>{p.label}</Link> /{" "}
+				<header className={styles.heroBanner}>
+					<div className={styles.heroOrbOne} aria-hidden="true" />
+					<div className={styles.heroOrbTwo} aria-hidden="true" />
+					<div className={styles.heroContent}>
+						<div className={styles.heroCopy}>
+							<div className={styles.heroEyebrow}>
+								<span>
+									<i className="bi bi-bank2" aria-hidden="true" /> KRA &amp;
+									Government
 								</span>
-							))}
-							<strong>{config.breadcrumb.current}</strong>
+								<span className={styles.livePill}>
+									<span className={styles.liveDot} aria-hidden="true" />{" "}
+									{config.hero.live}
+								</span>
+							</div>
+							<h1 id="kra-title">
+								Every obligation filed, every tax paid, every PIN synced.
+							</h1>
+							<p>{config.hero.detail}</p>
+							<div className={styles.heroActions}>
+								<button
+									type="button"
+									className={styles.heroPrimaryBtn}
+									onClick={() => openM("payKRAModal")}
+								>
+									<i className="bi bi-receipt-cutoff" aria-hidden="true" /> Pay
+									Tax
+								</button>
+								<button
+									type="button"
+									className={styles.heroSecondaryBtn}
+									onClick={() => openM("fileReturnModal")}
+								>
+									<i className="bi bi-file-earmark-text" aria-hidden="true" />{" "}
+									File Return
+								</button>
+								<button
+									type="button"
+									className={styles.heroSecondaryBtn}
+									onClick={() => openM("complianceHealthModal")}
+								>
+									<i className="bi bi-heart-pulse" aria-hidden="true" /> Health
+									Check
+								</button>
+							</div>
 						</div>
-						{/* <h2 className={styles.pageH2}>
-							{config.pageTitle}
-						</h2>
-						<p className={styles.pageSub}>{config.pageSub}</p> */}
-					</div>
-					<div className="d-flex flex-wrap" style={{ gap: 8 }}>
-						<button
-							className={styles.btnPm}
-							onClick={() => openM("complianceHealthModal")}
+						<aside
+							className={styles.heroSnapshot}
+							aria-label="Tax compliance snapshot"
 						>
-							<i className="bi bi-heart-pulse" /> Compliance Health
-						</button>
+							<span>Linked identities</span>
+							<strong>{config.hero.value}</strong>
+							<p>{config.hero.detail}</p>
+							<div className={styles.heroPinChips}>
+								{config.kraPins.rows.map((r) => (
+									<span className={styles.pinChip} key={String(r[0])}>
+										<i className="bi bi-check-circle-fill" aria-hidden="true" />{" "}
+										{String(r[0]).replace("C:", "")}
+									</span>
+								))}
+							</div>
+							<div className={styles.heroMeter}>
+								<div className={styles.heroMeterHead}>
+									<span>Obligations this month</span>
+									<span>
+										<strong>5</strong> · 65% met
+									</span>
+								</div>
+								<div className={styles.heroMeterTrack} aria-hidden="true">
+									{[0, 1, 2, 3, 4].map((i) => (
+										<span
+											key={i}
+											className={`${styles.heroMeterSeg} ${i < 3 ? styles.heroMeterOn : ""}`}
+										/>
+									))}
+								</div>
+							</div>
+							<div className={styles.heroMetricRow}>
+								<div>
+									<strong>KES 184.2k</strong>
+									<span>Due in 7 days</span>
+								</div>
+								<div>
+									<strong>94/100</strong>
+									<span>Compliance score</span>
+								</div>
+								<div>
+									<strong>KES 47.8k</strong>
+									<span>Savings this year</span>
+								</div>
+							</div>
+						</aside>
+					</div>
+				</header>
+
+				<div className={styles.controlStrip}>
+					<div className={styles.controlGroup}>
+						<span className={styles.controlLabel}>
+							<i className="bi bi-person-badge" aria-hidden="true" /> Entity
+						</span>
+						<div className={styles.filterPills}>
+							{config.entities.map((e) => (
+								<button
+									type="button"
+									key={e.key}
+									className={entity === e.key ? styles.filterActive : ""}
+									onClick={() => setEntity(e.key)}
+								>
+									{e.label}
+								</button>
+							))}
+						</div>
+					</div>
+					<div className={styles.headerButtonRow}>
 						<button
-							className={styles.btnPm}
+							type="button"
+							className={`${styles.btnPm} ${styles.btnSm}`}
 							onClick={() => openM("bulkTaxModal")}
 						>
-							<i className="bi bi-collection" /> Bulk File
+							<i className="bi bi-collection" aria-hidden="true" /> Bulk File
 						</button>
 						<button
-							className={styles.btnPm}
-							onClick={() => openM("payKRAModal")}
-						>
-							<i className="bi bi-credit-card" /> Pay Tax
-						</button>
-						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
+							type="button"
+							className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
 							onClick={() => openM("addKRAModal")}
 						>
-							<i className="bi bi-plus-lg" /> Link KRA PIN
+							<i className="bi bi-plus" aria-hidden="true" /> Link KRA PIN
 						</button>
 					</div>
+					<span className={styles.scopeNote}>
+						<i className="bi bi-funnel" aria-hidden="true" /> {scopeNote}
+					</span>
 				</div>
 
 				<div className={styles.content}>
-					{/* ======================= HERO STATS ======================= */}
-					<div className="row g-3">
-						<div className="col-lg-4">
-						<div className={styles.heroClip}>
-							<div className={styles.heroLedger}>
-								<i
-									className={`bi bi-bank2 ${styles.heroMark}`}
-									aria-hidden="true"
-								/>
-								<div className={styles.livePillRow}>
-									<span className={styles.livePill}>
-										<span className={styles.liveDot} />
-										{config.hero.live}
-									</span>
-									<span className={styles.heroEta}>iTax sync · 27 Jun 09:14</span>
-								</div>
-								<div className={styles.heroValue}>{config.hero.value}</div>
-								<p className={styles.heroDetail}>{config.hero.detail}</p>
-
-								{/* linked KRA PIN chips */}
-								<div className={styles.pinChips}>
-									{config.kraPins.rows.map((r, i) => (
-										<span key={i} className={styles.pinChip}>
-											{String(r[0]).replace("C:", "")}
-										</span>
-									))}
-								</div>
-
-								{/* obligations meter */}
-								<div className={styles.meterWrap}>
-									<div className={styles.meterHead}>
-										<span>Obligations this month</span>
-										<span>5 · 65% met</span>
-									</div>
-									<div className={styles.meter}>
-										{[0, 1, 2, 3, 4].map((i) => (
-											<span
-												key={i}
-												className={i < 3.25 ? styles.meterOn : styles.meterOff}
-											/>
-										))}
-									</div>
-								</div>
-
-								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-									{config.hero.buttons.map((b) => (
-										<button
-											key={b.label}
-											className={`${styles.btnPm} ${styles.btnSm} ${styles.btnGhost}`}
-											onClick={() => openM(b.modal)}
-										>
-											{b.label}
-										</button>
-									))}
-								</div>
-							</div>
-						</div>
-						</div>
-						{config.statCards.map((card) => {
-							const isDial = card.key === "score";
-							const shapeCls = isDial
-								? styles.shapeDial
-								: card.key === "due"
-									? styles.shapeCut
-									: styles.shapeStack;
-							return (
-								<div className={card.colClass} key={card.key}>
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="kra-sec-pulse"
+					>
+						<SectionHeading
+							index="1.1"
+							id="kra-sec-pulse"
+							title="Compliance pulse"
+							description={`${scopeNote} — headline figures across linked tax identities.`}
+						/>
+						<div className={styles.kpiGrid}>
+							{config.kpis.map((kpi) => (
+								<div className={styles.kpiCard} key={kpi.label}>
 									<div
-										className={`${styles.card} ${styles.statCard} ${shapeCls}`}
+										className={`${styles.kpiIcon} ${kpi.iconCls}`}
+										aria-hidden="true"
+									>
+										<i className={`bi ${kpi.icon}`} />
+									</div>
+									<div
 										style={{
-											minHeight: 196,
-											borderTop: `3px solid ${card.labelColor}`,
+											fontSize: "0.72rem",
+											fontWeight: 600,
+											color: "var(--pm-muted)",
+											textTransform: "uppercase",
+											letterSpacing: "0.06em",
 										}}
 									>
-										{isDial && (
-											<div className={styles.dialMedal}>
-												<RingGauge
-													pct={94}
-													color="var(--pm-accent)"
-													track="var(--pm-accent-soft)"
-												/>
-											</div>
-										)}
-										<div className={styles.statTopRow}>
-											<p className={styles.sl} style={{ color: card.labelColor }}>
-												{card.label}
-											</p>
-											<span
-													className={styles.statChip}
-													style={{ background: card.labelColor, color: "#fff" }}
-												>
-													<i className={`bi ${card.badge.icon}`} />
-												</span>
-										</div>
-										<div className={styles.statMainRow}>
-											<div className={styles.sv} style={{ fontSize: 30 }}>
-												{card.value}
-												{card.valueSuffix && (
-													<span className={styles.statSuffix}>
-														{card.valueSuffix}
-													</span>
-												)}
-											</div>
-											{card.key === "savings" && (
-												<div className={styles.spark}>
-													{[30, 45, 40, 62, 55, 74, 90, 82].map((h, i) => (
-														<i key={i} style={{ height: `${h}%` }} />
-													))}
-												</div>
-											)}
-										</div>
-										<span
-											className={`${styles.badge} ${styles[card.badge.tone]}`}
-										>
-											<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
+										{kpi.label}
+									</div>
+									<div className={styles.kpiValue}>{kpi.value}</div>
+									<div className={styles.kpiMeta}>
+										<span className={`${styles.badge} ${styles[kpi.tone]}`}>
+											{kpi.sub}
 										</span>
-										{card.progress && (
-											<div className={styles.progressBlock}>
-												<div className={styles.pmProgress}>
-													<div
-															className={styles.pmProgressBar}
-															style={{
-																width: card.progress.width,
-																background: card.progress.color,
-															}}
-														/>
-													</div>
-													<div className={styles.progressNote}>
-														{card.progress.note}
-													</div>
-												</div>
-											)}
-										{card.lines.length > 0 && (
-											<div className={styles.statFoot}>
-												{card.lines.map((li) => (
-													<span key={li}>{li}</span>
-												))}
-											</div>
-										)}
 									</div>
 								</div>
-							);
-						})}
-					</div>
+							))}
+						</div>
+					</section>
 
-					{/* ======================= ATTENTION / SUGGESTIONS / QUICK ACTIONS ======================= */}
-					<div className="row g-3">
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="d-flex justify-content-between align-items-center mb-2">
-									<h3 className={styles.st}>Attention Required</h3>
-									<button
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => openM("attentionModal")}
-									>
-										View all
-									</button>
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="kra-sec-queue"
+					>
+						<SectionHeading
+							index="1.2"
+							id="kra-sec-queue"
+							title="Needs your attention"
+							description="File due returns, settle overdue assessments and act on smart tax recommendations without leaving the dashboard."
+						/>
+						<div className={styles.attentionGrid}>
+							<div className={styles.listCard}>
+								<div className={styles.listCardHeader}>
+									<h3 className={styles.listCardTitle}>
+										<i
+											className="bi bi-exclamation-circle"
+											aria-hidden="true"
+										/>{" "}
+										Attention Required
+									</h3>
+									<div className={styles.headerButtonRow}>
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											onClick={() => openM("govNotifModal")}
+											aria-label="Government notifications"
+										>
+											<i className="bi bi-bell" aria-hidden="true" />
+										</button>
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											onClick={() => openM("attentionModal")}
+										>
+											View all
+										</button>
+									</div>
 								</div>
 								{config.attention.map((item) => (
-									<div className={styles.sr} key={item.title}>
-										<div className="d-flex align-items-center gap-3">
-											<div
-												className={styles.iconCircle}
-												style={{
-													background: item.iconBg,
-													color: item.iconColor,
-													fontSize: 12,
-												}}
-											>
-												<i className={`bi ${item.icon}`} />
-											</div>
-											<div>
-												<div className={styles.fwBold13}>{item.title}</div>
-												<div className={styles.mutedSmall}>{item.sub}</div>
-											</div>
-										</div>
-										<button
-											className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
-											onClick={() => openM(item.modal)}
+									<div className={styles.actionRow} key={item.title}>
+										<div
+											className={styles.iconCircle}
+											style={{
+												background: item.iconBg,
+												color: item.iconColor,
+											}}
+											aria-hidden="true"
 										>
-											{item.actionLabel}
-										</button>
+											<i className={`bi ${item.icon}`} />
+										</div>
+										<div className={styles.actionRowMain}>
+											<div className={styles.actionRowTitle}>{item.title}</div>
+											<div className={styles.actionRowSub}>{item.sub}</div>
+										</div>
+										<div className={styles.actionRowActions}>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
+												onClick={() => openM(item.modal)}
+											>
+												{item.actionLabel}
+											</button>
+										</div>
 									</div>
 								))}
 							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="d-flex justify-content-between align-items-center mb-2">
-									<h3 className={styles.st}>Smart Suggestions</h3>
+							<div className={styles.listCard}>
+								<div className={styles.listCardHeader}>
+									<h3 className={styles.listCardTitle}>
+										<i className="bi bi-lightbulb" aria-hidden="true" /> Smart
+										Suggestions
+									</h3>
 									<span className={`${styles.badge} ${styles.badgeP}`}>
-										<i className="bi bi-stars" /> AI
+										<i className="bi bi-stars" aria-hidden="true" /> AI
 									</span>
 								</div>
 								{config.suggestions.map((item) => (
-									<div className={styles.sr} key={item.title}>
-										<div className="d-flex align-items-center gap-3">
-											<div
-												className={styles.iconCircle}
-												style={{
-													background: item.iconBg,
-													color: item.iconColor,
-													fontSize: 12,
-												}}
-											>
-												<i className={`bi ${item.icon}`} />
-											</div>
-											<div>
-												<div className={styles.fwBold13}>{item.title}</div>
-												<div className={styles.mutedSmall}>{item.sub}</div>
-											</div>
-										</div>
-										<button
-											className={`${styles.btnPm} ${styles.btnSm}`}
-											onClick={() => openM(item.modal)}
+									<div className={styles.actionRow} key={item.title}>
+										<div
+											className={styles.iconCircle}
+											style={{
+												background: item.iconBg,
+												color: item.iconColor,
+											}}
+											aria-hidden="true"
 										>
-											{item.actionLabel}
-										</button>
+											<i className={`bi ${item.icon}`} />
+										</div>
+										<div className={styles.actionRowMain}>
+											<div className={styles.actionRowTitle}>{item.title}</div>
+											<div className={styles.actionRowSub}>{item.sub}</div>
+										</div>
+										<div className={styles.actionRowActions}>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm}`}
+												onClick={() => openM(item.modal)}
+											>
+												{item.actionLabel}
+											</button>
+										</div>
 									</div>
 								))}
 							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={`${styles.card} h-100`}>
-								<div className="mb-3">
-									<h3 className={styles.st}>Quick Actions</h3>
-									<p className={styles.ss}>
-										Frequent government payment workflows
-									</p>
-								</div>
+							<div className={styles.listCard}>
+								<h3 className={styles.listCardTitle}>
+									<i className="bi bi-lightning-charge" aria-hidden="true" />{" "}
+									Quick Actions
+								</h3>
+								<p className={styles.listCardSub}>
+									Frequent tax &amp; government workflows
+								</p>
 								<div className={styles.quickGrid}>
 									{config.quickActions.map((qa) => (
 										<button
+											type="button"
+											className={styles.quickActionCard}
 											key={qa.label}
-											className={styles.quickBtn}
 											onClick={() => openM(qa.modal)}
 										>
 											<i
-												className={`bi ${qa.icon} me-1`}
+												className={`bi ${qa.icon}`}
 												style={{ color: qa.color }}
-											/>{" "}
-											{qa.label}
+											/>
+											<span>{qa.label}</span>
 										</button>
 									))}
 								</div>
 							</div>
 						</div>
-					</div>
+					</section>
 
-					{/* ======================= SECTION KRA iTax Integration Hub ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-bank2"
-							iconColor="var(--pm-primary)"
-							title="KRA iTax Integration Hub"
-							sub="Link multiple KRA PINs, sync obligations, view real-time tax position, and manage filings across personal and business entities."
-							actions={[
-								{ label: "Link PIN", icon: "bi-plus-lg", modal: "addKRAModal" },
-								{
-									label: "Sync iTax",
-									icon: "bi-arrow-repeat",
-									modal: "syncItaxModal",
-									tone: "btnPmP",
-								},
-							]}
-							onOpen={openM}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="kra-sec-hub"
+					>
+						<SectionHeading
+							index="1.3"
+							id="kra-sec-hub"
+							title="KRA iTax integration hub"
+							description="Linked KRA PINs, obligations, real-time tax position and iTax activity across personal and business entities."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openM("addKRAModal")}
+									>
+										<i className="bi bi-plus" aria-hidden="true" /> Link PIN
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+										onClick={() => openM("syncItaxModal")}
+									>
+										<i className="bi bi-arrow-repeat" aria-hidden="true" /> Sync
+										iTax
+									</button>
+								</div>
+							}
 						/>
-						<div className="row g-3">
-							<div className="col-lg-7">
-								<Ub title="Linked KRA PINs & Obligations">
-									<div className="table-responsive">
-										<table className={styles.tbl}>
-											<thead>
-												<tr>
-													{config.kraPins.cols.map((c) => (
-														<th key={c.key}>{c.label}</th>
-													))}
-												</tr>
-											</thead>
-											<tbody>
-												{config.kraPins.rows.map((row, i) => (
-													<tr key={i}>
-														{row.map((cell, j) => (
-															<td key={j}>
-																<CellValue cell={cell} onOpen={openM} />
-															</td>
+						<div className={styles.tableCard}>
+							<div className="row g-3">
+								<div className="col-lg-7">
+									<div className={styles.panel}>
+										<h4 className={styles.panelTitle}>
+											<i className="bi bi-person-badge" aria-hidden="true" />{" "}
+											Linked KRA PINs &amp; Obligations
+										</h4>
+										<div className={styles.tableWrap}>
+											<table className={styles.tbl}>
+												<thead>
+													<tr>
+														{config.kraPins.cols.map((c) => (
+															<th key={c.key}>{c.label}</th>
 														))}
 													</tr>
-												))}
-											</tbody>
-										</table>
-									</div>
-								</Ub>
-							</div>
-							<div className="col-lg-5">
-								<Ub title="Tax Position Snapshot">
-									{config.taxPosition.map((r) => (
-										<div className={styles.sr} key={r.label}>
-											<div>
-												<strong>{r.label}</strong>
-											</div>
-											{r.badge ? (
-												<span
-													className={`${styles.badge} ${styles[r.badge.tone]}`}
-												>
-													{r.badge.text}
-												</span>
-											) : (
-												<strong
-													style={{
-														color: r.valueColor,
-														fontSize: r.small ? 12 : undefined,
-													}}
-												>
-													{r.value}
-												</strong>
-											)}
+												</thead>
+												<tbody>
+													{filteredPins.map((row) => (
+														<tr key={String(row[0])}>
+															{row.map((cell) => (
+																<td key={JSON.stringify(cell)}>
+																	<CellValue cell={cell} onOpen={openM} />
+																</td>
+															))}
+														</tr>
+													))}
+												</tbody>
+											</table>
 										</div>
-									))}
-									<div className="mt-3">
+									</div>
+								</div>
+								<div className="col-lg-5">
+									<div className={styles.panel}>
+										<h4 className={styles.panelTitle}>
+											<i className="bi bi-clipboard-data" aria-hidden="true" />{" "}
+											Tax Position Snapshot
+										</h4>
+										{config.taxPosition.map((r) => (
+											<div className={styles.sr} key={r.label}>
+												<div>
+													<strong>{r.label}</strong>
+												</div>
+												{r.badge ? (
+													<span
+														className={`${styles.badge} ${styles[r.badge.tone]}`}
+													>
+														{r.badge.text}
+													</span>
+												) : (
+													<strong
+														style={{
+															color: r.valueColor,
+															fontSize: r.small ? 12 : undefined,
+														}}
+													>
+														{r.value}
+													</strong>
+												)}
+											</div>
+										))}
 										<button
-											className={`${styles.btnPm} ${styles.btnSm} w-100`}
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
 											onClick={() => openM("syncItaxModal")}
 										>
-											<i className="bi bi-arrow-repeat" /> Force Full Sync
+											<i className="bi bi-arrow-repeat" aria-hidden="true" />{" "}
+											Force Full Sync
 										</button>
 									</div>
-								</Ub>
-							</div>
-							<div className="col-12">
-								<Ub
-									title="Recent iTax Activity"
-									action={
-										<button
-											className={`${styles.btnPm} ${styles.btnSm}`}
-											onClick={() => openM("taxHistoryModal")}
-										>
-											Full History
-										</button>
-									}
-								>
-									<div className="table-responsive">
-										<table className={styles.tbl}>
-											<thead>
-												<tr>
-													{config.itaxActivity.cols.map((c) => (
-														<th key={c.key}>{c.label}</th>
-													))}
-												</tr>
-											</thead>
-											<tbody>
-												{config.itaxActivity.rows.map((row, i) => (
-													<tr key={i}>
-														{row.map((cell, j) => (
-															<td key={j}>
-																<CellValue cell={cell} onOpen={openM} />
-															</td>
+								</div>
+								<div className="col-12">
+									<div className={styles.panel}>
+										<div className={styles.listCardHeader}>
+											<h4 className={styles.panelTitle}>
+												<i className="bi bi-activity" aria-hidden="true" />{" "}
+												Recent iTax Activity
+											</h4>
+											<button
+												type="button"
+												className={`${styles.btnPm} ${styles.btnSm}`}
+												onClick={() => openM("taxHistoryModal")}
+											>
+												Full History
+											</button>
+										</div>
+										<div className={styles.tableWrap}>
+											<table className={styles.tbl}>
+												<thead>
+													<tr>
+														{config.itaxActivity.cols.map((c) => (
+															<th key={c.key}>{c.label}</th>
 														))}
 													</tr>
-												))}
-											</tbody>
-										</table>
+												</thead>
+												<tbody>
+													{filteredItax.map((row) => (
+														<tr key={String(row[5])}>
+															{row.map((cell) => (
+																<td key={JSON.stringify(cell)}>
+																	<CellValue cell={cell} onOpen={openM} />
+																</td>
+															))}
+														</tr>
+													))}
+												</tbody>
+											</table>
+										</div>
 									</div>
-								</Ub>
+								</div>
 							</div>
 						</div>
-					</div>
+					</section>
 
-					{/* ======================= SECTION Client Tax PINs & Formats ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-person-badge"
-							iconColor="var(--pm-warning)"
-							title="Client Tax PINs & Formats"
-							sub="Tax identities for your clients across countries and authorities — every PIN/TIN is checked against its country's expected format."
-							actions={[
-								{ label: "Link PIN", icon: "bi-plus-lg", modal: "addKRAModal" },
-								{
-									label: "Sync iTax",
-									icon: "bi-arrow-repeat",
-									modal: "syncItaxModal",
-									tone: "btnPmP",
-								},
-							]}
-							onOpen={openM}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="kra-sec-clients"
+					>
+						<SectionHeading
+							index="1.4"
+							id="kra-sec-clients"
+							title="Client tax PINs & formats"
+							description="Tax identities for your clients across countries and authorities — every PIN/TIN is checked against its country's expected format."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+										onClick={() => openM("addKRAModal")}
+									>
+										<i className="bi bi-plus" aria-hidden="true" /> Link PIN
+									</button>
+								</div>
+							}
 						/>
-						<div className="table-responsive">
-							<table className={styles.tbl}>
-						<thead>
-							<tr>
-								{config.clientPins.cols.slice(0, 5).map((c) => (
-									<th key={c.key}>{c.label}</th>
-								))}
-								<th>Validation</th>
-								{config.clientPins.cols.slice(5).map((c) => (
-									<th key={c.key}>{c.label}</th>
-								))}
-							</tr>
-						</thead>
-						<tbody>
-							{config.clientPins.rows.map((row, i) => {
-								const pinStr = String(row[3]).replace(/^C:/, "");
-								const country = String(row[1]);
-								const valid = validatePin(country, pinStr);
-								return (
-									<tr key={i}>
-										{row.slice(0, 5).map((cell, j) => (
-											<td key={j}>
-												<CellValue cell={cell} onOpen={openM} />
-											</td>
-										))}
-										<td>
-											<span
-													className={`${styles.badge} ${
-														valid ? styles.badgeS : styles.badgeD
-													}`}
-													title={`Expected format: ${PIN_PATTERNS[country]?.source ?? "No rule for this country"}`}
-												>
-													<i
-														className={`bi ${valid ? "bi-check-lg" : "bi-x-lg"}`}
-													/>{" "}
-													{valid ? "Valid" : "Invalid"}
-												</span>
-											</td>
-											{row.slice(5).map((cell, j) => (
-												<td key={j + 5}>
-													<CellValue cell={cell} onOpen={openM} />
-												</td>
+						<div className={styles.tableCard}>
+							<div className={styles.tableWrap}>
+								<table className={styles.tbl}>
+									<thead>
+										<tr>
+											{config.clientPins.cols.slice(0, 5).map((c) => (
+												<th key={c.key}>{c.label}</th>
 											))}
-									</tr>
-								);
-							})}
-						</tbody>
-							</table>
-						</div>
-					</div>
-
-					{/* ======================= SECTION Tax Payment Execution & Scheduling ======================= */}
-					<div className={styles.card}>
-						<SectionHead
-							icon="bi-credit-card"
-							iconColor="var(--pm-info)"
-							title="Tax Payment Execution & Scheduling"
-							sub="Execute single or bulk tax payments, set recurring schedules, and manage payment plans with full audit trails."
-							actions={[
-								{
-									label: "Bulk Pay",
-									icon: "bi-collection",
-									modal: "bulkTaxModal",
-								},
-								{ label: "Pay Now", modal: "payKRAModal", tone: "btnPmP" },
-							]}
-							onOpen={openM}
-						/>
-						<div className="row g-3">
-							<div className="col-lg-5">
-								<Ub title="Payment Methods & Sources">
-									{config.payMethods.map((m) => (
-										<div className={styles.sr} key={m.title}>
-											<div>
-												<strong>{m.title}</strong>
-												<div className={styles.mutedSmall}>{m.sub}</div>
-											</div>
-											{m.badge ? (
-												<span
-													className={`${styles.badge} ${styles[m.badge.tone]}`}
-												>
-													{m.badge.text}
-												</span>
-											) : (
-												<button
-													className={`${styles.btnPm} ${styles.btnSm}`}
-													onClick={() => openM("payKRAModal")}
-												>
-													{m.actionLabel}
-												</button>
-											)}
-										</div>
-									))}
-								</Ub>
-							</div>
-							<div className="col-lg-7">
-								<Ub title="Scheduled & Recurring Payments">
-									{config.scheduled.map((s) => (
-										<div className={styles.sr} key={s.title}>
-											<div>
-												<strong>{s.title}</strong>
-												<div className={styles.mutedSmall}>{s.sub}</div>
-											</div>
-											<span className={`${styles.badge} ${styles[s.tone]}`}>
-												{s.status}
-											</span>
-										</div>
-									))}
-									<div className="mt-3">
-										<button
-											className={`${styles.btnPm} ${styles.btnSm} w-100`}
-											onClick={() => openM("scheduleTaxModal")}
-										>
-											<i className="bi bi-plus-lg" /> Schedule New Payment
-										</button>
-									</div>
-								</Ub>
-							</div>
-						</div>
-					</div>
-
-					{/* ======================= SECTION Recent Tax & Filing Activity ======================= */}
-					<div className={styles.card}>
-						<div className="d-flex justify-content-between align-items-center mb-3">
-							<div>
-								<h3 className={styles.st}>
-									<i
-										className="bi bi-clock-history"
-										style={{ color: "var(--pm-muted)" }}
-									/>{" "}
-									Recent Tax & Filing Activity
-								</h3>
-								<p className={styles.ss}>Payments, filings and receipts across linked PINs</p>
-							</div>
-							<button
-								className={`${styles.btnPm} ${styles.btnSm}`}
-								onClick={() => openM("govHistoryModal")}
-							>
-								View All
-							</button>
-						</div>
-						<div className="table-responsive">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										{config.activity.cols.map((c) => (
-											<th key={c.key}>{c.label}</th>
-										))}
-									</tr>
-								</thead>
-								<tbody>
-									{config.activity.rows.map((row, i) => (
-										<tr key={i}>
-											{row.map((cell, j) => (
-												<td key={j}>
-													<CellValue cell={cell} onOpen={openM} />
-												</td>
+											<th>Validation</th>
+											{config.clientPins.cols.slice(5).map((c) => (
+												<th key={c.key}>{c.label}</th>
 											))}
 										</tr>
-									))}
-								</tbody>
-							</table>
+									</thead>
+									<tbody>
+										{config.clientPins.rows.map((row) => {
+											const pinStr = String(row[3]).replace(/^C:/, "");
+											const country = String(row[1]);
+											const valid = validatePin(country, pinStr);
+											return (
+												<tr key={pinStr}>
+													{row.slice(0, 5).map((cell) => (
+														<td key={JSON.stringify(cell)}>
+															<CellValue cell={cell} onOpen={openM} />
+														</td>
+													))}
+													<td>
+														<span
+															className={`${styles.badge} ${valid ? styles.badgeS : styles.badgeD}`}
+															title={`Expected format: ${PIN_PATTERNS[country]?.source ?? "No rule for this country"}`}
+														>
+															<i
+																className={`bi ${valid ? "bi-check-lg" : "bi-x-lg"}`}
+																aria-hidden="true"
+															/>{" "}
+															{valid ? "Valid" : "Invalid"}
+														</span>
+													</td>
+													{row.slice(5).map((cell) => (
+														<td key={JSON.stringify(cell)}>
+															<CellValue cell={cell} onOpen={openM} />
+														</td>
+													))}
+												</tr>
+											);
+										})}
+									</tbody>
+								</table>
+							</div>
 						</div>
-					</div>
-				</div>
-				{/* content */}
-			</div>
-			{/* main */}
+					</section>
 
-			{/* ======================= ALL 21 MODALS ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="kra-sec-payments"
+					>
+						<SectionHeading
+							index="1.5"
+							id="kra-sec-payments"
+							title="Tax payment execution & scheduling"
+							description="Execute single or bulk tax payments, set recurring schedules, and manage payment plans with full audit trails."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openM("bulkTaxModal")}
+									>
+										<i className="bi bi-collection" aria-hidden="true" /> Bulk
+										Pay
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+										onClick={() => openM("payKRAModal")}
+									>
+										<i className="bi bi-receipt-cutoff" aria-hidden="true" />{" "}
+										Pay Now
+									</button>
+								</div>
+							}
+						/>
+						<div className={styles.tableCard}>
+							<div className="row g-3">
+								<div className="col-lg-5">
+									<div className={styles.panel}>
+										<h4 className={styles.panelTitle}>
+											<i className="bi bi-wallet2" aria-hidden="true" /> Payment
+											Methods &amp; Sources
+										</h4>
+										{config.payMethods.map((m) => (
+											<div className={styles.sr} key={m.title}>
+												<div>
+													<strong>{m.title}</strong>
+													<div className={styles.mutedSmall}>{m.sub}</div>
+												</div>
+												{m.badge ? (
+													<span
+														className={`${styles.badge} ${styles[m.badge.tone]}`}
+													>
+														{m.badge.text}
+													</span>
+												) : (
+													<button
+														type="button"
+														className={`${styles.btnPm} ${styles.btnSm}`}
+														onClick={() => openM("payKRAModal")}
+													>
+														{m.actionLabel}
+													</button>
+												)}
+											</div>
+										))}
+									</div>
+								</div>
+								<div className="col-lg-7">
+									<div className={styles.panel}>
+										<h4 className={styles.panelTitle}>
+											<i className="bi bi-calendar-event" aria-hidden="true" />{" "}
+											Scheduled &amp; Recurring Payments
+										</h4>
+										{filteredScheduled.map((sched) => (
+											<div className={styles.sr} key={sched.title}>
+												<div>
+													<strong>{sched.title}</strong>
+													<div className={styles.mutedSmall}>{sched.sub}</div>
+												</div>
+												<span
+													className={`${styles.badge} ${styles[sched.tone]}`}
+												>
+													{sched.status}
+												</span>
+											</div>
+										))}
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm} w-100 mt-2`}
+											onClick={() => openM("scheduleTaxModal")}
+										>
+											<i className="bi bi-plus" aria-hidden="true" /> Schedule
+											New Payment
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="kra-sec-gov"
+					>
+						<SectionHeading
+							index="1.6"
+							id="kra-sec-gov"
+							title="Government services & payments"
+							description="Pay eCitizen, county and Ardhisasa land services, and track application progress — all from one console."
+							action={
+								<div className={styles.headerButtonRow}>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openM("trackGovModal")}
+									>
+										<i className="bi bi-truck" aria-hidden="true" /> Track
+									</button>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+										onClick={() => openM("govHistoryModal")}
+									>
+										<i className="bi bi-clock-history" aria-hidden="true" />{" "}
+										History
+									</button>
+								</div>
+							}
+						/>
+						<div className={styles.govGrid}>
+							{config.govServices.map((g) => (
+								<div className={styles.govCard} key={g.provider}>
+									<div className={styles.govCardTop}>
+										<div
+											className={styles.govCardIcon}
+											style={{ background: g.iconBg, color: g.iconColor }}
+											aria-hidden="true"
+										>
+											<i className={`bi ${g.icon}`} />
+										</div>
+										<span className={`${styles.badge} ${styles.badgeI}`}>
+											{g.provider}
+										</span>
+									</div>
+									<h4>{g.title}</h4>
+									<p className={styles.govCardSub}>{g.sub}</p>
+									<div className={styles.govCardPrice}>{g.price}</div>
+									<div className={styles.govCardActions}>
+										<button
+											type="button"
+											className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+											onClick={() => openM(g.modal)}
+										>
+											{g.actionLabel}
+										</button>
+									</div>
+								</div>
+							))}
+						</div>
+						<div className={`${styles.tableCard} mt-3`}>
+							<div className={styles.panel}>
+								<div className={styles.listCardHeader}>
+									<h4 className={styles.panelTitle}>
+										<i className="bi bi-globe2" aria-hidden="true" /> Recent
+										Government Service Payments
+									</h4>
+									<button
+										type="button"
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openM("govHistoryModal")}
+									>
+										View All
+									</button>
+								</div>
+								<div className={styles.tableWrap}>
+									<table className={styles.tbl}>
+										<thead>
+											<tr>
+												{config.govActivity.cols.map((c) => (
+													<th key={c.key}>{c.label}</th>
+												))}
+											</tr>
+										</thead>
+										<tbody>
+											{config.govActivity.rows.map((row) => (
+												<tr key={String(row[5])}>
+													{row.map((cell) => (
+														<td key={JSON.stringify(cell)}>
+															<CellValue cell={cell} onOpen={openM} />
+														</td>
+													))}
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</section>
+
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="kra-sec-activity"
+					>
+						<SectionHeading
+							index="1.7"
+							id="kra-sec-activity"
+							title="Recent tax & filing activity"
+							description="Payments, filings and receipts across linked PINs, most recent first."
+							action={
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => openM("govHistoryModal")}
+								>
+									<i className="bi bi-clock-history" aria-hidden="true" /> View
+									All
+								</button>
+							}
+						/>
+						<div className={styles.tableCard}>
+							<div className={styles.tableWrap}>
+								<table className={styles.tbl}>
+									<thead>
+										<tr>
+											{config.activity.cols.map((c) => (
+												<th key={c.key}>{c.label}</th>
+											))}
+										</tr>
+									</thead>
+									<tbody>
+										{config.activity.rows.map((row) => (
+											<tr key={String(row[6])}>
+												{row.map((cell) => (
+													<td key={JSON.stringify(cell)}>
+														<CellValue cell={cell} onOpen={openM} />
+													</td>
+												))}
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</section>
+				</div>
+
+				<footer className={styles.pageFooter}>
+					<span>
+						<i className="bi bi-bank2" aria-hidden="true" /> KRA &amp;
+						Government · {config.hero.value} · Data refreshes every run
+					</span>
+					<nav aria-label="Footer links">
+						<Link to="/pm/app/disputes" search={{ modal: undefined }}>
+							Disputes
+						</Link>
+						<Link to="/pm/app/settlement" search={{ modal: undefined }}>
+							Settlements
+						</Link>
+						<Link to="/pm/app/fees">Fees</Link>
+					</nav>
+				</footer>
+			</div>
+
+			<nav className={styles.floatingBar} aria-label="Quick tax actions">
+				<button type="button" onClick={() => openM("attentionModal")}>
+					<i className="bi bi-exclamation-circle" aria-hidden="true" />{" "}
+					Attention
+				</button>
+				<button type="button" onClick={() => openM("syncItaxModal")}>
+					<i className="bi bi-arrow-repeat" aria-hidden="true" /> Sync
+				</button>
+				<button type="button" onClick={() => openM("complianceHealthModal")}>
+					<i className="bi bi-heart-pulse" aria-hidden="true" /> Health
+				</button>
+				<button
+					type="button"
+					className={styles.floatingPrimary}
+					onClick={() => openM("payKRAModal")}
+				>
+					<i className="bi bi-receipt-cutoff" aria-hidden="true" /> Pay Tax
+				</button>
+			</nav>
+
 			<KraGovernmentModals
 				active={activeModal}
 				onClose={closeM}

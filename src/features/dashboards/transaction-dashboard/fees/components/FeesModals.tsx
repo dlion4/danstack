@@ -1,21 +1,25 @@
-import type { ReactNode } from "react";
-import { useEffect, useRef, useState } from "react";
+/* ============================================================================
+ * FeesModals.tsx — all workflows for Fees, Charges & Profit Channeling.
+ * ----------------------------------------------------------------------------
+ * Every dialog uses the shared accessible modal primitives (ModalShell,
+ * SimpleModal, FlowModal) from shared/components/modals.tsx so the fees page
+ * inherits the PayMo transaction shell behaviour: labelled dialogs, focus
+ * trap, Escape-to-close, body scroll lock, bottom sheets on mobile and the
+ * emerald business visual language. In-modal navigation (e.g. Profit Pot →
+ * Deliver Now) is preserved through the onOpen callback.
+ * ========================================================================== */
+import { useState } from "react";
+import {
+	FlowModal,
+	ModalShell,
+	ReviewRow,
+	SelectField,
+	SimpleModal,
+} from "../../shared/components/modals.tsx";
+import shared from "../../shared/styles/appPage.module.css";
 import styles from "../styles/fees.module.css";
 
-/* ============================================================================
-   Fee & Commission Management — modal layer (legacy page 1.15, 25 modals)
-   LEGACY BRIDGE:
-     openM(id)          → parent lifts `active` state into this component
-     doAction(id,msg)   → `results` state; legacy showLoading 1400ms spinner,
-                          then swaps body to a receipt (exact legacy behavior)
-     nextFlow(key,total)→ `flows` state; labeled steppers:
-                          fee(4: Details/Pricing/Conditions/Done)
-                          calc(3: Details/Breakdown/Done)
-                          waiver(3: Details/Eligibility/Done)
-                          settle(3: Select/Review/Done)
-     calculateFee/advCalc → controlled inputs + live derived totals below
-     cacheAndReset()    → useEffect on close resets flows + results
-   ========================================================================== */
+const s = shared as Record<string, string>;
 
 interface ModalsProps {
 	active: string | null;
@@ -23,106 +27,16 @@ interface ModalsProps {
 	onOpen: (id: string) => void;
 }
 
-type Size = "md" | "lg" | "xl";
-
-interface MBoxProps {
-	id: string;
-	active: string | null;
-	title: ReactNode;
-	size?: Size;
-	onClose: () => void;
-	children: ReactNode;
-	footer?: ReactNode;
-}
-
-/* ---------- LEGACY BRIDGE: file download helper (receipt "Save" button) ---------- */
+/* ---------- file download helper (receipts, templates, reports) ---------- */
 function downloadFile(name: string, content: string, type = "text/plain") {
-	const a = document.createElement("a");
-	a.href = URL.createObjectURL(new Blob([content], { type }));
-	a.download = name;
-	a.click();
-	URL.revokeObjectURL(a.href);
+	const anchor = document.createElement("a");
+	anchor.href = URL.createObjectURL(new Blob([content], { type }));
+	anchor.download = name;
+	anchor.click();
+	URL.revokeObjectURL(anchor.href);
 }
 
-/* ---------- modal shell (Bootstrap look, React state driven) ---------- */
-function MBox({
-	id,
-	active,
-	title,
-	size = "md",
-	onClose,
-	children,
-	footer,
-}: MBoxProps) {
-	if (active !== id) return null;
-	return (
-		<>
-			<div className={styles.backdrop} onClick={onClose} />
-			<div
-				className={styles.modalWrap}
-				role="dialog"
-				aria-modal="true"
-				aria-label={id}
-			>
-				<div
-					className={`${styles.modalBox} ${size === "lg" ? styles.modalBoxLg : ""} ${
-						size === "xl" ? styles.modalBoxXl : ""
-					}`}
-				>
-					<div className={styles.modalHeader}>
-						<h5 className={styles.modalTitle}>{title}</h5>
-						<button
-							type="button"
-							className="btn-close"
-							aria-label="Close"
-							onClick={onClose}
-						/>
-					</div>
-					<div className={styles.modalBody}>{children}</div>
-					{footer && <div className={styles.modalFooter}>{footer}</div>}
-				</div>
-			</div>
-		</>
-	);
-}
-
-function BusyOverlay() {
-	return (
-		<div className={styles.loadingOv}>
-			<div className={styles.spinner} />
-			<p className={styles.loadingLabel}>Processing...</p>
-		</div>
-	);
-}
-
-/* ---------- LEGACY BRIDGE: flows map from page JS ---------- */
-type FlowKey = "fee" | "calc" | "waiver" | "settle";
-const FLOWS: Record<
-	FlowKey,
-	{ total: number; labels: string[]; modal: string }
-> = {
-	fee: {
-		total: 4,
-		labels: ["Details", "Pricing", "Conditions", "Done"],
-		modal: "addFeeRuleModal",
-	},
-	calc: {
-		total: 3,
-		labels: ["Details", "Breakdown", "Done"],
-		modal: "feeCalculatorModal",
-	},
-	waiver: {
-		total: 3,
-		labels: ["Details", "Eligibility", "Done"],
-		modal: "waiverModal",
-	},
-	settle: {
-		total: 3,
-		labels: ["Select", "Review", "Done"],
-		modal: "settlementModal",
-	},
-};
-
+/* ---------- shared option lists ---------- */
 const TXN_TYPES = [
 	"M-Pesa collection",
 	"Bank transfer payout",
@@ -152,7 +66,12 @@ const PARTNERS = [
 	"External M-Pesa (0712…890)",
 	"Equity Bank • 01-2345678-0",
 ];
-const SETTLE_FREQS = ["Instant (any amount ≥ KES 2)", "Daily", "Weekly", "Monthly"];
+const SETTLE_FREQS = [
+	"Instant (any amount ≥ KES 2)",
+	"Daily",
+	"Weekly",
+	"Monthly",
+];
 const REGULATORS = [
 	"CBK — Central Bank of Kenya",
 	"KRA — Kenya Revenue Authority",
@@ -164,15 +83,13 @@ const HARDSHIP_REASONS = [
 	"Natural disaster",
 	"Other",
 ];
-const ADV_TYPES = ["Money transfer", "International transfer", "Wallet to M-Pesa"];
+const ADV_TYPES = [
+	"Money transfer",
+	"International transfer",
+	"Wallet to M-Pesa",
+];
 
-interface Result {
-	msg: string;
-	ref?: string;
-}
-
-/* ---------- LEGACY BRIDGE: advCalc() — verbatim formula from page JS ----------
-   base = amt*0.0085; Instant → 0.45%; Wallet → KES 25 flat; VAT 16%; network KES 50. */
+/* ---------- advanced calculator formula (base + VAT + network fee) ---------- */
 function advCalc(amount: number, type: string) {
 	let base = amount * 0.0085;
 	if (type.includes("Instant")) base = amount * 0.0045;
@@ -185,1190 +102,811 @@ function advCalc(amount: number, type: string) {
 const fmt = (n: number) => `KES ${Math.round(n).toLocaleString("en-KE")}`;
 
 export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
-	/* ---------- doAction / nextFlow / busy state ---------- */
-	const [results, setResults] = useState<Record<string, Result>>({});
-	const [busy, setBusy] = useState<string | null>(null);
-	const [flows, setFlows] = useState<Record<FlowKey, number>>({
-		fee: 1,
-		calc: 1,
-		waiver: 1,
-		settle: 1,
-	});
-
-	/* LEGACY BRIDGE: #advAmount oninput / #advType onchange → advCalc() */
 	const [advAmount, setAdvAmount] = useState("500000");
-	const [advType, setAdvType] = useState("Inter-bank Transfer");
+	const [advType, setAdvType] = useState("Money transfer");
+	const [instantDelivery, setInstantDelivery] = useState(true);
+	const [approveBatch, setApproveBatch] = useState(true);
 	const adv = advCalc(parseFloat(advAmount) || 0, advType);
+	const calcBasePct = advType.includes("Instant")
+		? "0.45"
+		: advType.includes("Wallet")
+			? "flat"
+			: "0.85";
 
-	/* ---------- LEGACY BRIDGE: cacheAndReset → fresh state on next open ---------- */
-	useEffect(() => {
-		if (active === null) {
-			setResults({});
-			setFlows({ fee: 1, calc: 1, waiver: 1, settle: 1 });
-			setBusy(null);
-			setAdvAmount("500000");
-			setAdvType("Inter-bank Transfer");
-		}
-	}, [active]);
+	const isOpen = (id: string) => active === id;
 
-	const busyTimer = useRef<number | undefined>(undefined);
-	useEffect(() => () => window.clearTimeout(busyTimer.current), []);
-
-	/* ---------- LEGACY BRIDGE: doAction(modalId, msg, ref) — 1400ms as legacy ---------- */
-	const doAction = (modalId: string, msg: string, ref?: string) => {
-		setBusy(modalId);
-		busyTimer.current = window.setTimeout(() => {
-			setResults((prev) => ({ ...prev, [modalId]: { msg, ref } }));
-			setBusy(null);
-		}, 1400);
-	};
-
-	/* ---------- LEGACY BRIDGE: nextFlow(key,total) with modalMap close ---------- */
-	const nextFlow = (key: FlowKey) => {
-		const f = FLOWS[key];
-		const cur = flows[key];
-		if (cur === f.total - 1) {
-			setBusy(f.modal);
-			busyTimer.current = window.setTimeout(() => {
-				setFlows((prev) => ({ ...prev, [key]: f.total }));
-				setBusy(null);
-			}, 1400);
-			return;
-		}
-		if (cur >= f.total) {
-			onClose();
-			return;
-		}
-		setFlows((prev) => ({ ...prev, [key]: cur + 1 }));
-	};
-
-	/* ---------- receipt (exact legacy doAction result body) ---------- */
-	const receipt = (id: string) => {
-		const r = results[id];
-		if (!r) return null;
-		return (
-			<div className={styles.receipt}>
-				<div className={styles.ri}>
-					<i className="bi bi-check-lg" />
-				</div>
-				<h5 className={styles.receiptTitle}>{r.msg}</h5>
-				{r.ref && <p className={styles.receiptSub}>Reference: {r.ref}</p>}
-				<div className="d-flex justify-content-center mt-3" style={{ gap: 8 }}>
-					<button
-						className={`${styles.btnPm} ${styles.btnSm}`}
-						onClick={() =>
-							downloadFile(
-								`${r.ref ?? "paymo-receipt"}.txt`,
-								`PayMo — Fee & Commission Management\n${r.msg}${r.ref ? `\nReference: ${r.ref}` : ""}\nGenerated: ${new Date().toLocaleString()}`,
-							)
-						}
-					>
-						<i className="bi bi-download" /> Save
-					</button>
-					<button
-						className={`${styles.btnPm} ${styles.btnSm}`}
-						onClick={onClose}
-					>
-						<i className="bi bi-share" /> Continue
-					</button>
-				</div>
-			</div>
-		);
-	};
-
-	const actionBody = (id: string, form: ReactNode) => (
-		<div style={{ position: "relative" }}>
-			{busy === id && <BusyOverlay />}
-			{results[id] ? receipt(id) : form}
-		</div>
-	);
-
-	const BoxRow = ({
-		label,
-		value,
-		last,
-	}: {
-		label: string;
-		value: ReactNode;
-		last?: boolean;
-	}) => (
-		<div className={`d-flex justify-content-between ${last ? "" : "mb-2"}`}>
-			<span className={styles.mutedSmall}>{label}</span>
-			<strong>{value}</strong>
-		</div>
-	);
-
-	const actionFooter = (
-		id: string,
-		label: ReactNode,
-		msg: string,
-		ref?: string,
-	) =>
-		results[id] ? (
-			<button className={`${styles.btnPm} ${styles.btnPmP}`} onClick={onClose}>
-				Done
-			</button>
-		) : (
-			<>
-				<button className={styles.btnPm} onClick={onClose}>
-					Cancel
-				</button>
-				<button
-					className={`${styles.btnPm} ${styles.btnPmP}`}
-					onClick={() => doAction(id, msg, ref)}
-				>
-					{label}
-				</button>
-			</>
-		);
-
-	/* ---------- flow stepper (legacy renderStepper) ---------- */
-	const stepper = (key: FlowKey) => {
-		const f = FLOWS[key];
-		const cur = flows[key];
-		return (
-			<div className={styles.stepper}>
-				{f.labels.map((l, i) => {
-					const n = i + 1;
-					return (
-						<div key={l} style={{ display: "contents" }}>
-							<div
-								className={`${styles.step} ${n < cur ? styles.stepDone : ""} ${n === cur ? styles.stepActive : ""}`}
-							>
-								<div className={styles.stepN}>
-									{n < cur ? <i className="bi bi-check" /> : n}
-								</div>
-								<div className={styles.stepL}>{l}</div>
-							</div>
-							{i < f.labels.length - 1 && <div className={styles.stepLine} />}
-						</div>
-					);
-				})}
-			</div>
-		);
-	};
-
-	/* ---------- flow footer (legacy Continue → Done) ---------- */
-	const flowFooter = (key: FlowKey, cancelLabel = "Cancel") => {
-		const f = FLOWS[key];
-		const cur = flows[key];
-		return (
-			<>
-				<button className={styles.btnPm} onClick={onClose}>
-					{cancelLabel}
-				</button>
-				<button
-					className={`${styles.btnPm} ${styles.btnPmP}`}
-					onClick={() => nextFlow(key)}
-					disabled={busy === f.modal}
-				>
-					{cur >= f.total ? (
-						"Done"
-					) : (
-						<>
-							Continue <i className="bi bi-arrow-right" />
-						</>
-					)}
-				</button>
-			</>
-		);
-	};
-
-	const complianceTiles = [
-		{
-			value: "98",
-			label: "COMPLIANCE",
-			vColor: "var(--pm-accent)",
-			bg: "var(--pm-accent-soft)",
-			big: true,
-		},
-		{
-			value: "0",
-			label: "OPEN ISSUES",
-			vColor: "var(--pm-info)",
-			bg: "var(--pm-info-soft)",
-		},
-		{
-			value: "3",
-			label: "RECOMMENDATIONS",
-			vColor: "var(--pm-warning)",
-			bg: "var(--pm-warning-soft)",
-		},
-		{
-			value: "18",
-			label: "MODELS REVIEWED",
-			vColor: "var(--pm-purple)",
-			bg: "var(--pm-purple-soft)",
-		},
-	];
-	const complianceRows = [
-		["CBK Fee Transparency", "15 Jun 2025", "15 Sep 2025"],
-		["KRA Withholding Tax", "01 Jun 2025", "01 Jul 2025"],
-		["Consumer Protection Act", "20 Jun 2025", "20 Sep 2025"],
-	];
-	const leaderboard: [
-		string,
-		string,
-		string,
-		string,
-		string,
-		"badgeS" | "badgeP",
-	][] = [
-		["1", "Installments (Land Buyers)", "KES 1.08M", "KES 864K", "Top", "badgeS"],
-		["2", "Orders (Company 2)", "KES 256K", "KES 178K", "Top", "badgeS"],
-		["3", "International transfers", "KES 98.4K", "KES 62.1K", "Rising", "badgeP"],
-		["4", "Card settlements (USD)", "KES 176.8K", "KES 41.2K", "Rising", "badgeP"],
-		["5", "FX conversions", "KES 86.4K", "KES 24.8K", "Steady", "badgeP"],
-	];
-	const attentionRows = [
-		{
-			title: "Profit pot above auto-deliver threshold",
-			sub: "KES 25K rule — M-Pesa channel paused",
-			label: "Review",
-			modal: "partnerPayoutModal",
-		},
-		{
-			title: "Company 2 break-even orders",
-			sub: "12 orders covered by 2.0% charge — consider tiered",
-			label: "Adjust",
-			modal: "addFeeRuleModal",
-		},
-		{
-			title: "International transfer fee rose 8%",
-			sub: "1.5% + KES 150 — 24 this month",
-			label: "View",
-			modal: "feeReportModal",
-		},
-		{
-			title: "Promo budget 78% used",
-			sub: "0% fee month for 5 new buyers — consider top-up",
-			label: "Adjust",
-			modal: "editWaiverModal",
-		},
-	];
-	const notifItems = [
-		{
-			box: "summaryBoxWarn",
-			title: "Profit delivered — KES 84,500",
-			sub: "Auto-channelled to Business Wallet.",
-		},
-		{
-			box: "summaryBoxDanger",
-			title: "M-Pesa channel paused",
-			sub: "External wallet link needs verification.",
-		},
-		{
-			box: "summaryBoxAccent",
-			title: "Company 2 break-even orders",
-			sub: "12 orders — consider tiered model.",
-		},
-		{
-			box: "summaryBox",
-			title: "Promo budget at 78%",
-			sub: "Consider top-up.",
-		},
-	] as const;
-	const notifSettingsRows: [string, boolean, boolean, boolean][] = [
-		["Profit delivered", true, true, true],
-		["PayMo fee changes", true, false, true],
-		["Channel rule alerts", true, false, true],
-		["Promo budget", true, true, false],
-	];
-	const tierPerfRows = [
-		["Flat — Land Buyers", "3,240", "KES 1.08M", "91%", "+6%"],
-		["Percentage — Company 2", "88,410", "KES 256K", "84%", "+11%"],
-		["International transfers", "186", "KES 98.4K", "72%", "+8%"],
-		["Card settlements (USD)", "4,120", "KES 176.8K", "78%", "+4%"],
-	];
-	const feeCompareRows: [
-		string,
-		string,
-		string,
-		string,
-		string,
-		"badgeS" | "badgeI" | "badgeW",
-		boolean,
-	][] = [
-		["PayMo", "0.85%", "KES 25", "0.45%", "Best", "badgeS", true],
-		["Bank A", "1.2%", "KES 35", "0.8%", "Average", "badgeI", false],
-		["Bank B", "1.0%", "KES 30", "0.6%", "Average", "badgeI", false],
-		["Mobile Money X", "1.5%", "KES 20", "1.0%", "Higher", "badgeW", false],
-	];
-
+	/* ========================================================================
+	   1. NEW FEE MODEL — 4-step wizard (Details → Pricing → Conditions → Done)
+	   ======================================================================== */
 	return (
 		<>
-			{/* ============ M1: New Fee Model (flow: fee, 4 steps) ============ */}
-			<MBox
-				id="addFeeRuleModal"
-				active={active}
-				size="lg"
+			<FlowModal
+				show={isOpen("addFeeRuleModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-plus-circle"
-							style={{ color: "var(--pm-info)" }}
-						/>{" "}
-						New Fee Model
-					</>
-				}
-				footer={flowFooter("fee")}
+				iconCls="bi bi-plus-circle"
+				title="New Fee Model"
+				steps={["Details", "Pricing", "Conditions", "Done"]}
+				confirmLabel="Apply Model"
 			>
-				<div style={{ position: "relative" }}>
-					{busy === "addFeeRuleModal" && <BusyOverlay />}
-					{stepper("fee")}
-					{flows.fee === 1 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 1: Model Details
-							</h6>
-							<div className="row g-3">
-								<div className="col-md-6">
-									<label className={styles.fl}>Apply To Business</label>
-									<select className={styles.fc}>
-										<option>Land Buyers LTD</option>
-										<option>Company 2</option>
-									</select>
-								</div>
-								<div className="col-md-6">
-									<label className={styles.fl}>Service</label>
-									<select className={styles.fc}>
-										{TXN_TYPES.map((t) => (
-											<option key={t}>{t}</option>
-										))}
-									</select>
-								</div>
-								<div className="col-md-6">
-									<label className={styles.fl}>Model Type</label>
-									<select className={styles.fc}>
-										{FEE_TYPES.map((t) => (
-											<option key={t}>{t}</option>
-										))}
-									</select>
-								</div>
-								<div className="col-md-6">
-									<label className={styles.fl}>Effective Date</label>
-									<input
-										type="date"
-										className={styles.fc}
-										defaultValue="2025-08-01"
-									/>
-								</div>
-							</div>
-						</div>
-					)}
-					{flows.fee === 2 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 2: Your Charge
-							</h6>
-							<div className="row g-3">
-								<div className="col-md-6">
-									<label className={styles.fl}>Charge (rate or amount)</label>
-									<input className={styles.fc} defaultValue="2.0" />
-								</div>
-								<div className="col-md-6">
-									<label className={styles.fl}>Unit</label>
-									<select className={styles.fc}>
-										<option>% of transaction</option>
-										<option>KES fixed per txn</option>
-									</select>
-								</div>
-								<div className="col-md-6">
-									<label className={styles.fl}>Minimum Fee</label>
-									<input className={styles.fc} defaultValue="10" />
-								</div>
-								<div className="col-md-6">
-									<label className={styles.fl}>Maximum Fee</label>
-									<input className={styles.fc} defaultValue="5000" />
-								</div>
-							</div>
-							<div
-								className={`${styles.summaryBoxInfo} mt-3`}
-								style={{ fontSize: 12 }}
-							>
-								<i className="bi bi-info-circle me-1" /> Preview: KES 100,000 order = you charge
-								KES 2,000 → PayMo takes KES 1,280 → you keep KES 720
-							</div>
-						</div>
-					)}
-					{flows.fee === 3 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 3: Conditions &amp; Delivery
-							</h6>
-							<div className="mb-3">
-								<label className={styles.fl}>Applicable To</label>
-								{[
-									{ label: "All customers of this business", on: true },
-									{ label: "New customers only (promo)", on: false },
-									{ label: "Diaspora buyers only", on: false },
-								].map((s, i) => (
-									<div
-										className={`form-check ${i < 2 ? "mb-1" : ""}`}
-										key={s.label}
-									>
-										<input
-											className="form-check-input"
-											type="checkbox"
-											defaultChecked={s.on}
-											id={`seg-${i}`}
+				{(step) => (
+					<>
+						{step === 1 && (
+							<div>
+								<p className={`${s.fieldLabel} mb-3`}>Step 1: Model details</p>
+								<div className="row g-3">
+									<div className="col-md-6">
+										<SelectField
+											label="Apply To Business"
+											options={["Land Buyers LTD", "Company 2"]}
 										/>
-										<label className="form-check-label" htmlFor={`seg-${i}`}>
-											{s.label}
-										</label>
 									</div>
-								))}
-							</div>
-							<div className="form-check form-switch mb-3">
-								<input
-									className="form-check-input"
-									type="checkbox"
-									defaultChecked
-									id="fee-approval"
-								/>
-								<label className="form-check-label" htmlFor="fee-approval">
-									Auto-channel profit to my wallet when collected
-								</label>
-							</div>
-						</div>
-					)}
-					{flows.fee === 4 && (
-						<div className={styles.receipt}>
-							<div className={styles.ri}>
-								<i className="bi bi-check-lg" />
-							</div>
-							<h5 className={styles.receiptTitle}>Fee Model Applied</h5>
-							<p className={styles.receiptSub}>
-								Model FM-448 applied to Company 2 — profit auto-channels to your
-								wallet.
-							</p>
-						</div>
-					)}
-				</div>
-			</MBox>
-
-			{/* ============ M2: Edit Fee Rule ============ */}
-			<MBox
-				id="editFeeRuleModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-pencil" style={{ color: "var(--pm-info)" }} />{" "}
-						Edit Fee Rule
-					</>
-				}
-				footer={actionFooter(
-					"editFeeRuleModal",
-					"Save Changes",
-					"Fee rule updated successfully. Changes take effect immediately.",
-				)}
-			>
-				{actionBody(
-					"editFeeRuleModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Model</label>
-							<input
-								className={styles.fc}
-								defaultValue="Land Buyers — Flat KES 1,250"
-							/>
-						</div>
-						<div className="row g-3">
-							<div className="col-md-6">
-								<label className={styles.fl}>Rate</label>
-								<input className={styles.fc} defaultValue="0.50" />
-							</div>
-							<div className="col-md-6">
-								<label className={styles.fl}>Max Fee</label>
-								<input className={styles.fc} defaultValue="2500" />
-							</div>
-						</div>
-						<div className="mb-3 mt-3">
-							<label className={styles.fl}>Expiry Date</label>
-							<input
-								type="date"
-								className={styles.fc}
-								defaultValue="2025-07-05"
-							/>
-						</div>
-						<div className="form-check form-switch">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								defaultChecked
-								id="fee-active"
-							/>
-							<label className="form-check-label" htmlFor="fee-active">
-								Active
-							</label>
-						</div>
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M3: Fee Calculator (flow: calc, 3 steps) ============ */}
-			<MBox
-				id="feeCalculatorModal"
-				active={active}
-				size="lg"
-				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-calculator"
-							style={{ color: "var(--pm-info)" }}
-						/>{" "}
-						Advanced Fee Calculator
-					</>
-				}
-				footer={flowFooter("calc", "Close")}
-			>
-				<div style={{ position: "relative" }}>
-					{busy === "feeCalculatorModal" && <BusyOverlay />}
-					{stepper("calc")}
-					{flows.calc === 1 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 1: Transaction Details
-							</h6>
-							<div className="row g-3">
-								<div className="col-md-6">
-									<label className={styles.fl}>From Account</label>
-									<select className={styles.fc}>
-										<option>PayMo Wallet — KES 24,500</option>
-										<option>Equity Bank ****4521</option>
-										<option>KCB M-Pesa</option>
-									</select>
-								</div>
-								<div className="col-md-6">
-									<label className={styles.fl}>To Account</label>
-									<select className={styles.fc}>
-										<option>Equity Bank ****7788</option>
-										<option>Co-op Bank ****9910</option>
-										<option>PayMo Wallet</option>
-									</select>
-								</div>
-								<div className="col-md-6">
-									<label className={styles.fl}>Amount (KES)</label>
-									{/* LEGACY BRIDGE: #advAmount oninput → advCalc() */}
-									<input
-										className={styles.fc}
-										value={advAmount}
-										onChange={(e) => setAdvAmount(e.target.value)}
-										inputMode="numeric"
-									/>
-								</div>
-								<div className="col-md-6">
-									<label className={styles.fl}>Transaction Type</label>
-									{/* LEGACY BRIDGE: #advType onchange → advCalc() */}
-									<select
-										className={styles.fc}
-										value={advType}
-										onChange={(e) => setAdvType(e.target.value)}
-									>
-										{ADV_TYPES.map((t) => (
-											<option key={t}>{t}</option>
-										))}
-									</select>
+									<div className="col-md-6">
+										<SelectField label="Service" options={TXN_TYPES} />
+									</div>
+									<div className="col-md-6">
+										<SelectField label="Model Type" options={FEE_TYPES} />
+									</div>
+									<div className="col-md-6">
+										<label
+											className={s.fieldLabel}
+											htmlFor="fee-effective-date"
+										>
+											Effective Date
+										</label>
+										<input
+											id="fee-effective-date"
+											type="date"
+											className={s.field}
+											defaultValue="2025-08-01"
+										/>
+									</div>
 								</div>
 							</div>
-						</div>
-					)}
-					{flows.calc === 2 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 2: Fee Breakdown
-							</h6>
-							<div className={`${styles.summaryBox} mb-3`}>
-								<div className="d-flex justify-content-between mb-2">
+						)}
+						{step === 2 && (
+							<div>
+								<p className={`${s.fieldLabel} mb-3`}>Step 2: Your charge</p>
+								<div className="row g-3">
+									<div className="col-md-6">
+										<label className={s.fieldLabel} htmlFor="fee-charge-rate">
+											Charge (rate or amount)
+										</label>
+										<input
+											id="fee-charge-rate"
+											className={s.field}
+											defaultValue="2.0"
+										/>
+									</div>
+									<div className="col-md-6">
+										<SelectField
+											label="Unit"
+											options={["% of transaction", "KES fixed per txn"]}
+										/>
+									</div>
+									<div className="col-md-6">
+										<label className={s.fieldLabel} htmlFor="fee-min">
+											Minimum Fee
+										</label>
+										<input id="fee-min" className={s.field} defaultValue="10" />
+									</div>
+									<div className="col-md-6">
+										<label className={s.fieldLabel} htmlFor="fee-max">
+											Maximum Fee
+										</label>
+										<input
+											id="fee-max"
+											className={s.field}
+											defaultValue="5000"
+										/>
+									</div>
+								</div>
+								<div className={`${s.hintBox} mt-3`}>
+									<i className="bi bi-info-circle" />
 									<span>
-										Base Fee (
-										{advType.includes("Instant")
-											? "0.45"
-											: advType.includes("Wallet")
-												? "flat"
-												: "0.85"}
-										%)
+										Preview: KES 100,000 order = you charge KES 2,000 → PayMo
+										takes KES 1,280 → you keep KES 720.
 									</span>
-									<strong>{fmt(adv.base)}</strong>
-								</div>
-								<div className="d-flex justify-content-between mb-2">
-									<span>VAT (16%)</span>
-									<strong>{fmt(adv.vat)}</strong>
-								</div>
-								<div className="d-flex justify-content-between mb-2">
-									<span>Network Fee</span>
-									<strong>{fmt(adv.net)}</strong>
-								</div>
-								<hr className={styles.divider} />
-								<div className="d-flex justify-content-between">
-									<span className={styles.fwBold13}>Total Cost</span>
-									<strong
-										className={styles.textAccent}
-										style={{ fontSize: 18 }}
-									>
-										{fmt(adv.total)}
-									</strong>
 								</div>
 							</div>
-							<div className={styles.summaryBoxAccent} style={{ fontSize: 12 }}>
-								<i className="bi bi-lightbulb me-1" /> You save KES 1,200
-								compared to average market rate.
-							</div>
-						</div>
-					)}
-					{flows.calc === 3 && (
-						<div className={styles.receipt}>
-							<div className={styles.ri}>
-								<i className="bi bi-check-lg" />
-							</div>
-							<h5 className={styles.receiptTitle}>Fee Calculated</h5>
-							<p className={styles.receiptSub}>
-								Transaction cost preview complete. Ready to execute.
-							</p>
-						</div>
-					)}
-				</div>
-			</MBox>
-
-			{/* ============ M4: Add Tier to Tiered Model ============ */}
-			<MBox
-				id="addCommissionTierModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-layers" style={{ color: "var(--pm-accent)" }} />{" "}
-						Add Tier to Tiered Model
-					</>
-				}
-				footer={actionFooter(
-					"addCommissionTierModal",
-					"Create Tier",
-					"Tier added to the tiered model successfully!",
-					"TIER-013",
-				)}
-			>
-				{actionBody(
-					"addCommissionTierModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Business / Model</label>
-							<select className={styles.fc}>
-								<option>Company 2 — Tiered</option>
-								<option>Land Buyers LTD — Tiered</option>
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Tier Name</label>
-							<input className={styles.fc} defaultValue="Band 2 — orders ≥ KES 50K" />
-						</div>
-						<div className="row g-3">
-							<div className="col-md-6">
-								<label className={styles.fl}>Volume Threshold (KES)</label>
-								<input className={styles.fc} defaultValue="50000" />
-							</div>
-							<div className="col-md-6">
-								<label className={styles.fl}>Charge Rate</label>
-								<input className={styles.fc} defaultValue="1.5" />
-							</div>
-						</div>
-						<div className="mb-3 mt-3">
-							<label className={styles.fl}>Tier Benefits</label>
-							{[
-								{ label: "Applies above threshold", on: true },
-								{ label: "Shown to customer at checkout", on: true },
-								{ label: "Excluded from discount promos", on: false },
-							].map((b, i) => (
-								<div
-									className={`form-check ${i < 2 ? "mb-1" : ""}`}
-									key={b.label}
-								>
+						)}
+						{step === 3 && (
+							<div>
+								<p className={`${s.fieldLabel} mb-3`}>
+									Step 3: Conditions &amp; delivery
+								</p>
+								<div className="mb-3">
+									<span className={s.fieldLabel}>Applicable to</span>
+									{[
+										{ label: "All customers of this business", on: true },
+										{ label: "New customers only (promo)", on: false },
+										{ label: "Diaspora buyers only", on: false },
+									].map((option, index) => (
+										<div className="form-check mb-1" key={option.label}>
+											<input
+												className="form-check-input"
+												type="checkbox"
+												defaultChecked={option.on}
+												id={`fee-segment-${index}`}
+											/>
+											<label
+												className="form-check-label"
+												htmlFor={`fee-segment-${index}`}
+											>
+												{option.label}
+											</label>
+										</div>
+									))}
+								</div>
+								<div className="form-check form-switch">
 									<input
 										className="form-check-input"
 										type="checkbox"
-										defaultChecked={b.on}
-										id={`ct-${i}`}
+										defaultChecked
+										id="fee-auto-channel"
 									/>
-									<label className="form-check-label" htmlFor={`ct-${i}`}>
-										{b.label}
+									<label
+										className="form-check-label"
+										htmlFor="fee-auto-channel"
+									>
+										Auto-channel profit to my wallet when collected
 									</label>
 								</div>
-							))}
-						</div>
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M5: Edit Commission ============ */}
-			<MBox
-				id="editCommissionModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-pencil" style={{ color: "var(--pm-accent)" }} />{" "}
-						Edit Commission Tier
+							</div>
+						)}
 					</>
-				}
-				footer={actionFooter(
-					"editCommissionModal",
-					"Save Changes",
-					"Commission tier updated successfully!",
 				)}
-			>
-				{actionBody(
-					"editCommissionModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Tier</label>
-							<input className={styles.fc} defaultValue="Band 2 — orders ≥ KES 50K" />
-						</div>
-						<div className="row g-3">
-							<div className="col-md-6">
-								<label className={styles.fl}>Volume Threshold</label>
-								<input className={styles.fc} defaultValue="2000000" />
-							</div>
-							<div className="col-md-6">
-								<label className={styles.fl}>Rate</label>
-								<input className={styles.fc} defaultValue="1.4" />
-							</div>
-						</div>
-						<div className="mb-3 mt-3">
-							<label className={styles.fl}>Status</label>
-							<select className={styles.fc}>
-								<option>Active</option>
-								<option>Paused</option>
-								<option>Archived</option>
-							</select>
-						</div>
-					</>,
-				)}
-			</MBox>
+			</FlowModal>
 
-			{/* ============ M6: Waiver (flow: waiver, 3 steps) ============ */}
-			<MBox
-				id="waiverModal"
-				active={active}
-				size="lg"
+			{/* ====================================================================
+			   2. EDIT FEE RULE
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("editFeeRuleModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-gift" style={{ color: "var(--pm-warning)" }} />{" "}
-						Create Fee Waiver
-					</>
-				}
-				footer={flowFooter("waiver")}
+				iconCls="bi bi-pencil"
+				title="Edit Fee Rule"
+				submitLabel="Save Changes"
+				successMsg="Fee rule updated successfully. Changes take effect immediately."
 			>
-				<div style={{ position: "relative" }}>
-					{busy === "waiverModal" && <BusyOverlay />}
-					{stepper("waiver")}
-					{flows.waiver === 1 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 1: Waiver Details
-							</h6>
-							<div className="row g-3">
-								<div className="col-md-6">
-									<label className={styles.fl}>Waiver Name</label>
-									<input
-										className={styles.fc}
-										defaultValue="0% promo — 5 new buyers"
-									/>
-								</div>
-								<div className="col-md-6">
-									<label className={styles.fl}>Type</label>
-									<select className={styles.fc}>
-										{WAIVER_TYPES.map((t) => (
-											<option key={t}>{t}</option>
-										))}
-									</select>
-								</div>
-								<div className="col-md-6">
-									<label className={styles.fl}>Discount</label>
-									<input className={styles.fc} defaultValue="100" />
-								</div>
-								<div className="col-md-6">
-									<label className={styles.fl}>Budget (KES)</label>
-									<input className={styles.fc} defaultValue="5000000" />
-								</div>
-							</div>
-						</div>
-					)}
-					{flows.waiver === 2 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 2: Eligibility
-							</h6>
-							<div className="mb-3">
-								<label className={styles.fl}>Eligible Segments</label>
-								{[										{ label: "All customers of the business", on: true },
-										{ label: "New customers only (promo)", on: false },
-										{ label: "Diaspora buyers only", on: false },
-								].map((s, i) => (
-									<div
-										className={`form-check ${i < 2 ? "mb-1" : ""}`}
-										key={s.label}
-									>
-										<input
-											className="form-check-input"
-											type="checkbox"
-											defaultChecked={s.on}
-											id={`wseg-${i}`}
-										/>
-										<label className="form-check-label" htmlFor={`wseg-${i}`}>
-											{s.label}
-										</label>
-									</div>
-								))}
-							</div>
-							<div className="mb-3">
-								<label className={styles.fl}>Valid Until</label>
-								<input
-									type="date"
-									className={styles.fc}
-									defaultValue="2025-09-30"
-								/>
-							</div>
-						</div>
-					)}
-					{flows.waiver === 3 && (
-						<div className={styles.receipt}>
-							<div className={styles.ri}>
-								<i className="bi bi-check-lg" />
-							</div>
-							<h5 className={styles.receiptTitle}>Waiver Created</h5>
-							<p className={styles.receiptSub}>
-								WV-118 — 0% promo for 5 new buyers is now active.
-							</p>
-						</div>
-					)}
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="edit-fee-model">
+						Model
+					</label>
+					<input
+						id="edit-fee-model"
+						className={s.field}
+						defaultValue="Land Buyers — Flat KES 1,250"
+					/>
 				</div>
-			</MBox>
+				<div className="row g-3">
+					<div className="col-md-6">
+						<label className={s.fieldLabel} htmlFor="edit-fee-rate">
+							Rate
+						</label>
+						<input id="edit-fee-rate" className={s.field} defaultValue="0.50" />
+					</div>
+					<div className="col-md-6">
+						<label className={s.fieldLabel} htmlFor="edit-fee-max">
+							Max Fee
+						</label>
+						<input id="edit-fee-max" className={s.field} defaultValue="2500" />
+					</div>
+				</div>
+				<div className="mb-3 mt-3">
+					<label className={s.fieldLabel} htmlFor="edit-fee-expiry">
+						Expiry Date
+					</label>
+					<input
+						id="edit-fee-expiry"
+						type="date"
+						className={s.field}
+						defaultValue="2025-07-05"
+					/>
+				</div>
+				<div className="form-check form-switch">
+					<input
+						className="form-check-input"
+						type="checkbox"
+						defaultChecked
+						id="edit-fee-active"
+					/>
+					<label className="form-check-label" htmlFor="edit-fee-active">
+						Active
+					</label>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M7: Edit Waiver ============ */}
-			<MBox
-				id="editWaiverModal"
-				active={active}
+			{/* ====================================================================
+			   3. ADVANCED FEE CALCULATOR — 3-step flow with live math
+			   ==================================================================== */}
+			<FlowModal
+				show={isOpen("feeCalculatorModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-pencil"
-							style={{ color: "var(--pm-warning)" }}
-						/>{" "}
-						Edit Waiver
-					</>
-				}
-				footer={actionFooter(
-					"editWaiverModal",
-					"Save Changes",
-					"Waiver updated successfully!",
-				)}
+				iconCls="bi bi-calculator"
+				title="Advanced Fee Calculator"
+				steps={["Details", "Breakdown", "Done"]}
+				confirmLabel="Preview Fee"
 			>
-				{actionBody(
-					"editWaiverModal",
+				{(step) => (
 					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Waiver</label>
-							<input
-								className={styles.fc}
-								defaultValue="WV-101 — 0% promo new buyers"
-							/>
-						</div>
-						<div className="row g-3">
-							<div className="col-md-6">
-								<label className={styles.fl}>Discount %</label>
-								<input className={styles.fc} defaultValue="100" />
-							</div>
-							<div className="col-md-6">
-								<label className={styles.fl}>Remaining Budget</label>
-								<input className={styles.fc} defaultValue="1100000" />
-							</div>
-						</div>
-						<div className="mb-3 mt-3">
-							<label className={styles.fl}>Status</label>
-							<select className={styles.fc}>
-								<option>Active</option>
-								<option>Paused</option>
-								<option>Expired</option>
-							</select>
-						</div>
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M8: Profit Pot Delivery (flow: settle, 3 steps) ============ */}
-			<MBox
-				id="settlementModal"
-				active={active}
-				size="lg"
-				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-cash-stack"
-							style={{ color: "var(--pm-purple)" }}
-						/>{" "}
-						Profit Pot Delivery
-					</>
-				}
-				footer={flowFooter("settle")}
-			>
-				<div style={{ position: "relative" }}>
-					{busy === "settlementModal" && <BusyOverlay />}
-					{stepper("settle")}
-					{flows.settle === 1 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 1: Select Delivery
-							</h6>
-							<div className="mb-3">
-								<label className={styles.fl}>Delivery Type</label>
-								<select className={styles.fc}>
-									{SETTLEMENT_TYPES.map((t) => (
-										<option key={t}>{t}</option>
-									))}
-								</select>
-							</div>
-							<div className={styles.summaryBox}>
-								<div className="d-flex justify-content-between mb-2">
-									<span>Pot Balance</span>
-									<strong>KES 1,342,000</strong>
+						{step === 1 && (
+							<div>
+								<p className={`${s.fieldLabel} mb-3`}>
+									Step 1: Transaction details
+								</p>
+								<div className="row g-3">
+									<div className="col-md-6">
+										<SelectField
+											label="From Account"
+											options={[
+												"PayMo Wallet — KES 24,500",
+												"Equity Bank ****4521",
+												"KCB M-Pesa",
+											]}
+										/>
+									</div>
+									<div className="col-md-6">
+										<SelectField
+											label="To Account"
+											options={[
+												"Equity Bank ****7788",
+												"Co-op Bank ****9910",
+												"PayMo Wallet",
+											]}
+										/>
+									</div>
+									<div className="col-md-6">
+										<label className={s.fieldLabel} htmlFor="calc-amount">
+											Amount (KES)
+										</label>
+										<input
+											id="calc-amount"
+											className={s.field}
+											value={advAmount}
+											onChange={(event) => setAdvAmount(event.target.value)}
+											inputMode="numeric"
+										/>
+									</div>
+									<div className="col-md-6">
+										<label className={s.fieldLabel} htmlFor="calc-type">
+											Transaction Type
+										</label>
+										<select
+											id="calc-type"
+											className={s.field}
+											value={advType}
+											onChange={(event) => setAdvType(event.target.value)}
+										>
+											{ADV_TYPES.map((type) => (
+												<option key={type}>{type}</option>
+											))}
+										</select>
+									</div>
 								</div>
-								<div className="d-flex justify-content-between mb-2">
-									<span>Pending (this batch)</span>
-									<strong>KES 84,500</strong>
+							</div>
+						)}
+						{step === 2 && (
+							<div>
+								<p className={`${s.fieldLabel} mb-3`}>Step 2: Fee breakdown</p>
+								<div className={styles.summaryBox}>
+									<ReviewRow
+										label={`Base Fee (${calcBasePct}%)`}
+										value={fmt(adv.base)}
+									/>
+									<ReviewRow label="VAT (16%)" value={fmt(adv.vat)} />
+									<ReviewRow label="Network Fee" value={fmt(adv.net)} />
+									<hr className={styles.divider} />
+									<div className="d-flex justify-content-between">
+										<span className={styles.fwBold13}>Total Cost</span>
+										<strong
+											className={styles.textAccent}
+											style={{ fontSize: 18 }}
+										>
+											{fmt(adv.total)}
+										</strong>
+									</div>
 								</div>
-								<div className="d-flex justify-content-between">
-									<span>Status</span>
-									<span className={`${styles.badge} ${styles.badgeW}`}>
-										Ready to deliver
+								<div className={`${s.hintBox} ${s.hintBoxSuccess} mt-3`}>
+									<i className="bi bi-lightbulb" />
+									<span>
+										You save KES 1,200 compared to the average market rate.
 									</span>
 								</div>
 							</div>
-						</div>
-					)}
-					{flows.settle === 2 && (
-						<div>
-							<h6 className={styles.fwBold13} style={{ fontSize: 14 }}>
-								Step 2: Review &amp; Approve
-							</h6>
-							<div className="table-responsive">
-								<table className={styles.tbl}>
-									<thead>
-										<tr>
-											<th>Source</th>
-											<th>Profit</th>
-											<th>Channel</th>
-										</tr>
-									</thead>
-									<tbody>
-										{[
-											["CHG-4401 — Land Buyers", "KES 18,750", "Business Wallet"],
-											["CHG-4403 — Company 2", "KES 241", "Business Wallet"],
-											["FX conversions", "KES 24,800", "Business Wallet"],
-										].map(([a, v, c]) => (
-											<tr key={a}>
-												<td>{a}</td>
-												<td>{v}</td>
-												<td>{c}</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
-							<div className="form-check mt-3">
-								<input
-									className="form-check-input"
-									type="checkbox"
-									defaultChecked
-									id="settle-approve"
-								/>
-								<label className="form-check-label" htmlFor="settle-approve">
-									I approve this profit delivery batch
-								</label>
-							</div>
-						</div>
-					)}
-					{flows.settle === 3 && (
-						<div className={styles.receipt}>
-							<div className={styles.ri}>
-								<i className="bi bi-check-lg" />
-							</div>
-							<h5 className={styles.receiptTitle}>Profit Delivered</h5>
-							<p className={styles.receiptSub}>
-								KES 84,500 delivered to your Business Wallet. Reference:
-								POT-20250808-9914
-							</p>
-						</div>
-					)}
-				</div>
-			</MBox>
-
-			{/* ============ M9: Compliance Check ============ */}
-			<MBox
-				id="complianceCheckModal"
-				active={active}
-				size="lg"
-				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-shield-check"
-							style={{ color: "var(--pm-accent)" }}
-						/>{" "}
-						Compliance Health Check
+						)}
 					</>
-				}
-				footer={actionFooter(
-					"complianceCheckModal",
-					"Download Report",
-					"Full compliance report downloaded.",
 				)}
+			</FlowModal>
+
+			{/* ====================================================================
+			   4. ADD TIER TO TIERED MODEL
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("addCommissionTierModal")}
+				onClose={onClose}
+				iconCls="bi bi-layers"
+				title="Add Tier to Tiered Model"
+				submitLabel="Create Tier"
+				successMsg="Tier TIER-013 added to the tiered model successfully!"
 			>
-				{actionBody(
-					"complianceCheckModal",
+				<div className="mb-3">
+					<SelectField
+						label="Business / Model"
+						options={["Company 2 — Tiered", "Land Buyers LTD — Tiered"]}
+					/>
+				</div>
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="tier-name">
+						Tier Name
+					</label>
+					<input
+						id="tier-name"
+						className={s.field}
+						defaultValue="Band 2 — orders ≥ KES 50K"
+					/>
+				</div>
+				<div className="row g-3">
+					<div className="col-md-6">
+						<label className={s.fieldLabel} htmlFor="tier-threshold">
+							Volume Threshold (KES)
+						</label>
+						<input
+							id="tier-threshold"
+							className={s.field}
+							defaultValue="50000"
+						/>
+					</div>
+					<div className="col-md-6">
+						<label className={s.fieldLabel} htmlFor="tier-rate">
+							Charge Rate
+						</label>
+						<input id="tier-rate" className={s.field} defaultValue="1.5" />
+					</div>
+				</div>
+				<div className="mb-3 mt-3">
+					<span className={s.fieldLabel}>Tier benefits</span>
+					{[
+						{ label: "Applies above threshold", on: true },
+						{ label: "Shown to customer at checkout", on: true },
+						{ label: "Excluded from discount promos", on: false },
+					].map((benefit, index) => (
+						<div className="form-check mb-1" key={benefit.label}>
+							<input
+								className="form-check-input"
+								type="checkbox"
+								defaultChecked={benefit.on}
+								id={`tier-benefit-${index}`}
+							/>
+							<label
+								className="form-check-label"
+								htmlFor={`tier-benefit-${index}`}
+							>
+								{benefit.label}
+							</label>
+						</div>
+					))}
+				</div>
+			</SimpleModal>
+
+			{/* ====================================================================
+			   5. EDIT COMMISSION TIER
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("editCommissionModal")}
+				onClose={onClose}
+				iconCls="bi bi-pencil"
+				title="Edit Commission Tier"
+				submitLabel="Save Changes"
+				successMsg="Commission tier updated successfully!"
+			>
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="edit-tier-name">
+						Tier
+					</label>
+					<input
+						id="edit-tier-name"
+						className={s.field}
+						defaultValue="Band 2 — orders ≥ KES 50K"
+					/>
+				</div>
+				<div className="row g-3">
+					<div className="col-md-6">
+						<label className={s.fieldLabel} htmlFor="edit-tier-threshold">
+							Volume Threshold
+						</label>
+						<input
+							id="edit-tier-threshold"
+							className={s.field}
+							defaultValue="2000000"
+						/>
+					</div>
+					<div className="col-md-6">
+						<label className={s.fieldLabel} htmlFor="edit-tier-rate">
+							Rate
+						</label>
+						<input id="edit-tier-rate" className={s.field} defaultValue="1.4" />
+					</div>
+				</div>
+				<div className="mb-3 mt-3">
+					<SelectField
+						label="Status"
+						options={["Active", "Paused", "Archived"]}
+					/>
+				</div>
+			</SimpleModal>
+
+			{/* ====================================================================
+			   6. CREATE FEE WAIVER — 3-step flow
+			   ==================================================================== */}
+			<FlowModal
+				show={isOpen("waiverModal")}
+				onClose={onClose}
+				iconCls="bi bi-gift"
+				title="Create Fee Waiver"
+				steps={["Details", "Eligibility", "Done"]}
+				confirmLabel="Create Waiver"
+			>
+				{(step) => (
 					<>
-						<div className="row g-3 mb-3">
-							{complianceTiles.map((t) => (
-								<div className="col-md-3 col-6" key={t.label}>
-									<div className={styles.miniStat} style={{ background: t.bg }}>
-										<div
-											className={t.big ? styles.miniStatBig : undefined}
-											style={
-												t.big
-													? { color: t.vColor }
-													: { fontSize: 24, fontWeight: 700, color: t.vColor }
-											}
-										>
-											{t.value}
-										</div>
-										<div className={styles.miniStatLabel}>{t.label}</div>
+						{step === 1 && (
+							<div>
+								<p className={`${s.fieldLabel} mb-3`}>Step 1: Waiver details</p>
+								<div className="row g-3">
+									<div className="col-md-6">
+										<label className={s.fieldLabel} htmlFor="waiver-name">
+											Waiver Name
+										</label>
+										<input
+											id="waiver-name"
+											className={s.field}
+											defaultValue="0% promo — 5 new buyers"
+										/>
+									</div>
+									<div className="col-md-6">
+										<SelectField label="Type" options={WAIVER_TYPES} />
+									</div>
+									<div className="col-md-6">
+										<label className={s.fieldLabel} htmlFor="waiver-discount">
+											Discount
+										</label>
+										<input
+											id="waiver-discount"
+											className={s.field}
+											defaultValue="100"
+										/>
+									</div>
+									<div className="col-md-6">
+										<label className={s.fieldLabel} htmlFor="waiver-budget">
+											Budget (KES)
+										</label>
+										<input
+											id="waiver-budget"
+											className={s.field}
+											defaultValue="5000000"
+										/>
 									</div>
 								</div>
-							))}
-						</div>
-						<div
-							className={`${styles.summaryBoxAccent} mb-3`}
-							style={{ fontSize: 13 }}
-						>
-							<i className="bi bi-check-circle me-1" /> All fee disclosure
-							requirements met. No regulatory breaches detected.
-						</div>
-						<div className="table-responsive">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										<th>Regulation</th>
-										<th>Status</th>
-										<th>Last Audit</th>
-										<th>Next Due</th>
-									</tr>
-								</thead>
-								<tbody>
-									{complianceRows.map(([r, l, n]) => (
-										<tr key={r}>
-											<td>{r}</td>
-											<td>
-												<span className={`${styles.badge} ${styles.badgeS}`}>
-													Compliant
-												</span>
-											</td>
-											<td>{l}</td>
-											<td>{n}</td>
-										</tr>
+							</div>
+						)}
+						{step === 2 && (
+							<div>
+								<p className={`${s.fieldLabel} mb-3`}>Step 2: Eligibility</p>
+								<div className="mb-3">
+									<span className={s.fieldLabel}>Eligible segments</span>
+									{[
+										{ label: "All customers of the business", on: true },
+										{ label: "New customers only (promo)", on: false },
+										{ label: "Diaspora buyers only", on: false },
+									].map((segment, index) => (
+										<div className="form-check mb-1" key={segment.label}>
+											<input
+												className="form-check-input"
+												type="checkbox"
+												defaultChecked={segment.on}
+												id={`waiver-segment-${index}`}
+											/>
+											<label
+												className="form-check-label"
+												htmlFor={`waiver-segment-${index}`}
+											>
+												{segment.label}
+											</label>
+										</div>
 									))}
-								</tbody>
-							</table>
-						</div>
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M10: Fee Report ============ */}
-			<MBox
-				id="feeReportModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-file-earmark-bar-graph" /> Fee Revenue Report
+								</div>
+								<div className="mb-3">
+									<label className={s.fieldLabel} htmlFor="waiver-valid-until">
+										Valid Until
+									</label>
+									<input
+										id="waiver-valid-until"
+										type="date"
+										className={s.field}
+										defaultValue="2025-09-30"
+									/>
+								</div>
+							</div>
+						)}
 					</>
-				}
-				footer={actionFooter(
-					"feeReportModal",
-					"Generate Report",
-					"Fee revenue report generated and downloading...",
 				)}
+			</FlowModal>
+
+			{/* ====================================================================
+			   7. EDIT WAIVER
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("editWaiverModal")}
+				onClose={onClose}
+				iconCls="bi bi-pencil"
+				title="Edit Waiver"
+				submitLabel="Save Changes"
+				successMsg="Waiver updated successfully!"
 			>
-				{actionBody(
-					"feeReportModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Report Period</label>
-							<select className={styles.fc}>
-								{REPORT_PERIODS.map((p) => (
-									<option key={p}>{p}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Format</label>
-							<select className={styles.fc}>
-								{FORMATS.map((f) => (
-									<option key={f}>{f}</option>
-								))}
-							</select>
-						</div>
-						<div className={styles.summaryBox} style={{ fontSize: 13 }}>
-							<div className="d-flex justify-content-between mb-2">
-								<span>Inter-bank Fees</span>
-								<strong>KES 7.16M</strong>
-							</div>
-							<div className="d-flex justify-content-between mb-2">
-								<span>Wallet Fees</span>
-								<strong>KES 3.12M</strong>
-							</div>
-							<div className="d-flex justify-content-between mb-2">
-								<span>Instant Fees</span>
-								<strong>KES 6.84M</strong>
-							</div>
-							<hr className={styles.divider} />
-							<div className="d-flex justify-content-between">
-								<span className={styles.fwBold13}>Total Revenue</span>
-								<strong className={styles.textAccent}>KES 18.4M</strong>
-							</div>
-						</div>
-					</>,
-				)}
-			</MBox>
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="edit-waiver-name">
+						Waiver
+					</label>
+					<input
+						id="edit-waiver-name"
+						className={s.field}
+						defaultValue="WV-101 — 0% promo new buyers"
+					/>
+				</div>
+				<div className="row g-3">
+					<div className="col-md-6">
+						<label className={s.fieldLabel} htmlFor="edit-waiver-discount">
+							Discount %
+						</label>
+						<input
+							id="edit-waiver-discount"
+							className={s.field}
+							defaultValue="100"
+						/>
+					</div>
+					<div className="col-md-6">
+						<label className={s.fieldLabel} htmlFor="edit-waiver-budget">
+							Remaining Budget
+						</label>
+						<input
+							id="edit-waiver-budget"
+							className={s.field}
+							defaultValue="1100000"
+						/>
+					</div>
+				</div>
+				<div className="mb-3 mt-3">
+					<SelectField
+						label="Status"
+						options={["Active", "Paused", "Expired"]}
+					/>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M11: Agent Leaderboard ============ */}
-			<MBox
-				id="agentLeaderboardModal"
-				active={active}
-				size="lg"
+			{/* ====================================================================
+			   8. PROFIT POT DELIVERY — 3-step flow (Select → Review → Done)
+			   ==================================================================== */}
+			<FlowModal
+				show={isOpen("settlementModal")}
 				onClose={onClose}
-				title={
+				iconCls="bi bi-cash-stack"
+				title="Profit Pot Delivery"
+				steps={["Select", "Review", "Done"]}
+				confirmLabel="Approve & Deliver"
+			>
+				{(step) => (
 					<>
-						<i
-							className="bi bi-trophy"
-							style={{ color: "var(--pm-warning)" }}
-						/>{" "}
-						Profit by Service
+						{step === 1 && (
+							<div>
+								<p className={`${s.fieldLabel} mb-3`}>
+									Step 1: Select delivery
+								</p>
+								<div className="mb-3">
+									<SelectField
+										label="Delivery Type"
+										options={SETTLEMENT_TYPES}
+									/>
+								</div>
+								<div className={styles.summaryBox}>
+									<ReviewRow label="Pot Balance" value="KES 1,342,000" />
+									<ReviewRow label="Pending (this batch)" value="KES 84,500" />
+									<div className="d-flex justify-content-between">
+										<span className="text-muted">Status</span>
+										<span className={`${s.badge} ${s.badgeWarning}`}>
+											Ready to deliver
+										</span>
+									</div>
+								</div>
+							</div>
+						)}
+						{step === 2 && (
+							<div>
+								<p className={`${s.fieldLabel} mb-3`}>
+									Step 2: Review &amp; approve
+								</p>
+								<div className={s.tableWrap}>
+									<table className={s.table}>
+										<thead>
+											<tr>
+												<th>Source</th>
+												<th>Profit</th>
+												<th>Channel</th>
+											</tr>
+										</thead>
+										<tbody>
+											{[
+												[
+													"CHG-4401 — Land Buyers",
+													"KES 18,750",
+													"Business Wallet",
+												],
+												["CHG-4403 — Company 2", "KES 241", "Business Wallet"],
+												["FX conversions", "KES 24,800", "Business Wallet"],
+											].map(([source, profit, channel]) => (
+												<tr key={source}>
+													<td>{source}</td>
+													<td>{profit}</td>
+													<td>{channel}</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+								<div className="form-check mt-3">
+									<input
+										className="form-check-input"
+										type="checkbox"
+										checked={approveBatch}
+										onChange={(event) => setApproveBatch(event.target.checked)}
+										id="settle-approve"
+									/>
+									<label className="form-check-label" htmlFor="settle-approve">
+										I approve this profit delivery batch
+									</label>
+								</div>
+							</div>
+						)}
 					</>
+				)}
+			</FlowModal>
+
+			{/* ====================================================================
+			   9. COMPLIANCE HEALTH CHECK
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("complianceCheckModal")}
+				onClose={onClose}
+				iconCls="bi bi-shield-check"
+				title="Compliance Health Check"
+				size="lg"
+				submitLabel="Download Report"
+				successMsg="Full compliance report downloaded."
+			>
+				<div className="row g-3 mb-3">
+					{[
+						{ value: "98", label: "Compliance", color: "var(--pm-accent)" },
+						{ value: "0", label: "Open Issues", color: "var(--pm-info)" },
+						{
+							value: "3",
+							label: "Recommendations",
+							color: "var(--pm-warning)",
+						},
+						{
+							value: "18",
+							label: "Models Reviewed",
+							color: "var(--pm-purple)",
+						},
+					].map((tile) => (
+						<div className="col-md-3 col-6" key={tile.label}>
+							<div
+								className={styles.miniStat}
+								style={{ background: "var(--pm-surface-2)" }}
+							>
+								<div
+									className={styles.miniStatBig}
+									style={{ color: tile.color }}
+								>
+									{tile.value}
+								</div>
+								<div className={styles.miniStatLabel}>{tile.label}</div>
+							</div>
+						</div>
+					))}
+				</div>
+				<div className={`${s.hintBox} ${s.hintBoxSuccess} mb-3`}>
+					<i className="bi bi-check-circle" />
+					<span>
+						All fee disclosure requirements met. No regulatory breaches
+						detected.
+					</span>
+				</div>
+				<div className={s.tableWrap}>
+					<table className={s.table}>
+						<thead>
+							<tr>
+								<th>Regulation</th>
+								<th>Status</th>
+								<th>Last Audit</th>
+								<th>Next Due</th>
+							</tr>
+						</thead>
+						<tbody>
+							{[
+								["CBK Fee Transparency", "15 Jun 2025", "15 Sep 2025"],
+								["KRA Withholding Tax", "01 Jun 2025", "01 Jul 2025"],
+								["Consumer Protection Act", "20 Jun 2025", "20 Sep 2025"],
+							].map(([regulation, lastAudit, nextDue]) => (
+								<tr key={regulation}>
+									<td>{regulation}</td>
+									<td>
+										<span className={`${s.badge} ${s.badgeSuccess}`}>
+											Compliant
+										</span>
+									</td>
+									<td>{lastAudit}</td>
+									<td>{nextDue}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			</SimpleModal>
+
+			{/* ====================================================================
+			   10. FEE REVENUE REPORT
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("feeReportModal")}
+				onClose={onClose}
+				iconCls="bi bi-file-earmark-bar-graph"
+				title="Fee Revenue Report"
+				submitLabel="Generate Report"
+				successMsg="Fee revenue report generated and downloading…"
+				onSubmit={() =>
+					downloadFile(
+						"fee_revenue_report.txt",
+						"PayMo — Fee & Profit Report\nJune 2025\nInter-bank fees: KES 7.16M\nWallet fees: KES 3.12M\nInstant fees: KES 6.84M\nTotal revenue: KES 18.4M",
+					)
 				}
+			>
+				<div className="mb-3">
+					<SelectField label="Report Period" options={REPORT_PERIODS} />
+				</div>
+				<div className="mb-3">
+					<SelectField label="Format" options={FORMATS} />
+				</div>
+				<div className={styles.summaryBox}>
+					<ReviewRow label="Inter-bank Fees" value="KES 7.16M" />
+					<ReviewRow label="Wallet Fees" value="KES 3.12M" />
+					<ReviewRow label="Instant Fees" value="KES 6.84M" />
+					<hr className={styles.divider} />
+					<div className="d-flex justify-content-between">
+						<span className={styles.fwBold13}>Total Revenue</span>
+						<strong className={styles.textAccent}>KES 18.4M</strong>
+					</div>
+				</div>
+			</SimpleModal>
+
+			{/* ====================================================================
+			   11. PROFIT BY SERVICE (leaderboard)
+			   ==================================================================== */}
+			<ModalShell
+				show={isOpen("agentLeaderboardModal")}
+				onClose={onClose}
+				iconCls="bi bi-trophy"
+				title="Profit by Service"
+				size="lg"
 				footer={
-					<button className={styles.btnPm} onClick={onClose}>
+					<button
+						type="button"
+						className={`${s.btn} ${s.btnSecondary}`}
+						onClick={onClose}
+					>
 						Close
 					</button>
 				}
 			>
-				<div className="table-responsive">
-					<table className={styles.tbl}>
+				<div className={s.tableWrap}>
+					<table className={s.table}>
 						<thead>
 							<tr>
 								<th>Rank</th>
@@ -1379,509 +917,466 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							</tr>
 						</thead>
 						<tbody>
-							{leaderboard.map(([rk, a, v, c, t, tone]) => (
-								<tr key={rk}>
-									<td>{rk}</td>
-									<td>{a}</td>
-									<td>{v}</td>
-									<td>{c}</td>
+							{[
+								[
+									"1",
+									"Installments (Land Buyers)",
+									"KES 1.08M",
+									"KES 864K",
+									"Top",
+									"badgeSuccess",
+								],
+								[
+									"2",
+									"Orders (Company 2)",
+									"KES 256K",
+									"KES 178K",
+									"Top",
+									"badgeSuccess",
+								],
+								[
+									"3",
+									"International transfers",
+									"KES 98.4K",
+									"KES 62.1K",
+									"Rising",
+									"badgePurple",
+								],
+								[
+									"4",
+									"Card settlements (USD)",
+									"KES 176.8K",
+									"KES 41.2K",
+									"Rising",
+									"badgePurple",
+								],
+								[
+									"5",
+									"FX conversions",
+									"KES 86.4K",
+									"KES 24.8K",
+									"Steady",
+									"badgePurple",
+								],
+							].map(([rank, service, charges, profit, trend, tone]) => (
+								<tr key={rank}>
+									<td>{rank}</td>
+									<td>{service}</td>
+									<td>{charges}</td>
+									<td>{profit}</td>
 									<td>
-										<span className={`${styles.badge} ${styles[tone]}`}>
-											{t}
-										</span>
+										<span className={`${s.badge} ${s[tone]}`}>{trend}</span>
 									</td>
 								</tr>
 							))}
 						</tbody>
 					</table>
 				</div>
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M12: Exemption ============ */}
-			<MBox
-				id="exemptionModal"
-				active={active}
+			{/* ====================================================================
+			   12. FEE EXEMPTIONS
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("exemptionModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-shield" /> Fee Exemptions
-					</>
-				}
-				footer={actionFooter(
-					"exemptionModal",
-					"Create Exemption",
-					"Exemption rule created successfully!",
-				)}
+				iconCls="bi bi-shield"
+				title="Fee Exemptions"
+				submitLabel="Create Exemption"
+				successMsg="Exemption rule created successfully!"
 			>
-				{actionBody(
-					"exemptionModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Exemption Type</label>
-							<select className={styles.fc}>
-								{EXEMPTION_TYPES.map((t) => (
-									<option key={t}>{t}</option>
-								))}
-							</select>
+				<div className="mb-3">
+					<SelectField label="Exemption Type" options={EXEMPTION_TYPES} />
+				</div>
+				<div className="mb-3">
+					<span className={s.fieldLabel}>Applicable transactions</span>
+					{[
+						{ label: "All government-to-citizen payments", on: true },
+						{ label: "Salary disbursements", on: true },
+						{ label: "Charity donations", on: false },
+					].map((option, index) => (
+						<div className="form-check mb-1" key={option.label}>
+							<input
+								className="form-check-input"
+								type="checkbox"
+								defaultChecked={option.on}
+								id={`exemption-option-${index}`}
+							/>
+							<label
+								className="form-check-label"
+								htmlFor={`exemption-option-${index}`}
+							>
+								{option.label}
+							</label>
 						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Applicable Transactions</label>
-							{[
-								{ label: "All government-to-citizen payments", on: true },
-								{ label: "Salary disbursements", on: true },
-								{ label: "Charity donations", on: false },
-							].map((t, i) => (
-								<div
-									className={`form-check ${i < 2 ? "mb-1" : ""}`}
-									key={t.label}
-								>
-									<input
-										className="form-check-input"
-										type="checkbox"
-										defaultChecked={t.on}
-										id={`ex-${i}`}
-									/>
-									<label className="form-check-label" htmlFor={`ex-${i}`}>
-										{t.label}
-									</label>
-								</div>
-							))}
-						</div>
-					</>,
-				)}
-			</MBox>
+					))}
+				</div>
+			</SimpleModal>
 
-			{/* ============ M13: Attention Full ============ */}
-			<MBox
-				id="attentionFullModal"
-				active={active}
+			{/* ====================================================================
+			   13. FULL ATTENTION QUEUE (cross-modal navigation)
+			   ==================================================================== */}
+			<ModalShell
+				show={isOpen("attentionFullModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-exclamation-circle"
-							style={{ color: "var(--pm-warning)" }}
-						/>{" "}
-						All Items Requiring Attention
-					</>
-				}
+				iconCls="bi bi-exclamation-circle"
+				title="All Items Requiring Attention"
 				footer={
-					<button className={styles.btnPm} onClick={onClose}>
+					<button
+						type="button"
+						className={`${s.btn} ${s.btnSecondary}`}
+						onClick={onClose}
+					>
 						Close
 					</button>
 				}
 			>
-				{attentionRows.map((r) => (
-					<div className={styles.sr} key={r.title}>
+				{[
+					{
+						title: "Profit pot above auto-deliver threshold",
+						sub: "KES 25K rule — M-Pesa channel paused",
+						label: "Review",
+						modal: "partnerPayoutModal",
+					},
+					{
+						title: "Company 2 break-even orders",
+						sub: "12 orders covered by 2.0% charge — consider tiered",
+						label: "Adjust",
+						modal: "addFeeRuleModal",
+					},
+					{
+						title: "International transfer fee rose 8%",
+						sub: "1.5% + KES 150 — 24 this month",
+						label: "View",
+						modal: "feeReportModal",
+					},
+					{
+						title: "Promo budget 78% used",
+						sub: "0% fee month for 5 new buyers — consider top-up",
+						label: "Adjust",
+						modal: "editWaiverModal",
+					},
+				].map((item) => (
+					<div className={styles.sr} key={item.title}>
 						<div>
-							<strong>{r.title}</strong>
-							<div className={styles.mutedSmall}>{r.sub}</div>
+							<strong>{item.title}</strong>
+							<div className={styles.mutedSmall}>{item.sub}</div>
 						</div>
 						<button
-							className={`${styles.btnPm} ${styles.btnSm}`}
-							onClick={() => onOpen(r.modal)}
+							type="button"
+							className={`${s.btn} ${s.btnSm}`}
+							onClick={() => onOpen(item.modal)}
 						>
-							{r.label}
+							{item.label}
 						</button>
 					</div>
 				))}
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M14: Fee Notifications ============ */}
-			<MBox
-				id="feeNotifModal"
-				active={active}
+			{/* ====================================================================
+			   14. FEE NOTIFICATIONS (→ settings)
+			   ==================================================================== */}
+			<ModalShell
+				show={isOpen("feeNotifModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-bell" /> Fee Notifications (7)
-					</>
-				}
+				iconCls="bi bi-bell"
+				title="Fee Notifications (7)"
 				footer={
 					<>
 						<button
-							className={styles.btnPm}
+							type="button"
+							className={`${s.btn} ${s.btnSecondary}`}
 							onClick={() => onOpen("notifSettingsModal")}
 						>
 							Settings
 						</button>
-						<button className={styles.btnPm} onClick={onClose}>
+						<button
+							type="button"
+							className={`${s.btn} ${s.btnSecondary}`}
+							onClick={onClose}
+						>
 							Close
 						</button>
 					</>
 				}
 			>
-				<div style={{ maxHeight: 500, overflowY: "auto" }}>
-					{notifItems.map((n) => (
+				<div className={s.tableWrap}>
+					{[
+						{
+							box: styles.summaryBoxAccent,
+							title: "Profit delivered — KES 84,500",
+							sub: "Auto-channelled to Business Wallet.",
+						},
+						{
+							box: styles.summaryBoxDanger,
+							title: "M-Pesa channel paused",
+							sub: "External wallet link needs verification.",
+						},
+						{
+							box: styles.summaryBoxWarn,
+							title: "Company 2 break-even orders",
+							sub: "12 orders — consider tiered model.",
+						},
+						{
+							box: styles.summaryBox,
+							title: "Promo budget at 78%",
+							sub: "Consider top-up.",
+						},
+					].map((notification) => (
 						<div
-							key={n.title}
-							className={`${styles[n.box]} mb-2`}
-							style={{ fontSize: 13 }}
+							key={notification.title}
+							className={`${notification.box} mb-2`}
 						>
-							<strong>{n.title}</strong>
-							<div className={styles.mutedSmall}>{n.sub}</div>
+							<strong className={styles.fwBold13}>{notification.title}</strong>
+							<div className={styles.mutedSmall}>{notification.sub}</div>
 						</div>
 					))}
 				</div>
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M15: Profile ============ */}
-			<MBox
-				id="profileModal"
-				active={active}
+			{/* ====================================================================
+			   15. NOTIFICATION PREFERENCES
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("notifSettingsModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-person-circle" /> Profile
-					</>
-				}
-				footer={
-					<button className={styles.btnPm} onClick={onClose}>
-						Close
-					</button>
-				}
+				iconCls="bi bi-gear"
+				title="Notification Preferences"
+				submitLabel="Save"
+				successMsg="Notification preferences saved!"
 			>
-				<div className="text-center">
-					<div
-						className={`${styles.avatar} mx-auto mb-3`}
-						style={{ width: 64, height: 64, fontSize: 24 }}
-					>
-						JK
-					</div>
-					<h5
-						className={styles.fwBold13}
-						style={{ fontSize: 16, marginBottom: 2 }}
-					>
-						Jckonia Kamau
-					</h5>
-					<p style={{ fontSize: 13, color: "var(--pm-muted)" }}>
-						james.kamau@paymo.co.ke
-					</p>
-					<div className="row g-2 text-start mt-3" style={{ fontSize: 13 }}>
-						<div className="col-6">
-							<div
-								className="p-2 rounded"
-								style={{ background: "var(--pm-surface-2)" }}
-							>
-								<span className={styles.mutedSmall}>Role</span>
-								<br />
-								<strong>Account Holder</strong>
-							</div>
-						</div>
-						<div className="col-6">
-							<div
-								className="p-2 rounded"
-								style={{ background: "var(--pm-surface-2)" }}
-							>
-								<span className={styles.mutedSmall}>Fee Rules Managed</span>
-								<br />
-								<strong>47</strong>
-							</div>
-						</div>
-					</div>
-				</div>
-			</MBox>
-
-			{/* ============ M16: Notification Settings ============ */}
-			<MBox
-				id="notifSettingsModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-gear" /> Notification Preferences
-					</>
-				}
-				footer={actionFooter(
-					"notifSettingsModal",
-					"Save",
-					"Notification preferences saved!",
-				)}
-			>
-				{actionBody(
-					"notifSettingsModal",
-					<div className="table-responsive">
-						<table className={styles.tbl}>
-							<thead>
-								<tr>
-									<th>Alert Type</th>
-									<th>Push</th>
-									<th>SMS</th>
-									<th>Email</th>
+				<div className={s.tableWrap}>
+					<table className={s.table}>
+						<thead>
+							<tr>
+								<th>Alert Type</th>
+								<th>Push</th>
+								<th>SMS</th>
+								<th>Email</th>
+							</tr>
+						</thead>
+						<tbody>
+							{(
+								[
+									["Profit delivered", true, true, true],
+									["PayMo fee changes", true, false, true],
+									["Channel rule alerts", true, false, true],
+									["Promo budget", true, true, false],
+								] as Array<[string, boolean, boolean, boolean]>
+							).map(([label, push, sms, email]) => (
+								<tr key={label}>
+									<td>{label}</td>
+									{["Push", "SMS", "Email"].map((channel, index) => (
+										<td key={channel}>
+											<input
+												type="checkbox"
+												defaultChecked={[push, sms, email][index]}
+												aria-label={`${label} ${channel.toLowerCase()} notifications`}
+											/>
+										</td>
+									))}
 								</tr>
-							</thead>
-							<tbody>
-								{notifSettingsRows.map(([label, push, sms, email]) => (
-									<tr key={label}>
-										<td>{label}</td>
-										{[push, sms, email].map((v, i) => (
-											<td key={i}>
-												<input
-													type="checkbox"
-													defaultChecked={v}
-													aria-label={`${label} channel ${i + 1}`}
-												/>
-											</td>
-										))}
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>,
-				)}
-			</MBox>
+							))}
+						</tbody>
+					</table>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M17: Policy Config ============ */}
-			<MBox
-				id="policyConfigModal"
-				active={active}
+			{/* ====================================================================
+			   16. FEE POLICY CONFIGURATION
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("policyConfigModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-file-earmark-text" /> Fee Policy Configuration
-					</>
-				}
-				footer={actionFooter(
-					"policyConfigModal",
-					"Save Policy",
-					"Policy updated successfully!",
-				)}
+				iconCls="bi bi-file-earmark-text"
+				title="Fee Policy Configuration"
+				submitLabel="Save Policy"
+				successMsg="Policy updated successfully!"
 			>
-				{actionBody(
-					"policyConfigModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Policy Name</label>
-							<input
-								className={styles.fc}
-								defaultValue="Standard Transaction Fee Policy 2025"
-							/>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Effective From</label>
-							<input
-								type="date"
-								className={styles.fc}
-								defaultValue="2025-01-01"
-							/>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Review Cycle</label>
-							<select className={styles.fc}>
-								<option>Quarterly</option>
-								<option>Bi-annually</option>
-								<option>Annually</option>
-							</select>
-						</div>
-						<div className="form-check">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								defaultChecked
-								id="policy-board"
-							/>
-							<label className="form-check-label" htmlFor="policy-board">
-								Require board approval for changes &gt;10%
-							</label>
-						</div>
-					</>,
-				)}
-			</MBox>
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="policy-name">
+						Policy Name
+					</label>
+					<input
+						id="policy-name"
+						className={s.field}
+						defaultValue="Standard Transaction Fee Policy 2025"
+					/>
+				</div>
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="policy-effective">
+						Effective From
+					</label>
+					<input
+						id="policy-effective"
+						type="date"
+						className={s.field}
+						defaultValue="2025-01-01"
+					/>
+				</div>
+				<div className="mb-3">
+					<SelectField
+						label="Review Cycle"
+						options={["Quarterly", "Bi-annually", "Annually"]}
+					/>
+				</div>
+				<div className="form-check">
+					<input
+						className="form-check-input"
+						type="checkbox"
+						defaultChecked
+						id="policy-board"
+					/>
+					<label className="form-check-label" htmlFor="policy-board">
+						Require board approval for changes &gt;10%
+					</label>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M18: Audit Detail ============ */}
-			<MBox
-				id="auditDetailModal"
-				active={active}
+			{/* ====================================================================
+			   17. AUDIT LOG DETAIL
+			   ==================================================================== */}
+			<ModalShell
+				show={isOpen("auditDetailModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-file-text" /> Audit Log Detail
-					</>
-				}
+				iconCls="bi bi-file-text"
+				title="Audit Log Detail"
 				footer={
-					<button className={styles.btnPm} onClick={onClose}>
+					<button
+						type="button"
+						className={`${s.btn} ${s.btnSecondary}`}
+						onClick={onClose}
+					>
 						Close
 					</button>
 				}
 			>
-				<div className={styles.summaryBox} style={{ fontSize: 13 }}>
-					<div className="d-flex justify-content-between mb-2">
-						<span className={styles.mutedSmall}>Action ID</span>
-						<strong>AUD-20250626-8812</strong>
-					</div>
-					<div className="d-flex justify-content-between mb-2">
-						<span className={styles.mutedSmall}>User</span>
-						<strong>Jckonia K.</strong>
-					</div>
-					<div className="d-flex justify-content-between mb-2">
-						<span className={styles.mutedSmall}>IP Address</span>
-						<strong>102.68.45.112</strong>
-					</div>
-					<div className="d-flex justify-content-between mb-2">
-						<span className={styles.mutedSmall}>Timestamp</span>
-						<strong>26 Jun 2025, 14:22 EAT</strong>
-					</div>
-					<div className="d-flex justify-content-between">
-						<span className={styles.mutedSmall}>Changes</span>
-						<strong>FR-415 rate: 0.75% → 0.50%</strong>
-					</div>
+				<div className={styles.summaryBox}>
+					<ReviewRow label="Action ID" value="AUD-20250626-8812" />
+					<ReviewRow label="User" value="Jckonia K." />
+					<ReviewRow label="IP Address" value="102.68.45.112" />
+					<ReviewRow label="Timestamp" value="26 Jun 2025, 14:22 EAT" />
+					<ReviewRow label="Changes" value="FR-415 rate: 0.75% → 0.50%" />
 				</div>
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M19: Bulk Upload ============ */}
-			<MBox
-				id="bulkUploadModal"
-				active={active}
+			{/* ====================================================================
+			   18. BULK FEE RULE UPLOAD
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("bulkUploadModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-upload" /> Bulk Fee Rule Upload
-					</>
-				}
-				footer={actionFooter(
-					"bulkUploadModal",
-					"Upload & Validate",
-					"47 fee rules imported successfully!",
-					"BULK-20250627",
-				)}
+				iconCls="bi bi-upload"
+				title="Bulk Fee Rule Upload"
+				submitLabel="Upload & Validate"
+				successMsg="47 fee rules imported successfully! Ref BULK-20250627"
 			>
-				{actionBody(
-					"bulkUploadModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Upload CSV</label>
-							<input type="file" className={styles.fc} />
-						</div>
-						<div className={styles.summaryBoxInfo} style={{ fontSize: 12 }}>
-							<i className="bi bi-info-circle me-1" /> Download template:{" "}
-							{/* LEGACY BRIDGE: alert('Template downloaded!') → real CSV download */}
-							<button
-								className="btn btn-link btn-sm p-0 align-baseline"
-								style={{ fontSize: 12 }}
-								onClick={() =>
-									downloadFile(
-										"fee_rules_template.csv",													"model,business,charge,paymo_fee,profit,status\nPercentage,Company 2,2.0%,2.0%,KES 241,Collected",
-										"text/csv",
-									)
-								}
-							>
-								fee_rules_template.csv
-							</button>
-						</div>
-					</>,
-				)}
-			</MBox>
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="bulk-fee-csv">
+						Upload CSV
+					</label>
+					<input id="bulk-fee-csv" type="file" className={s.field} />
+				</div>
+				<div className={`${s.hintBox} ${s.hintBoxWarn}`}>
+					<i className="bi bi-info-circle" />
+					<span>
+						Download template:{" "}
+						<button
+							type="button"
+							className="btn btn-link btn-sm p-0 align-baseline"
+							style={{ fontSize: 12 }}
+							onClick={() =>
+								downloadFile(
+									"fee_rules_template.csv",
+									"model,business,charge,paymo_fee,profit,status\nPercentage,Company 2,2.0%,2.0%,KES 241,Collected",
+									"text/csv",
+								)
+							}
+						>
+							fee_rules_template.csv
+						</button>
+					</span>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M20: Partner Payout ============ */}
-			<MBox
-				id="partnerPayoutModal"
-				active={active}
+			{/* ====================================================================
+			   19. CHANNEL PROFITS TO WALLET (partner payout)
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("partnerPayoutModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-send" /> Channel Profits to Wallet
-					</>
-				}
-				footer={actionFooter(
-					"partnerPayoutModal",
-					"Save Rule",
-					"Profit channel rule saved — profits will auto-deliver.",
-				)}
+				iconCls="bi bi-send"
+				title="Channel Profits to Wallet"
+				submitLabel="Save Rule"
+				successMsg="Profit channel rule saved — profits will auto-deliver."
 			>
-				{actionBody(
-					"partnerPayoutModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Deliver To</label>
-							<select className={styles.fc}>
-								{PARTNERS.map((p) => (
-									<option key={p}>{p}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Minimum Profit (KES)</label>
-							<input className={styles.fc} defaultValue="2" />
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Delivery Frequency</label>
-							<select className={styles.fc}>
-								{SETTLE_FREQS.map((f) => (
-									<option key={f}>{f}</option>
-								))}
-							</select>
-						</div>
-						<div className={styles.summaryBox} style={{ fontSize: 12 }}>
-							<i className="bi bi-lightning-charge me-1" /> Even KES 2 of profit is
-							delivered the moment it's earned.
-						</div>
-					</>,
-				)}
-			</MBox>
+				<div className="mb-3">
+					<SelectField label="Deliver To" options={PARTNERS} />
+				</div>
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="payout-min-profit">
+						Minimum Profit (KES)
+					</label>
+					<input id="payout-min-profit" className={s.field} defaultValue="2" />
+				</div>
+				<div className="mb-3">
+					<SelectField label="Delivery Frequency" options={SETTLE_FREQS} />
+				</div>
+				<div className={`${s.hintBox} ${s.hintBoxSuccess}`}>
+					<i className="bi bi-lightning-charge" />
+					<span>
+						Even KES 2 of profit is delivered the moment it is earned.
+					</span>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M21: Regulatory Report ============ */}
-			<MBox
-				id="regulatoryReportModal"
-				active={active}
+			{/* ====================================================================
+			   20. REGULATORY FEE REPORT
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("regulatoryReportModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-file-earmark-check" /> Regulatory Fee Report
-					</>
-				}
-				footer={actionFooter(
-					"regulatoryReportModal",
-					"Generate & Submit",
-					"Regulatory report generated and submitted!",
-					"REG-20250627",
-				)}
+				iconCls="bi bi-file-earmark-check"
+				title="Regulatory Fee Report"
+				submitLabel="Generate & Submit"
+				successMsg="Regulatory report generated and submitted! Ref REG-20250627"
 			>
-				{actionBody(
-					"regulatoryReportModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Report For</label>
-							<select className={styles.fc}>
-								{REGULATORS.map((r) => (
-									<option key={r}>{r}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Period</label>
-							<select className={styles.fc}>
-								{REPORT_PERIODS.map((p) => (
-									<option key={p}>{p}</option>
-								))}
-							</select>
-						</div>
-						<div className={styles.summaryBox} style={{ fontSize: 12 }}>
-							Report will include: your customer charges, PayMo fees
-							deducted, profit delivered, waiver utilization, and fee
-							disclosure attestations.
-						</div>
-					</>,
-				)}
-			</MBox>
+				<div className="mb-3">
+					<SelectField label="Report For" options={REGULATORS} />
+				</div>
+				<div className="mb-3">
+					<SelectField label="Period" options={REPORT_PERIODS} />
+				</div>
+				<div className={`${s.hintBox} mb-0`}>
+					<i className="bi bi-info-circle" />
+					<span>
+						Report includes: your customer charges, PayMo fees deducted, profit
+						delivered, waiver utilization and fee disclosure attestations.
+					</span>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M22: Tier Performance ============ */}
-			<MBox
-				id="tierPerformanceModal"
-				active={active}
+			{/* ====================================================================
+			   21. TIER PERFORMANCE ANALYTICS
+			   ==================================================================== */}
+			<ModalShell
+				show={isOpen("tierPerformanceModal")}
+				onClose={onClose}
+				iconCls="bi bi-bar-chart-line"
+				title="Tier Performance Analytics"
 				size="lg"
-				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-bar-chart-line" /> Tier Performance Analytics
-					</>
-				}
 				footer={
 					<>
-						<button className={styles.btnPm} onClick={onClose}>
+						<button
+							type="button"
+							className={`${s.btn} ${s.btnSecondary}`}
+							onClick={onClose}
+						>
 							Close
 						</button>
 						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
+							type="button"
+							className={`${s.btn} ${s.btnPrimary}`}
 							onClick={() => onOpen("addCommissionTierModal")}
 						>
 							Add New Tier
@@ -1889,94 +1384,100 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 					</>
 				}
 			>
-				<div className="table-responsive">
-					<table className={styles.tbl}>
+				<div className={s.tableWrap}>
+					<table className={s.table}>
 						<thead>
-							<tr>													<th>Model / Business</th>
-													<th>Volume</th>
-													<th>Revenue</th>
-													<th>Adoption</th>
-													<th>Growth</th>
+							<tr>
+								<th>Model / Business</th>
+								<th>Volume</th>
+								<th>Revenue</th>
+								<th>Adoption</th>
+								<th>Growth</th>
 							</tr>
 						</thead>
 						<tbody>
-							{tierPerfRows.map(([t, a, v, r, g]) => (
-								<tr key={t}>
-									<td>{t}</td>
-									<td>{a}</td>
-									<td>{v}</td>
-									<td>{r}</td>
-									<td>{g}</td>
+							{[
+								["Flat — Land Buyers", "3,240", "KES 1.08M", "91%", "+6%"],
+								["Percentage — Company 2", "88,410", "KES 256K", "84%", "+11%"],
+								["International transfers", "186", "KES 98.4K", "72%", "+8%"],
+								["Card settlements (USD)", "4,120", "KES 176.8K", "78%", "+4%"],
+							].map(([model, volume, revenue, adoption, growth]) => (
+								<tr key={model}>
+									<td>{model}</td>
+									<td>{volume}</td>
+									<td>{revenue}</td>
+									<td>{adoption}</td>
+									<td>{growth}</td>
 								</tr>
 							))}
 						</tbody>
 					</table>
 				</div>
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M23: Hardship Waiver ============ */}
-			<MBox
-				id="hardshipWaiverModal"
-				active={active}
+			{/* ====================================================================
+			   22. HARDSHIP WAIVER REQUEST
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("hardshipWaiverModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-heart" /> Hardship Waiver Request
-					</>
-				}
-				footer={actionFooter(
-					"hardshipWaiverModal",
-					"Submit Request",
-					"Hardship waiver request submitted for review!",
-					"HW-20250627",
-				)}
+				iconCls="bi bi-heart"
+				title="Hardship Waiver Request"
+				submitLabel="Submit Request"
+				successMsg="Hardship waiver request submitted for review! Ref HW-20250627"
 			>
-				{actionBody(
-					"hardshipWaiverModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Customer ID / Phone</label>
-							<input className={styles.fc} defaultValue="0712 345 890" />
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Reason</label>
-							<select className={styles.fc}>
-								{HARDSHIP_REASONS.map((r) => (
-									<option key={r}>{r}</option>
-								))}
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Requested Discount</label>
-							<input className={styles.fc} defaultValue="100" />
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Supporting Document</label>
-							<input type="file" className={styles.fc} />
-						</div>
-					</>,
-				)}
-			</MBox>
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="hardship-customer">
+						Customer ID / Phone
+					</label>
+					<input
+						id="hardship-customer"
+						className={s.field}
+						defaultValue="0712 345 890"
+					/>
+				</div>
+				<div className="mb-3">
+					<SelectField label="Reason" options={HARDSHIP_REASONS} />
+				</div>
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="hardship-discount">
+						Requested Discount
+					</label>
+					<input
+						id="hardship-discount"
+						className={s.field}
+						defaultValue="100"
+					/>
+				</div>
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="hardship-document">
+						Supporting Document
+					</label>
+					<input id="hardship-document" type="file" className={s.field} />
+				</div>
+			</SimpleModal>
 
-			{/* ============ M24: Fee Comparison Tool ============ */}
-			<MBox
-				id="feeCompareModal"
-				active={active}
-				size="lg"
+			{/* ====================================================================
+			   23. MARKET FEE COMPARISON
+			   ==================================================================== */}
+			<ModalShell
+				show={isOpen("feeCompareModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-arrow-left-right" /> Market Fee Comparison
-					</>
-				}
+				iconCls="bi bi-arrow-left-right"
+				title="Market Fee Comparison"
+				size="lg"
 				footer={
-					<button className={styles.btnPm} onClick={onClose}>
+					<button
+						type="button"
+						className={`${s.btn} ${s.btnSecondary}`}
+						onClick={onClose}
+					>
 						Close
 					</button>
 				}
 			>
-				<div className="table-responsive">
-					<table className={styles.tbl}>
+				<div className={s.tableWrap}>
+					<table className={s.table}>
 						<thead>
 							<tr>
 								<th>Provider</th>
@@ -1987,201 +1488,236 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							</tr>
 						</thead>
 						<tbody>
-							{feeCompareRows.map(([p, ib, w, inst, overall, tone, strong]) => (
-								<tr key={p}>
-									<td>{strong ? <strong>{p}</strong> : p}</td>
-									<td>{ib}</td>
-									<td>{w}</td>
-									<td>{inst}</td>
-									<td>
-										<span className={`${styles.badge} ${styles[tone]}`}>
-											{overall}
-										</span>
-									</td>
-								</tr>
-							))}
+							{(
+								[
+									[
+										"PayMo",
+										"0.85%",
+										"KES 25",
+										"0.45%",
+										"Best",
+										"badgeSuccess",
+										true,
+									],
+									[
+										"Bank A",
+										"1.2%",
+										"KES 35",
+										"0.8%",
+										"Average",
+										"badgeInfo",
+										false,
+									],
+									[
+										"Bank B",
+										"1.0%",
+										"KES 30",
+										"0.6%",
+										"Average",
+										"badgeInfo",
+										false,
+									],
+									[
+										"Mobile Money X",
+										"1.5%",
+										"KES 20",
+										"1.0%",
+										"Higher",
+										"badgeWarning",
+										false,
+									],
+								] as Array<
+									[string, string, string, string, string, string, boolean]
+								>
+							).map(
+								([
+									provider,
+									interbank,
+									wallet,
+									instant,
+									overall,
+									tone,
+									strong,
+								]) => (
+									<tr key={provider}>
+										<td>{strong ? <strong>{provider}</strong> : provider}</td>
+										<td>{interbank}</td>
+										<td>{wallet}</td>
+										<td>{instant}</td>
+										<td>
+											<span className={`${s.badge} ${s[tone]}`}>{overall}</span>
+										</td>
+									</tr>
+								),
+							)}
 						</tbody>
 					</table>
 				</div>
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M25: Final Confirmation ============ */}
-			<MBox
-				id="finalConfirmModal"
-				active={active}
+			{/* ====================================================================
+			   24. FINAL CONFIRMATION
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("finalConfirmModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i className="bi bi-check2-circle" /> Confirm Action
-					</>
-				}
-				footer={actionFooter(
-					"finalConfirmModal",
-					"Confirm & Execute",
-					"Action confirmed and executed successfully!",
-					"CONF-20250627",
-				)}
+				iconCls="bi bi-check2-circle"
+				title="Confirm Action"
+				submitLabel="Confirm & Execute"
+				successMsg="Action confirmed and executed successfully! Ref CONF-20250627"
 			>
-				{actionBody(
-					"finalConfirmModal",
-					<div className={styles.summaryBoxAccent}>
-						<i className="bi bi-info-circle me-1" /> This action will affect
-						your live fee models and KES 2.31M in monthly customer charges.
-						Are you sure?
-					</div>,
-				)}
-			</MBox>
+				<div className={`${s.hintBox} ${s.hintBoxWarn}`}>
+					<i className="bi bi-exclamation-triangle" />
+					<span>
+						This action affects your live fee models and KES 2.31M in monthly
+						customer charges. Are you sure?
+					</span>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M26: Charge a Customer ============ */}
-			<MBox
-				id="chargeCustomerModal"
-				active={active}
+			{/* ====================================================================
+			   25. CHARGE A CUSTOMER
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("chargeCustomerModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-receipt me-2"
-							style={{ color: "var(--pm-info)" }}
+				iconCls="bi bi-receipt"
+				title="Charge a Customer"
+				submitLabel="Apply Charge"
+				successMsg="Charge applied — KES 277 profit delivered instantly. Ref CHG-20250808-4409"
+			>
+				<div className="mb-3">
+					<SelectField
+						label="Business"
+						options={["Land Buyers LTD — Flat KES 1,250", "Company 2 — 2.0%"]}
+					/>
+				</div>
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="charge-customer-ref">
+						Customer / Ref
+					</label>
+					<input
+						id="charge-customer-ref"
+						className={s.field}
+						defaultValue="Order #ORD-8904"
+					/>
+				</div>
+				<div className="row g-3">
+					<div className="col-md-6">
+						<label className={s.fieldLabel} htmlFor="charge-amount">
+							Transaction Amount (KES)
+						</label>
+						<input
+							id="charge-amount"
+							className={s.field}
+							defaultValue="50000"
 						/>
-						Charge a Customer
-					</>
-				}
-				footer={actionFooter(
-					"chargeCustomerModal",
-					"Apply Charge",
-					"Charge applied — KES 277 profit delivered instantly to Business Wallet.",
-					"CHG-20250808-4409",
-				)}
-			>
-				{actionBody(
-					"chargeCustomerModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Business</label>
-							<select className={styles.fc}>
-								<option>Land Buyers LTD — Flat KES 1,250</option>
-								<option>Company 2 — 2.0%</option>
-							</select>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Customer / Ref</label>
-							<input
-								className={styles.fc}
-								defaultValue="Order #ORD-8904"
-							/>
-						</div>
-						<div className="row g-3">
-							<div className="col-md-6">
-								<label className={styles.fl}>Transaction Amount (KES)</label>
-								<input className={styles.fc} defaultValue="50000" />
-							</div>
-							<div className="col-md-6">
-								<label className={styles.fl}>Your Charge</label>
-								<input className={styles.fc} defaultValue="2.0% = KES 1,000" />
-							</div>
-						</div>
-						<div className={`${styles.summaryBox} mt-3`} style={{ fontSize: 13 }}>
-							<BoxRow label="PayMo fee (deducted)" value="KES 723" />
-							<BoxRow label="Your profit" value="KES 277" last />
-						</div>
-						<div className={`${styles.summaryBoxAccent} mt-3`} style={{ fontSize: 12 }}>
-							<i className="bi bi-lightning-charge me-1" /> Profit auto-channels to
-							Business Wallet the moment this settles.
-						</div>
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M27: Channel Rule ============ */}
-			<MBox
-				id="channelRuleModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-arrow-left-right me-2"
-							style={{ color: "var(--pm-accent)" }}
+					</div>
+					<div className="col-md-6">
+						<label className={s.fieldLabel} htmlFor="charge-rate">
+							Your Charge
+						</label>
+						<input
+							id="charge-rate"
+							className={s.field}
+							defaultValue="2.0% = KES 1,000"
 						/>
-						Channel Rule
-					</>
-				}
-				footer={actionFooter(
-					"channelRuleModal",
-					"Save Rule",
-					"Channel rule saved — profits deliver on schedule.",
-					"CR-012",
-				)}
-			>
-				{actionBody(
-					"channelRuleModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Rule Name</label>
-							<input
-								className={styles.fc}
-								defaultValue="Micro-profit instant delivery"
-							/>
-						</div>
-						<div className="mb-3">
-							<label className={styles.fl}>Deliver To</label>
-							<select className={styles.fc}>
-								{PARTNERS.map((p) => (
-									<option key={p}>{p}</option>
-								))}
-							</select>
-						</div>
-						<div className="row g-3">
-							<div className="col-md-6">
-								<label className={styles.fl}>Trigger</label>
-								<select className={styles.fc}>
-									<option>Instant (any profit ≥ KES 2)</option>
-									<option>When pot ≥ threshold</option>
-									<option>Weekly schedule</option>
-								</select>
-							</div>
-							<div className="col-md-6">
-								<label className={styles.fl}>Threshold (KES)</label>
-								<input className={styles.fc} defaultValue="2" />
-							</div>
-						</div>
-						<div className="form-check mt-3">
-							<input
-								className="form-check-input"
-								type="checkbox"
-								defaultChecked
-								id="cr1"
-							/>
-							<label className="form-check-label" htmlFor="cr1" style={{ fontSize: 13 }}>
-								Active — deliver profits immediately as earned
-							</label>
-						</div>
-					</>,
-				)}
-			</MBox>
+					</div>
+				</div>
+				<div className={`${styles.summaryBox} mt-3`}>
+					<ReviewRow label="PayMo fee (deducted)" value="KES 723" />
+					<ReviewRow label="Your profit" value="KES 277" />
+				</div>
+				<div className={`${s.hintBox} ${s.hintBoxSuccess} mt-3`}>
+					<i className="bi bi-lightning-charge" />
+					<span>
+						Profit auto-channels to Business Wallet the moment this settles.
+					</span>
+				</div>
+			</SimpleModal>
 
-			{/* ============ M28: Profit Pot Detail ============ */}
-			<MBox
-				id="potDetailModal"
-				active={active}
+			{/* ====================================================================
+			   26. CHANNEL RULE
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("channelRuleModal")}
+				onClose={onClose}
+				iconCls="bi bi-arrow-left-right"
+				title="Channel Rule"
+				submitLabel="Save Rule"
+				successMsg="Channel rule saved — profits deliver on schedule. Ref CR-012"
+			>
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="rule-name">
+						Rule Name
+					</label>
+					<input
+						id="rule-name"
+						className={s.field}
+						defaultValue="Micro-profit instant delivery"
+					/>
+				</div>
+				<div className="mb-3">
+					<SelectField label="Deliver To" options={PARTNERS} />
+				</div>
+				<div className="row g-3">
+					<div className="col-md-6">
+						<SelectField
+							label="Trigger"
+							options={[
+								"Instant (any profit ≥ KES 2)",
+								"When pot ≥ threshold",
+								"Weekly schedule",
+							]}
+						/>
+					</div>
+					<div className="col-md-6">
+						<label className={s.fieldLabel} htmlFor="rule-threshold">
+							Threshold (KES)
+						</label>
+						<input id="rule-threshold" className={s.field} defaultValue="2" />
+					</div>
+				</div>
+				<div className="d-flex align-items-center justify-content-between mt-3">
+					<div>
+						<div className={styles.fwBold13}>Active</div>
+						<div className={styles.mutedSmall}>
+							Deliver profits immediately as earned
+						</div>
+					</div>
+					<button
+						type="button"
+						role="switch"
+						aria-checked={instantDelivery}
+						className={`${s.toggle} ${instantDelivery ? s.toggleOn : ""}`}
+						onClick={() => setInstantDelivery(!instantDelivery)}
+					>
+						<span className={s.toggleKnob} />
+					</button>
+				</div>
+			</SimpleModal>
+
+			{/* ====================================================================
+			   27. PROFIT POT DETAIL
+			   ==================================================================== */}
+			<ModalShell
+				show={isOpen("potDetailModal")}
+				onClose={onClose}
+				iconCls="bi bi-cash-stack"
+				title="Profit Pot"
 				size="lg"
-				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-cash-stack me-2"
-							style={{ color: "var(--pm-purple)" }}
-						/>
-						Profit Pot
-					</>
-				}
 				footer={
 					<>
-						<button className={styles.btnPm} onClick={onClose}>
+						<button
+							type="button"
+							className={`${s.btn} ${s.btnSecondary}`}
+							onClick={onClose}
+						>
 							Close
 						</button>
 						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
+							type="button"
+							className={`${s.btn} ${s.btnPrimary}`}
 							onClick={() => onOpen("settlementModal")}
 						>
 							Deliver Now
@@ -2190,21 +1726,12 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 				}
 			>
 				<div className={`${styles.summaryBox} mb-3`}>
-					<div className="d-flex justify-content-between mb-2">
-						<span>Pot balance</span>
-						<strong>KES 1,342,000</strong>
-					</div>
-					<div className="d-flex justify-content-between mb-2">
-						<span>Pending</span>
-						<strong>KES 84,500</strong>
-					</div>
-					<div className="d-flex justify-content-between">
-						<span>Delivered MTD</span>
-						<strong style={{ color: "var(--pm-accent)" }}>KES 968,000</strong>
-					</div>
+					<ReviewRow label="Pot balance" value="KES 1,342,000" />
+					<ReviewRow label="Pending" value="KES 84,500" />
+					<ReviewRow label="Delivered MTD" value="KES 968,000" />
 				</div>
-				<div className="table-responsive">
-					<table className={styles.tbl}>
+				<div className={s.tableWrap}>
+					<table className={s.table}>
 						<thead>
 							<tr>
 								<th>Time</th>
@@ -2216,164 +1743,179 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 						</thead>
 						<tbody>
 							{[
-								["14:32", "CHG-4401 · Land Buyers", "KES 18,750", "Business Wallet", "Delivered"],
-								["14:28", "CHG-4403 · Company 2", "KES 241", "Business Wallet", "Delivered"],
-								["13:10", "FX conversions", "KES 24,800", "Business Wallet", "Delivered"],
-							].map((r) => (
-								<tr key={r[0]}>
-									{r.map((c, j) => (
-										<td key={j}>{c}</td>
-									))}
+								[
+									"14:32",
+									"CHG-4401 · Land Buyers",
+									"KES 18,750",
+									"Business Wallet",
+									"Delivered",
+								],
+								[
+									"14:28",
+									"CHG-4403 · Company 2",
+									"KES 241",
+									"Business Wallet",
+									"Delivered",
+								],
+								[
+									"13:10",
+									"FX conversions",
+									"KES 24,800",
+									"Business Wallet",
+									"Delivered",
+								],
+							].map(([time, source, profit, channel, status]) => (
+								<tr key={source}>
+									<td>{time}</td>
+									<td>{source}</td>
+									<td>{profit}</td>
+									<td>{channel}</td>
+									<td>
+										<span className={`${s.badge} ${s.badgeSuccess}`}>
+											{status}
+										</span>
+									</td>
 								</tr>
 							))}
 						</tbody>
 					</table>
 				</div>
-			</MBox>
+			</ModalShell>
 
-			{/* ============ M29: Profit Access & Permissions ============ */}
-			<MBox
-				id="profitAccessModal"
-				active={active}
+			{/* ====================================================================
+			   28. PROFIT PERMISSIONS & ACCESS
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("profitAccessModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-shield-check me-2"
-							style={{ color: "var(--pm-primary-light)" }}
-						/>
-						Profit Permissions &amp; Access
-					</>
-				}
-				footer={actionFooter(
-					"profitAccessModal",
-					"Request Access",
-					"Access request submitted — pending approval by Paymo.",
-					undefined,
-				)}
+				iconCls="bi bi-shield-check"
+				title="Profit Permissions & Access"
+				submitLabel="Request Access"
+				successMsg="Access request submitted — pending approval by Paymo."
 			>
-				{actionBody(
-					"profitAccessModal",
-					<>
-						{(
-							[
-								["Channel profits to Business Wallet", "Auto-deliver to KES Business Wallet", true],
-								["Auto-deliver micro-profits (≥ KES 2)", "Instant delivery on every charge", true],
-								["Route profits to external M-Pesa", "Deliver to 0712…890 on schedule", false],
-								["Withdraw profit pot to linked bank", "Equity Bank • 01-2345678-0", false],
-							] as const
-						).map(([scope, desc, granted]) => (
-							<div className={styles.sr} key={scope}>
-								<div className="d-flex align-items-center gap-2">
-									<div
-										className={styles.permDot}
-										style={{
-											background: granted
-												? "var(--pm-primary)"
-												: "var(--pm-warning)",
-										}}
-									/>
-									<div>
-										<strong>{scope}</strong>
-										<div className={styles.mutedSmall}>{desc}</div>
-									</div>
-								</div>
-								{granted ? (
-									<span className={`${styles.badge} ${styles.badgeS}`}>
-										Granted
-									</span>
-								) : (
-									<span className={`${styles.badge} ${styles.badgeW}`}>
-										Pending
-									</span>
-								)}
-							</div>
-						))}
-					</>,
-				)}
-			</MBox>
-
-			{/* ============ M30: Promo Campaign ============ */}
-			<MBox
-				id="promoModal"
-				active={active}
-				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-megaphone me-2"
-							style={{ color: "var(--pm-warning)" }}
-						/>
-						Promo &amp; Discount Campaign
-					</>
-				}
-				footer={actionFooter(
-					"promoModal",
-					"Launch Promo",
-					"Promo launched — 0% fees for 5 new buyers this month.",
-					"PRM-20250808-2210",
-				)}
-			>
-				{actionBody(
-					"promoModal",
-					<>
-						<div className="mb-3">
-							<label className={styles.fl}>Campaign Name</label>
-							<input
-								className={styles.fc}
-								defaultValue="0% fees — new buyers month"
+				{(
+					[
+						[
+							"Channel profits to Business Wallet",
+							"Auto-deliver to KES Business Wallet",
+							true,
+						],
+						[
+							"Auto-deliver micro-profits (≥ KES 2)",
+							"Instant delivery on every charge",
+							true,
+						],
+						[
+							"Route profits to external M-Pesa",
+							"Deliver to 0712…890 on schedule",
+							false,
+						],
+						[
+							"Withdraw profit pot to linked bank",
+							"Equity Bank • 01-2345678-0",
+							false,
+						],
+					] as const
+				).map(([scope, desc, granted]) => (
+					<div className={styles.sr} key={scope}>
+						<div className="d-flex align-items-center gap-2">
+							<span
+								className={`${styles.permDot} ${
+									granted ? styles.permOk : styles.permPending
+								}`}
 							/>
-						</div>
-						<div className="row g-3">
-							<div className="col-md-6">
-								<label className={styles.fl}>Discount</label>
-								<select className={styles.fc}>
-									<option>0% charge (absorb cost)</option>
-									<option>50% off your charge</option>
-									<option>Bulk rebate (10+ orders)</option>
-								</select>
-							</div>
-							<div className="col-md-6">
-								<label className={styles.fl}>Business</label>
-								<select className={styles.fc}>
-									<option>Land Buyers LTD</option>
-									<option>Company 2</option>
-								</select>
+							<div>
+								<strong>{scope}</strong>
+								<div className={styles.mutedSmall}>{desc}</div>
 							</div>
 						</div>
-						<div className="mb-3 mt-3">
-							<label className={styles.fl}>End Date</label>
-							<input type="date" className={styles.fc} defaultValue="2025-08-31" />
-						</div>
-						<div className={`${styles.summaryBoxInfo} mb-3`} style={{ fontSize: 12 }}>
-							<i className="bi bi-graph-up me-1" /> Typical lift: 12% more buyers —
-							forecast +KES 210K extra volume this month.
-						</div>
-					</>,
-				)}
-			</MBox>
+						{granted ? (
+							<span className={`${s.badge} ${s.badgeSuccess}`}>Granted</span>
+						) : (
+							<span className={`${s.badge} ${s.badgeWarning}`}>Pending</span>
+						)}
+					</div>
+				))}
+			</SimpleModal>
 
-			{/* ============ M31: Fee Model Detail ============ */}
-			<MBox
-				id="feeModelDetailModal"
-				active={active}
+			{/* ====================================================================
+			   29. PROMO & DISCOUNT CAMPAIGN
+			   ==================================================================== */}
+			<SimpleModal
+				show={isOpen("promoModal")}
 				onClose={onClose}
-				title={
-					<>
-						<i
-							className="bi bi-grid-3x3-gap me-2"
-							style={{ color: "var(--pm-info)" }}
+				iconCls="bi bi-megaphone"
+				title="Promo & Discount Campaign"
+				submitLabel="Launch Promo"
+				successMsg="Promo launched — 0% fees for 5 new buyers this month. Ref PRM-20250808-2210"
+			>
+				<div className="mb-3">
+					<label className={s.fieldLabel} htmlFor="promo-name">
+						Campaign Name
+					</label>
+					<input
+						id="promo-name"
+						className={s.field}
+						defaultValue="0% fees — new buyers month"
+					/>
+				</div>
+				<div className="row g-3">
+					<div className="col-md-6">
+						<SelectField
+							label="Discount"
+							options={[
+								"0% charge (absorb cost)",
+								"50% off your charge",
+								"Bulk rebate (10+ orders)",
+							]}
 						/>
-						Fee Model — Percentage
-					</>
-				}
+					</div>
+					<div className="col-md-6">
+						<SelectField
+							label="Business"
+							options={["Land Buyers LTD", "Company 2"]}
+						/>
+					</div>
+				</div>
+				<div className="mb-3 mt-3">
+					<label className={s.fieldLabel} htmlFor="promo-end">
+						End Date
+					</label>
+					<input
+						id="promo-end"
+						type="date"
+						className={s.field}
+						defaultValue="2025-08-31"
+					/>
+				</div>
+				<div className={`${s.hintBox} ${s.hintBoxSuccess}`}>
+					<i className="bi bi-graph-up" />
+					<span>
+						Typical lift: 12% more buyers — forecast +KES 210K extra volume.
+					</span>
+				</div>
+			</SimpleModal>
+
+			{/* ====================================================================
+			   30. FEE MODEL DETAIL
+			   ==================================================================== */}
+			<ModalShell
+				show={isOpen("feeModelDetailModal")}
+				onClose={onClose}
+				iconCls="bi bi-grid-3x3-gap"
+				title="Fee Model — Percentage"
 				footer={
 					<>
-						<button className={styles.btnPm} onClick={onClose}>
+						<button
+							type="button"
+							className={`${s.btn} ${s.btnSecondary}`}
+							onClick={onClose}
+						>
 							Close
 						</button>
 						<button
-							className={`${styles.btnPm} ${styles.btnPmP}`}
+							type="button"
+							className={`${s.btn} ${s.btnPrimary}`}
 							onClick={() => onOpen("addFeeRuleModal")}
 						>
 							Apply to Business
@@ -2381,18 +1923,24 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 					</>
 				}
 			>
-				<div className={`${styles.summaryBox} mb-3`} style={{ fontSize: 13 }}>
-					<BoxRow label="How it works" value="% of each transaction" />
-					<BoxRow label="Example" value="KES 50,000 order × 2.0% = KES 1,000 charge" />
-					<BoxRow label="PayMo fee" value="KES 723 deducted" />
-					<BoxRow label="You keep" value="KES 277 delivered instantly" last />
+				<div className={`${styles.summaryBox} mb-3`}>
+					<ReviewRow label="How it works" value="% of each transaction" />
+					<ReviewRow
+						label="Example"
+						value="KES 50,000 order × 2.0% = KES 1,000 charge"
+					/>
+					<ReviewRow label="PayMo fee" value="KES 723 deducted" />
+					<ReviewRow label="You keep" value="KES 277 delivered instantly" />
 				</div>
-				<div className={`${styles.summaryBoxAccent} mb-3`} style={{ fontSize: 12 }}>
-					<i className="bi bi-lightbulb me-1" /> Best for low-value, high-volume
-					businesses like Company 2 (209 daily orders).
+				<div className={`${s.hintBox} ${s.hintBoxSuccess} mb-3`}>
+					<i className="bi bi-lightbulb" />
+					<span>
+						Best for low-value, high-volume businesses like Company 2 (209 daily
+						orders).
+					</span>
 				</div>
-				<div className="table-responsive">
-					<table className={styles.tbl}>
+				<div className={s.tableWrap}>
+					<table className={s.table}>
 						<thead>
 							<tr>
 								<th>Band</th>
@@ -2405,14 +1953,15 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 							{[
 								["Orders < KES 50K", "2.0%", "Active"],
 								["Orders ≥ KES 50K", "1.5%", "Active"],
-							].map((r) => (
-								<tr key={r[0]}>
-									<td>{r[0]}</td>
-									<td>{r[1]}</td>
-									<td>{r[2]}</td>
+							].map(([band, rate, status]) => (
+								<tr key={band}>
+									<td>{band}</td>
+									<td>{rate}</td>
+									<td>{status}</td>
 									<td>
 										<button
-											className={`${styles.btnPm} ${styles.btnSm}`}
+											type="button"
+											className={`${s.btn} ${s.btnSm}`}
 											onClick={() => onOpen("editCommissionModal")}
 										>
 											Edit
@@ -2423,7 +1972,7 @@ export default function FeesModals({ active, onClose, onOpen }: ModalsProps) {
 						</tbody>
 					</table>
 				</div>
-			</MBox>
+			</ModalShell>
 		</>
 	);
 }
