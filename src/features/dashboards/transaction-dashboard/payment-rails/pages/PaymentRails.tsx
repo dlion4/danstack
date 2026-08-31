@@ -12,7 +12,12 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
+import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import type {
+	AttentionItem as DrawerAttentionItem,
+	QuickActionItem,
+} from "../../shared/data/attentionFeed";
 import {
 	type PaymentRailsData,
 	PaymentRailsModals,
@@ -661,21 +666,6 @@ const nostroStatusMeta: Record<
 	paused: { label: "Paused", badge: styles.badgeNeutral },
 };
 
-const severityMeta: Record<
-	AttentionItem["severity"],
-	{ icon: string; cls: string }
-> = {
-	danger: { icon: "bi-exclamation-octagon-fill", cls: styles.iconDanger },
-	warn: { icon: "bi-exclamation-triangle-fill", cls: styles.iconAmber },
-	info: { icon: "bi-info-circle-fill", cls: styles.iconBlue },
-};
-
-const priorityMeta: Record<Priority, { label: string; badge: string }> = {
-	high: { label: "High priority", badge: styles.badgeDanger },
-	medium: { label: "Medium priority", badge: styles.badgeWarn },
-	low: { label: "Low priority", badge: styles.badgeInfo },
-};
-
 function railStatusOf(rail: RailConfig): RailStatus {
 	if (!rail.enabled) return "disabled";
 	if (rail.failureRate >= 2) return "degraded";
@@ -692,6 +682,7 @@ export default function PaymentRails() {
 	});
 	const c = remoteData ?? initialMockData;
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [activeBank, setActiveBank] = useState<string | null>(null);
 	const [activeRail, setActiveRail] = useState<string | null>(null);
 	const [toasts, setToasts] = useState<
@@ -727,24 +718,6 @@ export default function PaymentRails() {
 		go("railConfigModal");
 	};
 
-	const openAttention = (item: AttentionItem) => {
-		if (item.action === "bankHealthModal" && item.bank) {
-			openBankHealth(item.bank);
-			return;
-		}
-		if (item.action === "railConfigModal") {
-			setActiveRail("swift");
-			go("railConfigModal");
-			return;
-		}
-		if (item.action === "nostroModal") {
-			setActiveRail(null);
-			go("nostroModal");
-			return;
-		}
-		go("attentionModal");
-	};
-
 	const applySuggestion = (sug: AiSuggestion) => {
 		if (sug.action === "nostroModal") {
 			setActiveBank(null);
@@ -754,6 +727,92 @@ export default function PaymentRails() {
 		}
 		pushToast(`Applied suggestion: ${sug.title}`);
 	};
+
+	const handleDrawerAction = (modal: string) => {
+		if (!modal) return;
+		if (modal.startsWith("suggestion:")) {
+			const suggestion = c.suggestions.find(
+				(sug) => sug.action === modal.slice("suggestion:".length),
+			);
+			if (suggestion) applySuggestion(suggestion);
+			return;
+		}
+		if (modal.startsWith("attention:bank:")) {
+			openBankHealth(modal.slice("attention:bank:".length));
+			return;
+		}
+		if (modal === "attention:rail") {
+			setActiveRail("swift");
+			go("railConfigModal");
+			return;
+		}
+		if (modal === "attention:nostro") {
+			setActiveRail(null);
+			go("nostroModal");
+			return;
+		}
+		go(modal);
+	};
+
+	const severityAttention: Record<
+		AttentionItem["severity"],
+		{ icon: string; iconBg: string; iconColor: string }
+	> = {
+		danger: {
+			icon: "bi-exclamation-octagon-fill",
+			iconBg: "var(--pr-danger-soft)",
+			iconColor: "var(--pr-danger)",
+		},
+		warn: {
+			icon: "bi-exclamation-triangle-fill",
+			iconBg: "var(--pr-warning-soft)",
+			iconColor: "var(--pr-warning)",
+		},
+		info: {
+			icon: "bi-info-circle-fill",
+			iconBg: "var(--pr-info-soft)",
+			iconColor: "var(--pr-info)",
+		},
+	};
+	const drawerAttention = c.attention.map((item): DrawerAttentionItem => {
+		const sev = severityAttention[item.severity];
+		const modal =
+			item.action === "bankHealthModal"
+				? `attention:bank:${item.bank ?? ""}`
+				: item.action === "railConfigModal"
+					? "attention:rail"
+					: item.action === "nostroModal"
+						? "attention:nostro"
+						: "attentionModal";
+		return {
+			icon: sev.icon.replace(/^bi-/, ""),
+			iconBg: sev.iconBg,
+			iconColor: sev.iconColor,
+			title: item.title,
+			sub: item.detail,
+			actionLabel: "Resolve",
+			modal,
+		};
+	});
+	const drawerSuggestions = c.suggestions.map(
+		(sug): DrawerAttentionItem => ({
+			icon: "lightbulb",
+			iconBg: "var(--pr-green-soft)",
+			iconColor: "var(--pr-green-dark)",
+			title: sug.title,
+			sub: `${sug.recommendation} · ${sug.savings}`,
+			actionLabel: "Apply",
+			modal: `suggestion:${sug.action}`,
+		}),
+	);
+	const drawerQuickActions = c.quickActions.map(
+		(action): QuickActionItem => ({
+			icon: action.icon.replace(/^bi-/, ""),
+			iconColor: "var(--pr-green)",
+			label: action.label,
+			modal: action.modal,
+		}),
+	);
 
 	const scrollTo = (sectionId: string) => {
 		document
@@ -959,127 +1018,54 @@ export default function PaymentRails() {
 						<SectionHeading
 							index="01"
 							id="rails-sec-queues"
-							title="Attention, suggestions & quick actions"
-							description="Open operational items, AI routing recommendations and the actions treasury uses most — each opens the matching workflow."
+							title="Action centre"
+							description="Resolve exceptions first, then use guided suggestions to improve transfer outcomes."
+							action={
+								<button
+									type="button"
+									className={styles.textButton}
+									onClick={() => setDrawerOpen(true)}
+								>
+									<i className="bi-columns-gap" aria-hidden="true" /> Review
+									queue
+								</button>
+							}
 						/>
-						<div className={styles.queueGrid}>
-							<div className={cx(styles.card, styles.queueCard)}>
-								<div className={styles.cardHead}>
-									<div>
-										<span className={styles.cardKicker}>Operations queue</span>
-										<h3>
-											<i
-												className="bi-exclamation-triangle"
-												aria-hidden="true"
-											/>{" "}
-											Attention required
-										</h3>
-										<p>{c.attention.length} items need a decision today.</p>
-									</div>
-								</div>
-								{c.attention.map((item) => {
-									const sev = severityMeta[item.severity];
-									return (
-										<div className={styles.actionRow} key={item.id}>
-											<div className={styles.actionLead}>
-												<span className={cx(styles.actionIcon, sev.cls)}>
-													<i className={sev.icon} aria-hidden="true" />
-												</span>
-												<div>
-													<div className={styles.actionTitle}>{item.title}</div>
-													<div className={styles.actionSub}>{item.detail}</div>
-												</div>
-											</div>
-											<button
-												type="button"
-												className={styles.textButton}
-												onClick={() => openAttention(item)}
-											>
-												Resolve{" "}
-												<i className="bi-arrow-right" aria-hidden="true" />
-											</button>
-										</div>
-									);
-								})}
+						<div className={cx(styles.card, styles.actionCentreCard)}>
+							<div className={styles.actionCentreIcon}>
+								<i className="bi-exclamation-octagon" aria-hidden="true" />
 							</div>
-
-							<div className={cx(styles.card, styles.queueCard)}>
-								<div className={styles.cardHead}>
-									<div>
-										<span className={styles.cardKicker}>
-											AI routing copilot
-										</span>
-										<h3>
-											<i className="bi-stars" aria-hidden="true" /> Smart
-											suggestions
-										</h3>
-										<p>Routing-engine recommendations based on today's flow.</p>
-									</div>
-								</div>
-								{c.suggestions.map((sug) => (
-									<div className={styles.actionRow} key={sug.id}>
-										<div className={styles.actionLead}>
-											<span className={cx(styles.actionIcon, styles.iconGreen)}>
-												<i className="bi-lightbulb" aria-hidden="true" />
-											</span>
-											<div>
-												<div className={styles.actionTitle}>
-													<span
-														className={cx(
-															styles.badge,
-															priorityMeta[sug.priority].badge,
-														)}
-														style={{ marginRight: 6 }}
-													>
-														{priorityMeta[sug.priority].label}
-													</span>
-													{sug.title}
-												</div>
-												<div className={styles.actionSub}>
-													{sug.recommendation}
-													<br />
-													<strong style={{ color: "var(--pr-green-dark)" }}>
-														{sug.savings}
-													</strong>
-												</div>
-											</div>
-										</div>
-										<button
-											type="button"
-											className={styles.textButton}
-											onClick={() => applySuggestion(sug)}
-										>
-											Apply <i className="bi-check2" aria-hidden="true" />
-										</button>
-									</div>
-								))}
+							<div className={styles.actionCentreCopy}>
+								<span className={styles.cardKicker}>Action centre</span>
+								<h3>Attention, suggestions &amp; quick actions</h3>
+								<p>
+									Open operational items, AI routing recommendations and the
+									actions treasury uses most — each opens the matching workflow.
+								</p>
 							</div>
-
-							<div className={cx(styles.card, styles.queueCard)}>
-								<div className={styles.cardHead}>
-									<div>
-										<span className={styles.cardKicker}>Workspace</span>
-										<h3>
-											<i className="bi-lightning-charge" aria-hidden="true" />{" "}
-											Quick actions
-										</h3>
-										<p>Jump straight into a rail workflow.</p>
-									</div>
+							<div className={styles.actionCentreStats}>
+								<div className={styles.actionCentreStat}>
+									<strong>{c.attention.length}</strong>
+									<span>Attention</span>
 								</div>
-								<div className={styles.qaGrid}>
-									{c.quickActions.map((qa) => (
-										<button
-											type="button"
-											key={qa.id}
-											className={styles.qaBtn}
-											onClick={() => go(qa.modal)}
-										>
-											<i className={qa.icon} aria-hidden="true" />
-											{qa.label}
-											<small>{qa.detail}</small>
-										</button>
-									))}
+								<div className={styles.actionCentreStat}>
+									<strong>{c.suggestions.length}</strong>
+									<span>Suggestions</span>
 								</div>
+								<div className={styles.actionCentreStat}>
+									<strong>{c.quickActions.length}</strong>
+									<span>Shortcuts</span>
+								</div>
+							</div>
+							<div className={styles.actionCentreActions}>
+								<button
+									type="button"
+									className={styles.textButton}
+									onClick={() => setDrawerOpen(true)}
+								>
+									<i className="bi-columns-gap" aria-hidden="true" /> Open
+									drawer
+								</button>
 							</div>
 						</div>
 					</section>
@@ -1881,6 +1867,17 @@ export default function PaymentRails() {
 				))}
 			</div>
 
+			<AttentionDrawer
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				onAction={handleDrawerAction}
+				pageName="Payment rails"
+				pageIcon="bi-diagram-3"
+				attention={drawerAttention}
+				suggestions={drawerSuggestions}
+				quickActions={drawerQuickActions}
+				description="Open operational items, AI routing recommendations and the actions treasury uses most — each opens the matching workflow."
+			/>
 			<PaymentRailsModals data={modalData} />
 		</div>
 	);
@@ -1928,11 +1925,13 @@ function SectionHeading({
 	id,
 	title,
 	description,
+	action,
 }: {
 	index: string;
 	id: string;
 	title: string;
 	description: string;
+	action?: ReactNode;
 }) {
 	return (
 		<div className={styles.sectionHeading}>
@@ -1943,6 +1942,7 @@ function SectionHeading({
 				<h2 id={id}>{title}</h2>
 				<p>{description}</p>
 			</div>
+			{action ? <div className={styles.sectionAction}>{action}</div> : null}
 		</div>
 	);
 }

@@ -3,6 +3,11 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import type {
+	AttentionItem,
+	QuickActionItem,
+} from "../../shared/data/attentionFeed";
 import CustomersModals from "../components/CustomersModals";
 import styles from "../styles/customers.module.css";
 
@@ -31,8 +36,19 @@ interface Customer {
 	county: string;
 	town: string;
 	address: string;
-	kyc: { status: "Verified" | "Pending" | "Expiring"; level: 1 | 2 | 3; docs: string[]; expiry: string };
-	payment: { mpesa?: string; card?: string; bank?: string; wallet?: string; primary: string };
+	kyc: {
+		status: "Verified" | "Pending" | "Expiring";
+		level: 1 | 2 | 3;
+		docs: string[];
+		expiry: string;
+	};
+	payment: {
+		mpesa?: string;
+		card?: string;
+		bank?: string;
+		wallet?: string;
+		primary: string;
+	};
 	billing: {
 		model: "One-off" | "Recurring" | "Auto-bill";
 		plan: string;
@@ -43,7 +59,11 @@ interface Customer {
 		failed: number;
 		status: "Active" | "Paused";
 	};
-	reminder: { last: string; channel: "SMS" | "Email" | "WhatsApp"; count: number };
+	reminder: {
+		last: string;
+		channel: "SMS" | "Email" | "WhatsApp";
+		count: number;
+	};
 	lastPay: string;
 	refs: string[];
 }
@@ -119,11 +139,38 @@ interface CustomersConfig {
 	quickActions: { icon: string; label: string; color: string; modal: string }[];
 	customers: Customer[];
 	plans: Plan[];
-	schedule: { day: string; expected: string; actual: string; pct: number; tone: string }[];
-	paymentMethods: { customer: string; mpesa?: string; card?: string; bank?: string; wallet?: string; primary: string; verified: boolean }[];
-	kycQueue: { customer: string; business: string; submitted: string; docs: string; risk: string; tone: BadgeTone }[];
+	schedule: {
+		day: string;
+		expected: string;
+		actual: string;
+		pct: number;
+		tone: string;
+	}[];
+	paymentMethods: {
+		customer: string;
+		mpesa?: string;
+		card?: string;
+		bank?: string;
+		wallet?: string;
+		primary: string;
+		verified: boolean;
+	}[];
+	kycQueue: {
+		customer: string;
+		business: string;
+		submitted: string;
+		docs: string;
+		risk: string;
+		tone: BadgeTone;
+	}[];
 	remTriggers: RemTrigger[];
-	commLog: { to: string; channel: "SMS" | "Email" | "WhatsApp"; subject: string; when: string; status: string }[];
+	commLog: {
+		to: string;
+		channel: "SMS" | "Email" | "WhatsApp";
+		subject: string;
+		when: string;
+		status: string;
+	}[];
 	refunds: RefundRow[];
 	perms: PermRow[];
 	tickets: TicketRow[];
@@ -155,7 +202,11 @@ const initialMockData: CustomersConfig = {
 			label: "RECURRING PLANS",
 			labelColor: "var(--pm-info)",
 			value: "44",
-			badge: { icon: "bi-calendar-check", text: "weekly 30 · monthly 14", tone: "badgeI" },
+			badge: {
+				icon: "bi-calendar-check",
+				text: "weekly 30 · monthly 14",
+				tone: "badgeI",
+			},
 			lines: ["KES 2.84M billed / week", "3 paused this month"],
 		},
 		{
@@ -164,7 +215,11 @@ const initialMockData: CustomersConfig = {
 			label: "KYC VERIFIED",
 			labelColor: "var(--pm-info)",
 			value: "100%",
-			badge: { icon: "bi-shield-check", text: "4 pending review", tone: "badgeW" },
+			badge: {
+				icon: "bi-shield-check",
+				text: "4 pending review",
+				tone: "badgeW",
+			},
 			lines: ["Level 2 — 201 customers", "Level 3 — 38 customers"],
 		},
 		{
@@ -173,7 +228,11 @@ const initialMockData: CustomersConfig = {
 			label: "NEXT 7-DAY BILLINGS",
 			labelColor: "var(--pm-warning)",
 			value: "KES 2.84M",
-			badge: { icon: "bi-cash-stack", text: "38 due this week", tone: "badgeW" },
+			badge: {
+				icon: "bi-cash-stack",
+				text: "38 due this week",
+				tone: "badgeW",
+			},
 			lines: ["28 Land Buyers installments", "10 Company 2 orders"],
 		},
 		{
@@ -182,7 +241,11 @@ const initialMockData: CustomersConfig = {
 			label: "FAILED PAYMENTS (30D)",
 			labelColor: "var(--pm-danger)",
 			value: "12",
-			badge: { icon: "bi-exclamation-triangle", text: "KES 96K · 4 reminders", tone: "badgeD" },
+			badge: {
+				icon: "bi-exclamation-triangle",
+				text: "KES 96K · 4 reminders",
+				tone: "badgeD",
+			},
 			lines: ["8 insufficient funds", "4 declined / expired"],
 			attention: true,
 			bars: [
@@ -196,7 +259,11 @@ const initialMockData: CustomersConfig = {
 			label: "REFUNDS THIS MONTH",
 			labelColor: "var(--pm-purple)",
 			value: "KES 41K",
-			badge: { icon: "bi-arrow-counterclockwise", text: "8 issued", tone: "badgeP" },
+			badge: {
+				icon: "bi-arrow-counterclockwise",
+				text: "8 issued",
+				tone: "badgeP",
+			},
 			lines: ["5 full · 3 partial", "avg KES 5,125"],
 			bars: [
 				{ label: "5 full refunds", pct: 63, color: "var(--pm-purple)" },
@@ -264,14 +331,54 @@ const initialMockData: CustomersConfig = {
 		},
 	],
 	quickActions: [
-		{ icon: "bi-person-plus", label: "Onboard", color: "var(--pm-accent)", modal: "onboardCustomerModal" },
-		{ icon: "bi-calendar-check", label: "New Billing Plan", color: "var(--pm-info)", modal: "openAccountModal" },
-		{ icon: "bi-bell", label: "Send Reminder", color: "var(--pm-warning)", modal: "sendReminderModal" },
-		{ icon: "bi-arrow-counterclockwise", label: "Issue Refund", color: "var(--pm-purple)", modal: "issueRefundModal" },
-		{ icon: "bi-upload", label: "Bulk Import", color: "var(--pm-muted)", modal: "bulkUploadModal" },
-		{ icon: "bi-shield-check", label: "KYC Queue", color: "var(--pm-info)", modal: "kycHealthModal" },
-		{ icon: "bi-file-earmark-text", label: "Statements", color: "var(--pm-accent)", modal: "statementModal" },
-		{ icon: "bi-headset", label: "Support", color: "var(--pm-warning)", modal: "supportTicketsModal" },
+		{
+			icon: "bi-person-plus",
+			label: "Onboard",
+			color: "var(--pm-accent)",
+			modal: "onboardCustomerModal",
+		},
+		{
+			icon: "bi-calendar-check",
+			label: "New Billing Plan",
+			color: "var(--pm-info)",
+			modal: "openAccountModal",
+		},
+		{
+			icon: "bi-bell",
+			label: "Send Reminder",
+			color: "var(--pm-warning)",
+			modal: "sendReminderModal",
+		},
+		{
+			icon: "bi-arrow-counterclockwise",
+			label: "Issue Refund",
+			color: "var(--pm-purple)",
+			modal: "issueRefundModal",
+		},
+		{
+			icon: "bi-upload",
+			label: "Bulk Import",
+			color: "var(--pm-muted)",
+			modal: "bulkUploadModal",
+		},
+		{
+			icon: "bi-shield-check",
+			label: "KYC Queue",
+			color: "var(--pm-info)",
+			modal: "kycHealthModal",
+		},
+		{
+			icon: "bi-file-earmark-text",
+			label: "Statements",
+			color: "var(--pm-accent)",
+			modal: "statementModal",
+		},
+		{
+			icon: "bi-headset",
+			label: "Support",
+			color: "var(--pm-warning)",
+			modal: "supportTicketsModal",
+		},
 	],
 	customers: [
 		{
@@ -288,7 +395,12 @@ const initialMockData: CustomersConfig = {
 			county: "Kiambu",
 			town: "Ruiru",
 			address: "Plot 14, Kamiti Rd",
-			kyc: { status: "Verified", level: 2, docs: ["ID Front", "ID Back"], expiry: "2027-03-01" },
+			kyc: {
+				status: "Verified",
+				level: 2,
+				docs: ["ID Front", "ID Back"],
+				expiry: "2027-03-01",
+			},
 			payment: { mpesa: "M-Pesa •••678", primary: "M-Pesa •••678" },
 			billing: {
 				model: "Recurring",
@@ -318,8 +430,17 @@ const initialMockData: CustomersConfig = {
 			county: "Mombasa",
 			town: "Nyali",
 			address: "Apartment 3B, Links Rd",
-			kyc: { status: "Verified", level: 3, docs: ["ID Front", "Passport", "Utility"], expiry: "2028-11-12" },
-			payment: { card: "Visa ••4412", mpesa: "M-Pesa •••114", primary: "Visa ••4412" },
+			kyc: {
+				status: "Verified",
+				level: 3,
+				docs: ["ID Front", "Passport", "Utility"],
+				expiry: "2028-11-12",
+			},
+			payment: {
+				card: "Visa ••4412",
+				mpesa: "M-Pesa •••114",
+				primary: "Visa ••4412",
+			},
 			billing: {
 				model: "Auto-bill",
 				plan: "Monthly installment",
@@ -348,7 +469,12 @@ const initialMockData: CustomersConfig = {
 			county: "Nairobi",
 			town: "Kasarani",
 			address: "Mwiki, Gate 5",
-			kyc: { status: "Verified", level: 2, docs: ["ID Front", "ID Back"], expiry: "2026-05-20" },
+			kyc: {
+				status: "Verified",
+				level: 2,
+				docs: ["ID Front", "ID Back"],
+				expiry: "2026-05-20",
+			},
 			payment: { mpesa: "M-Pesa •••980", primary: "M-Pesa •••980" },
 			billing: {
 				model: "Recurring",
@@ -378,7 +504,12 @@ const initialMockData: CustomersConfig = {
 			county: "Nakuru",
 			town: "Milimani",
 			address: "Plot 8, Ngata Rd",
-			kyc: { status: "Pending", level: 1, docs: ["ID Front"], expiry: "2026-09-02" },
+			kyc: {
+				status: "Pending",
+				level: 1,
+				docs: ["ID Front"],
+				expiry: "2026-09-02",
+			},
 			payment: { mpesa: "M-Pesa •••316", primary: "M-Pesa •••316" },
 			billing: {
 				model: "Recurring",
@@ -408,8 +539,17 @@ const initialMockData: CustomersConfig = {
 			county: "Nairobi",
 			town: "Industrial Area",
 			address: "Warehouse 12, Likoni Rd",
-			kyc: { status: "Verified", level: 3, docs: ["CR12", "Directors", "Tax PIN"], expiry: "2027-01-15" },
-			payment: { bank: "Equity ••4521", mpesa: "M-Pesa •••208", primary: "Bank ••4521" },
+			kyc: {
+				status: "Verified",
+				level: 3,
+				docs: ["CR12", "Directors", "Tax PIN"],
+				expiry: "2027-01-15",
+			},
+			payment: {
+				bank: "Equity ••4521",
+				mpesa: "M-Pesa •••208",
+				primary: "Bank ••4521",
+			},
 			billing: {
 				model: "Auto-bill",
 				plan: "Daily orders",
@@ -438,7 +578,12 @@ const initialMockData: CustomersConfig = {
 			county: "Kisumu",
 			town: "CBD",
 			address: "Oginga Odinga St, Shop 3",
-			kyc: { status: "Verified", level: 2, docs: ["ID", "Business Permit"], expiry: "2026-12-08" },
+			kyc: {
+				status: "Verified",
+				level: 2,
+				docs: ["ID", "Business Permit"],
+				expiry: "2026-12-08",
+			},
 			payment: { mpesa: "M-Pesa •••903", primary: "M-Pesa •••903" },
 			billing: {
 				model: "One-off",
@@ -468,8 +613,17 @@ const initialMockData: CustomersConfig = {
 			county: "Nairobi",
 			town: "Westlands",
 			address: "Delta Towers, 2nd Flr",
-			kyc: { status: "Verified", level: 2, docs: ["ID", "Tax PIN"], expiry: "2027-07-21" },
-			payment: { card: "Visa ••8830", wallet: "Virtual Wallet", primary: "Visa ••8830" },
+			kyc: {
+				status: "Verified",
+				level: 2,
+				docs: ["ID", "Tax PIN"],
+				expiry: "2027-07-21",
+			},
+			payment: {
+				card: "Visa ••8830",
+				wallet: "Virtual Wallet",
+				primary: "Visa ••8830",
+			},
 			billing: {
 				model: "Auto-bill",
 				plan: "Monthly retainer",
@@ -498,7 +652,12 @@ const initialMockData: CustomersConfig = {
 			county: "Mombasa",
 			town: "Kongowea",
 			address: "Market St, Stall 21",
-			kyc: { status: "Expiring", level: 2, docs: ["ID", "Permit"], expiry: "2025-08-14" },
+			kyc: {
+				status: "Expiring",
+				level: 2,
+				docs: ["ID", "Permit"],
+				expiry: "2025-08-14",
+			},
 			payment: { mpesa: "M-Pesa •••334", primary: "M-Pesa •••334" },
 			billing: {
 				model: "One-off",
@@ -528,8 +687,17 @@ const initialMockData: CustomersConfig = {
 			county: "Nairobi",
 			town: "Upper Hill",
 			address: "Riverside Sq, 4th Flr",
-			kyc: { status: "Verified", level: 3, docs: ["CR12", "Directors", "Compliance Q", "Bank Ref"], expiry: "2028-02-09" },
-			payment: { bank: "Co-op ••7740", wallet: "Business Wallet", primary: "Bank ••7740" },
+			kyc: {
+				status: "Verified",
+				level: 3,
+				docs: ["CR12", "Directors", "Compliance Q", "Bank Ref"],
+				expiry: "2028-02-09",
+			},
+			payment: {
+				bank: "Co-op ••7740",
+				wallet: "Business Wallet",
+				primary: "Bank ••7740",
+			},
 			billing: {
 				model: "Recurring",
 				plan: "Monthly PSP settlement",
@@ -558,7 +726,12 @@ const initialMockData: CustomersConfig = {
 			county: "Nakuru",
 			town: "CBD",
 			address: "Kenyatta Ave, Ground Flr",
-			kyc: { status: "Verified", level: 2, docs: ["ID", "Permit"], expiry: "2026-04-30" },
+			kyc: {
+				status: "Verified",
+				level: 2,
+				docs: ["ID", "Permit"],
+				expiry: "2026-04-30",
+			},
 			payment: { mpesa: "M-Pesa •••619", primary: "M-Pesa •••619" },
 			billing: {
 				model: "Auto-bill",
@@ -576,74 +749,407 @@ const initialMockData: CustomersConfig = {
 		},
 	],
 	plans: [
-		{ customer: "John Ochieng", business: "Land Buyers LTD", amount: "KES 1,250", frequency: "Weekly · 12 wks", duration: "Jul 30 — Oct 22", nextDue: "Fri 01 Aug", status: "Active", failed: 0 },
-		{ customer: "Amina Hassan", business: "Land Buyers LTD", amount: "KES 18,500", frequency: "Monthly · 24 mo", duration: "Apr 24 — Mar 26", nextDue: "01 Aug", status: "Active", failed: 1 },
-		{ customer: "Peter Njoroge", business: "Land Buyers LTD", amount: "KES 2,400", frequency: "Weekly · 8 wks", duration: "Jul 12 — Sep 06", nextDue: "Thu 31 Jul", status: "Active", failed: 2 },
-		{ customer: "Nia Textiles", business: "Company 2", amount: "KES 214,300", frequency: "Daily · open", duration: "Continuous", nextDue: "Daily", status: "Active", failed: 1 },
-		{ customer: "Zawadi Beauty", business: "Company 2", amount: "KES 48,000", frequency: "Monthly", duration: "Jan — Dec 2025", nextDue: "05 Aug", status: "Active", failed: 0 },
-		{ customer: "Sunrise Restaurant", business: "Company 2", amount: "KES 12,400", frequency: "Daily", duration: "Continuous", nextDue: "Daily", status: "Paused", failed: 3 },
-		{ customer: "Grace Wanjiku Ltd", business: "Land Buyers LTD", amount: "KES 340,000", frequency: "Monthly", duration: "Ongoing", nextDue: "01 Aug", status: "Active", failed: 0 },
+		{
+			customer: "John Ochieng",
+			business: "Land Buyers LTD",
+			amount: "KES 1,250",
+			frequency: "Weekly · 12 wks",
+			duration: "Jul 30 — Oct 22",
+			nextDue: "Fri 01 Aug",
+			status: "Active",
+			failed: 0,
+		},
+		{
+			customer: "Amina Hassan",
+			business: "Land Buyers LTD",
+			amount: "KES 18,500",
+			frequency: "Monthly · 24 mo",
+			duration: "Apr 24 — Mar 26",
+			nextDue: "01 Aug",
+			status: "Active",
+			failed: 1,
+		},
+		{
+			customer: "Peter Njoroge",
+			business: "Land Buyers LTD",
+			amount: "KES 2,400",
+			frequency: "Weekly · 8 wks",
+			duration: "Jul 12 — Sep 06",
+			nextDue: "Thu 31 Jul",
+			status: "Active",
+			failed: 2,
+		},
+		{
+			customer: "Nia Textiles",
+			business: "Company 2",
+			amount: "KES 214,300",
+			frequency: "Daily · open",
+			duration: "Continuous",
+			nextDue: "Daily",
+			status: "Active",
+			failed: 1,
+		},
+		{
+			customer: "Zawadi Beauty",
+			business: "Company 2",
+			amount: "KES 48,000",
+			frequency: "Monthly",
+			duration: "Jan — Dec 2025",
+			nextDue: "05 Aug",
+			status: "Active",
+			failed: 0,
+		},
+		{
+			customer: "Sunrise Restaurant",
+			business: "Company 2",
+			amount: "KES 12,400",
+			frequency: "Daily",
+			duration: "Continuous",
+			nextDue: "Daily",
+			status: "Paused",
+			failed: 3,
+		},
+		{
+			customer: "Grace Wanjiku Ltd",
+			business: "Land Buyers LTD",
+			amount: "KES 340,000",
+			frequency: "Monthly",
+			duration: "Ongoing",
+			nextDue: "01 Aug",
+			status: "Active",
+			failed: 0,
+		},
 	],
 	schedule: [
-		{ day: "Mon 28", expected: "KES 402K", actual: "KES 396K", pct: 98, tone: "var(--pm-accent)" },
-		{ day: "Tue 29", expected: "KES 388K", actual: "KES 402K", pct: 104, tone: "var(--pm-accent)" },
-		{ day: "Wed 30", expected: "KES 415K", actual: "KES 381K", pct: 92, tone: "var(--pm-warning)" },
-		{ day: "Thu 31", expected: "KES 396K", actual: "KES 364K", pct: 92, tone: "var(--pm-warning)" },
-		{ day: "Fri 01", expected: "KES 428K", actual: "—", pct: 0, tone: "var(--pm-info)" },
-		{ day: "Sat 02", expected: "KES 190K", actual: "—", pct: 0, tone: "var(--pm-info)" },
-		{ day: "Sun 03", expected: "KES 132K", actual: "—", pct: 0, tone: "var(--pm-info)" },
+		{
+			day: "Mon 28",
+			expected: "KES 402K",
+			actual: "KES 396K",
+			pct: 98,
+			tone: "var(--pm-accent)",
+		},
+		{
+			day: "Tue 29",
+			expected: "KES 388K",
+			actual: "KES 402K",
+			pct: 104,
+			tone: "var(--pm-accent)",
+		},
+		{
+			day: "Wed 30",
+			expected: "KES 415K",
+			actual: "KES 381K",
+			pct: 92,
+			tone: "var(--pm-warning)",
+		},
+		{
+			day: "Thu 31",
+			expected: "KES 396K",
+			actual: "KES 364K",
+			pct: 92,
+			tone: "var(--pm-warning)",
+		},
+		{
+			day: "Fri 01",
+			expected: "KES 428K",
+			actual: "—",
+			pct: 0,
+			tone: "var(--pm-info)",
+		},
+		{
+			day: "Sat 02",
+			expected: "KES 190K",
+			actual: "—",
+			pct: 0,
+			tone: "var(--pm-info)",
+		},
+		{
+			day: "Sun 03",
+			expected: "KES 132K",
+			actual: "—",
+			pct: 0,
+			tone: "var(--pm-info)",
+		},
 	],
 	paymentMethods: [
-		{ customer: "John Ochieng", mpesa: "•••678", primary: "M-Pesa", verified: true },
-		{ customer: "Amina Hassan", mpesa: "•••114", card: "Visa ••4412", primary: "Card", verified: true },
-		{ customer: "Peter Njoroge", mpesa: "•••980", primary: "M-Pesa", verified: true },
-		{ customer: "Nia Textiles", mpesa: "•••208", bank: "Equity ••4521", primary: "Bank", verified: true },
-		{ customer: "Zawadi Beauty", card: "Visa ••8830", wallet: "Virtual Wallet", primary: "Card", verified: true },
-		{ customer: "Sunrise Restaurant", mpesa: "•••619", primary: "M-Pesa", verified: false },
-		{ customer: "Grace Wanjiku Ltd", bank: "Co-op ••7740", wallet: "Business Wallet", primary: "Bank", verified: true },
+		{
+			customer: "John Ochieng",
+			mpesa: "•••678",
+			primary: "M-Pesa",
+			verified: true,
+		},
+		{
+			customer: "Amina Hassan",
+			mpesa: "•••114",
+			card: "Visa ••4412",
+			primary: "Card",
+			verified: true,
+		},
+		{
+			customer: "Peter Njoroge",
+			mpesa: "•••980",
+			primary: "M-Pesa",
+			verified: true,
+		},
+		{
+			customer: "Nia Textiles",
+			mpesa: "•••208",
+			bank: "Equity ••4521",
+			primary: "Bank",
+			verified: true,
+		},
+		{
+			customer: "Zawadi Beauty",
+			card: "Visa ••8830",
+			wallet: "Virtual Wallet",
+			primary: "Card",
+			verified: true,
+		},
+		{
+			customer: "Sunrise Restaurant",
+			mpesa: "•••619",
+			primary: "M-Pesa",
+			verified: false,
+		},
+		{
+			customer: "Grace Wanjiku Ltd",
+			bank: "Co-op ••7740",
+			wallet: "Business Wallet",
+			primary: "Bank",
+			verified: true,
+		},
 	],
 	kycQueue: [
-		{ customer: "Ruth Wambui", business: "Land Buyers LTD", submitted: "29 Jul", docs: "ID Front", risk: "Low", tone: "badgeS" },
-		{ customer: "Malik Foodstuff", business: "Company 2", submitted: "14 Jul", docs: "ID, Permit — expiring", risk: "Medium", tone: "badgeW" },
-		{ customer: "Samuel Kipchoge", business: "Land Buyers LTD", submitted: "21 Jul", docs: "ID Front, Selfie", risk: "High", tone: "badgeD" },
+		{
+			customer: "Ruth Wambui",
+			business: "Land Buyers LTD",
+			submitted: "29 Jul",
+			docs: "ID Front",
+			risk: "Low",
+			tone: "badgeS",
+		},
+		{
+			customer: "Malik Foodstuff",
+			business: "Company 2",
+			submitted: "14 Jul",
+			docs: "ID, Permit — expiring",
+			risk: "Medium",
+			tone: "badgeW",
+		},
+		{
+			customer: "Samuel Kipchoge",
+			business: "Land Buyers LTD",
+			submitted: "21 Jul",
+			docs: "ID Front, Selfie",
+			risk: "High",
+			tone: "badgeD",
+		},
 	],
 	remTriggers: [
-		{ icon: "bi-arrow-repeat", iconBg: "var(--pm-accent-soft)", iconColor: "var(--pm-accent)", title: "Subscription / installment renewal", sub: "Auto-remind 3 days before next due date", count: "31 plans", modal: "sendReminderModal" },
-		{ icon: "bi-exclamation-triangle", iconBg: "var(--pm-danger-soft)", iconColor: "var(--pm-danger)", title: "Failed payment — insufficient funds", sub: "Retry notice + top-up instruction on 2nd failure", count: "12 this month", modal: "sendReminderModal" },
-		{ icon: "bi-pencil-square", iconBg: "var(--pm-info-soft)", iconColor: "var(--pm-info)", title: "Manual message", sub: "Compose SMS / Email / WhatsApp to any customer", count: "—", modal: "sendReminderModal" },
+		{
+			icon: "bi-arrow-repeat",
+			iconBg: "var(--pm-accent-soft)",
+			iconColor: "var(--pm-accent)",
+			title: "Subscription / installment renewal",
+			sub: "Auto-remind 3 days before next due date",
+			count: "31 plans",
+			modal: "sendReminderModal",
+		},
+		{
+			icon: "bi-exclamation-triangle",
+			iconBg: "var(--pm-danger-soft)",
+			iconColor: "var(--pm-danger)",
+			title: "Failed payment — insufficient funds",
+			sub: "Retry notice + top-up instruction on 2nd failure",
+			count: "12 this month",
+			modal: "sendReminderModal",
+		},
+		{
+			icon: "bi-pencil-square",
+			iconBg: "var(--pm-info-soft)",
+			iconColor: "var(--pm-info)",
+			title: "Manual message",
+			sub: "Compose SMS / Email / WhatsApp to any customer",
+			count: "—",
+			modal: "sendReminderModal",
+		},
 	],
 	commLog: [
-		{ to: "John Ochieng", channel: "SMS", subject: "Installment due Fri — KES 1,250", when: "27 Jun 09:00", status: "Delivered" },
-		{ to: "Amina Hassan", channel: "WhatsApp", subject: "Top-up failed — retry M-Pesa payment", when: "01 Jul 08:30", status: "Delivered" },
-		{ to: "Nia Textiles", channel: "Email", subject: "Invoice ORD-8891 & statement attached", when: "30 Jun 19:20", status: "Delivered" },
-		{ to: "Sunrise Restaurant", channel: "SMS", subject: "3rd failed attempt — update payment method", when: "29 Jun 07:55", status: "Failed" },
-		{ to: "Peter Njoroge", channel: "SMS", subject: "2nd attempt failed — KES 2,400 due", when: "24 Jun 16:40", status: "Delivered" },
+		{
+			to: "John Ochieng",
+			channel: "SMS",
+			subject: "Installment due Fri — KES 1,250",
+			when: "27 Jun 09:00",
+			status: "Delivered",
+		},
+		{
+			to: "Amina Hassan",
+			channel: "WhatsApp",
+			subject: "Top-up failed — retry M-Pesa payment",
+			when: "01 Jul 08:30",
+			status: "Delivered",
+		},
+		{
+			to: "Nia Textiles",
+			channel: "Email",
+			subject: "Invoice ORD-8891 & statement attached",
+			when: "30 Jun 19:20",
+			status: "Delivered",
+		},
+		{
+			to: "Sunrise Restaurant",
+			channel: "SMS",
+			subject: "3rd failed attempt — update payment method",
+			when: "29 Jun 07:55",
+			status: "Failed",
+		},
+		{
+			to: "Peter Njoroge",
+			channel: "SMS",
+			subject: "2nd attempt failed — KES 2,400 due",
+			when: "24 Jun 16:40",
+			status: "Delivered",
+		},
 	],
 	refunds: [
-		{ ref: "RF-2210", customer: "Zawadi Beauty", business: "Company 2", payment: "ORD-8890 · KES 48,200", amount: "KES 48,200", reason: "Duplicate charge", status: "Pending approval", tone: "badgeW" },
-		{ ref: "RF-2209", customer: "John Ochieng", business: "Land Buyers LTD", payment: "PLT-077 · KES 1,250", amount: "KES 1,250", reason: "Overpaid installment", status: "Refunded", tone: "badgeS" },
-		{ ref: "RF-2208", customer: "Nia Textiles", business: "Company 2", payment: "ORD-8884 · KES 214,300", amount: "KES 31,200", reason: "Partial order return", status: "Refunded", tone: "badgeS" },
-		{ ref: "RF-2207", customer: "Peter Njoroge", business: "Land Buyers LTD", payment: "PLT-073 · KES 2,400", amount: "KES 2,400", reason: "Cancellation", status: "Refunded", tone: "badgeS" },
-		{ ref: "RF-2206", customer: "Malik Foodstuff", business: "Company 2", payment: "ORD-8863 · KES 22,800", amount: "KES 5,000", reason: "Hardship waiver", status: "Pending approval", tone: "badgeW" },
+		{
+			ref: "RF-2210",
+			customer: "Zawadi Beauty",
+			business: "Company 2",
+			payment: "ORD-8890 · KES 48,200",
+			amount: "KES 48,200",
+			reason: "Duplicate charge",
+			status: "Pending approval",
+			tone: "badgeW",
+		},
+		{
+			ref: "RF-2209",
+			customer: "John Ochieng",
+			business: "Land Buyers LTD",
+			payment: "PLT-077 · KES 1,250",
+			amount: "KES 1,250",
+			reason: "Overpaid installment",
+			status: "Refunded",
+			tone: "badgeS",
+		},
+		{
+			ref: "RF-2208",
+			customer: "Nia Textiles",
+			business: "Company 2",
+			payment: "ORD-8884 · KES 214,300",
+			amount: "KES 31,200",
+			reason: "Partial order return",
+			status: "Refunded",
+			tone: "badgeS",
+		},
+		{
+			ref: "RF-2207",
+			customer: "Peter Njoroge",
+			business: "Land Buyers LTD",
+			payment: "PLT-073 · KES 2,400",
+			amount: "KES 2,400",
+			reason: "Cancellation",
+			status: "Refunded",
+			tone: "badgeS",
+		},
+		{
+			ref: "RF-2206",
+			customer: "Malik Foodstuff",
+			business: "Company 2",
+			payment: "ORD-8863 · KES 22,800",
+			amount: "KES 5,000",
+			reason: "Hardship waiver",
+			status: "Pending approval",
+			tone: "badgeW",
+		},
 	],
 	perms: [
-		{ title: "Generate statements & receipts", sub: "Per-customer statements, invoices, transaction receipts", granted: true },
-		{ title: "Send reminders & messages", sub: "SMS / Email / WhatsApp on your behalf", granted: true },
-		{ title: "Self-service payment portal", sub: "Customer manages own payment methods & plans", granted: true },
-		{ title: "Edit billing & schedules", sub: "Adjust plans, amounts, next-due dates", granted: true },
-		{ title: "Issue fee waivers & discounts", sub: "Waive fees on hardship or promotional cases", granted: false, pending: true },
-		{ title: "Export customer KYC records", sub: "KYC document export for audits", granted: false, pending: true },
+		{
+			title: "Generate statements & receipts",
+			sub: "Per-customer statements, invoices, transaction receipts",
+			granted: true,
+		},
+		{
+			title: "Send reminders & messages",
+			sub: "SMS / Email / WhatsApp on your behalf",
+			granted: true,
+		},
+		{
+			title: "Self-service payment portal",
+			sub: "Customer manages own payment methods & plans",
+			granted: true,
+		},
+		{
+			title: "Edit billing & schedules",
+			sub: "Adjust plans, amounts, next-due dates",
+			granted: true,
+		},
+		{
+			title: "Issue fee waivers & discounts",
+			sub: "Waive fees on hardship or promotional cases",
+			granted: false,
+			pending: true,
+		},
+		{
+			title: "Export customer KYC records",
+			sub: "KYC document export for audits",
+			granted: false,
+			pending: true,
+		},
 	],
 	tickets: [
-		{ t: "TKT-8821", c: "Peter Njoroge", s: "Payment failed twice — what happens next?", p: "Medium", st: "In Progress", u: "27 Jun" },
-		{ t: "TKT-8834", c: "Zawadi Beauty", s: "Duplicate charge on ORD-8890", p: "High", st: "Open", u: "30 Jun" },
-		{ t: "TKT-8847", c: "Ruth Wambui", s: "How do I upload my ID for verification?", p: "Low", st: "Awaiting Customer", u: "29 Jun" },
-		{ t: "TKT-8851", c: "Sunrise Restaurant", s: "Request statement for June", p: "Low", st: "Closed", u: "25 Jun" },
+		{
+			t: "TKT-8821",
+			c: "Peter Njoroge",
+			s: "Payment failed twice — what happens next?",
+			p: "Medium",
+			st: "In Progress",
+			u: "27 Jun",
+		},
+		{
+			t: "TKT-8834",
+			c: "Zawadi Beauty",
+			s: "Duplicate charge on ORD-8890",
+			p: "High",
+			st: "Open",
+			u: "30 Jun",
+		},
+		{
+			t: "TKT-8847",
+			c: "Ruth Wambui",
+			s: "How do I upload my ID for verification?",
+			p: "Low",
+			st: "Awaiting Customer",
+			u: "29 Jun",
+		},
+		{
+			t: "TKT-8851",
+			c: "Sunrise Restaurant",
+			s: "Request statement for June",
+			p: "Low",
+			st: "Closed",
+			u: "25 Jun",
+		},
 	],
 	walletLinks: [
-		{ name: "M-Pesa (Business Till)", sub: "Refunds & payouts — last sync 2h ago", status: "Active", tone: "badgeS" },
-		{ name: "Equity Bank (Payouts)", sub: "Bank transfers for PSP settlements", status: "Active", tone: "badgeS" },
-		{ name: "Business Wallet", sub: "Internal paymo wallet for collections", status: "Linked", tone: "badgeI" },
+		{
+			name: "M-Pesa (Business Till)",
+			sub: "Refunds & payouts — last sync 2h ago",
+			status: "Active",
+			tone: "badgeS",
+		},
+		{
+			name: "Equity Bank (Payouts)",
+			sub: "Bank transfers for PSP settlements",
+			status: "Active",
+			tone: "badgeS",
+		},
+		{
+			name: "Business Wallet",
+			sub: "Internal paymo wallet for collections",
+			status: "Linked",
+			tone: "badgeI",
+		},
 	],
 };
 
@@ -658,15 +1164,24 @@ async function fetchCustomers(): Promise<CustomersConfig> {
 
 const AVATAR_FALLBACK = "#10b981";
 
-function kycChip(status: Customer["kyc"]["status"]): { cls: string; label: string } {
-	if (status === "Verified") return { cls: "chipAccent", label: "KYC Verified" };
+function kycChip(status: Customer["kyc"]["status"]): {
+	cls: string;
+	label: string;
+} {
+	if (status === "Verified")
+		return { cls: "chipAccent", label: "KYC Verified" };
 	if (status === "Pending") return { cls: "chipWarn", label: "KYC Pending" };
 	return { cls: "chipWarn", label: "KYC Expiring" };
 }
 
-function planChip(model: Customer["billing"]["model"]): { cls: string; icon: string } {
-	if (model === "Recurring") return { cls: "chipAccent", icon: "bi-calendar-week" };
-	if (model === "Auto-bill") return { cls: "chipInfo", icon: "bi-lightning-charge" };
+function planChip(model: Customer["billing"]["model"]): {
+	cls: string;
+	icon: string;
+} {
+	if (model === "Recurring")
+		return { cls: "chipAccent", icon: "bi-calendar-week" };
+	if (model === "Auto-bill")
+		return { cls: "chipInfo", icon: "bi-lightning-charge" };
 	return { cls: "chipPurple", icon: "bi-receipt" };
 }
 
@@ -686,6 +1201,7 @@ export default function Customers() {
 	const config = data ?? initialMockData;
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [biz, setBiz] = useState<BizId>("all");
 	const [world, setWorld] = useState<"directory" | "billing">("directory");
 	const [kycTab, setKycTab] = useState<"pending" | "all">("pending");
@@ -695,6 +1211,41 @@ export default function Customers() {
 
 	const openM = (id: string) => setActiveModal(id);
 	const closeM = () => setActiveModal(null);
+
+	const handleDrawerAction = (modal: string) => {
+		if (modal) openM(modal);
+	};
+
+	const drawerAttention = config.attention.map(
+		(item): AttentionItem => ({
+			icon: item.icon.replace(/^bi-/, ""),
+			iconBg: item.iconBg,
+			iconColor: item.iconColor,
+			title: item.title,
+			sub: `${item.sub} · ${item.count}`,
+			actionLabel: "Act",
+			modal: item.modal,
+		}),
+	);
+	const drawerSuggestions = config.suggestions.map(
+		(item): AttentionItem => ({
+			icon: item.icon.replace(/^bi-/, ""),
+			iconBg: item.iconBg,
+			iconColor: item.iconColor,
+			title: item.title,
+			sub: `${item.sub} · ${item.count}`,
+			actionLabel: "Act",
+			modal: item.modal,
+		}),
+	);
+	const drawerQuickActions = config.quickActions.map(
+		(action): QuickActionItem => ({
+			icon: action.icon.replace(/^bi-/, ""),
+			iconColor: action.color,
+			label: action.label,
+			modal: action.modal,
+		}),
+	);
 
 	useEffect(() => {
 		if (!toasts.length) return;
@@ -715,14 +1266,22 @@ export default function Customers() {
 		]);
 
 	const scrollToSection = (id: string) => {
-		document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+		document
+			.getElementById(id)
+			?.scrollIntoView({ behavior: "smooth", block: "start" });
 	};
 
 	const inScope = (bizId: "land" | "co2") => biz === "all" || biz === bizId;
 	const scopedCustomers = config.customers.filter((c) => inScope(c.bizId));
-	const scopedPlans = config.plans.filter((p) => inScope(p.business === "Land Buyers LTD" ? "land" : "co2"));
-	const scopedRefunds = config.refunds.filter((r) => inScope(r.business === "Land Buyers LTD" ? "land" : "co2"));
-	const scopedKyc = config.kycQueue.filter((k) => inScope(k.business === "Land Buyers LTD" ? "land" : "co2"));
+	const scopedPlans = config.plans.filter((p) =>
+		inScope(p.business === "Land Buyers LTD" ? "land" : "co2"),
+	);
+	const scopedRefunds = config.refunds.filter((r) =>
+		inScope(r.business === "Land Buyers LTD" ? "land" : "co2"),
+	);
+	const scopedKyc = config.kycQueue.filter((k) =>
+		inScope(k.business === "Land Buyers LTD" ? "land" : "co2"),
+	);
 	const bizLabel = biz === "all" ? "all businesses" : BIZ_NAMES[biz];
 	const kycVerifiedCard = config.statCards.find((c) => c.key === "kyc");
 
@@ -754,15 +1313,16 @@ export default function Customers() {
 										className={styles.heroPrimary}
 										onClick={() => openM("onboardCustomerModal")}
 									>
-										<i className="bi bi-person-plus" aria-hidden="true" /> Onboard
-										customer
+										<i className="bi bi-person-plus" aria-hidden="true" />{" "}
+										Onboard customer
 									</button>
 									<button
 										type="button"
 										className={styles.heroSecondary}
 										onClick={() => openM("bulkUploadModal")}
 									>
-										<i className="bi bi-upload" aria-hidden="true" /> Bulk import
+										<i className="bi bi-upload" aria-hidden="true" /> Bulk
+										import
 									</button>
 									<button
 										type="button"
@@ -780,10 +1340,15 @@ export default function Customers() {
 									</button>
 								</div>
 							</div>
-							<aside className={styles.heroSnapshot} aria-label="Customer base snapshot">
+							<aside
+								className={styles.heroSnapshot}
+								aria-label="Customer base snapshot"
+							>
 								<span>Directory snapshot</span>
 								<strong>{config.statCards[0]?.value ?? "239"}</strong>
-								<p>Across Land Buyers LTD and Company 2, refreshed every sync.</p>
+								<p>
+									Across Land Buyers LTD and Company 2, refreshed every sync.
+								</p>
 								<div className={styles.heroMetricRow}>
 									<div>
 										<strong>{config.statCards[1]?.value ?? "44"} plans</strong>
@@ -801,8 +1366,7 @@ export default function Customers() {
 					{/* ======================= BREADCRUMB ======================= */}
 					<div className={styles.pageBar}>
 						<div className={styles.breadcrumb}>
-							<Link to="/">Home</Link> /{" "}
-							<Link to="/pm/app">PayMo Hub</Link> /{" "}
+							<Link to="/">Home</Link> / <Link to="/pm/app">PayMo Hub</Link> /{" "}
 							<strong>{config.pageTitle}</strong>
 						</div>
 						<button
@@ -840,11 +1404,23 @@ export default function Customers() {
 					</div>
 
 					{/* ======================= KPI ROW ======================= */}
-					<section className={styles.dashboardSection} aria-label="Customer health metrics">
+					<section
+						className={styles.dashboardSection}
+						aria-label="Customer health metrics"
+					>
 						<div className={styles.kpiGrid}>
 							{config.statCards.map((card) => (
-								<div className={`${styles.card} ${styles.kpiCard} ${card.attention ? styles.attentionCard : ""}`} key={card.key}>
-									<span className={styles.kpiIcon} style={{ background: `${card.labelColor}1a`, color: card.labelColor }}>
+								<div
+									className={`${styles.card} ${styles.kpiCard} ${card.attention ? styles.attentionCard : ""}`}
+									key={card.key}
+								>
+									<span
+										className={styles.kpiIcon}
+										style={{
+											background: `${card.labelColor}1a`,
+											color: card.labelColor,
+										}}
+									>
 										<i className={`bi ${card.badge.icon}`} aria-hidden="true" />
 									</span>
 									<div className={styles.kpiMeta}>
@@ -852,19 +1428,33 @@ export default function Customers() {
 									</div>
 									<div className={styles.kpiValue}>{card.value}</div>
 									<div className={styles.kpiFoot}>
-										<span className={`${styles.badge} ${styles[card.badge.tone]}`}>
-											<i className={`bi ${card.badge.icon}`} /> {card.badge.text}
+										<span
+											className={`${styles.badge} ${styles[card.badge.tone]}`}
+										>
+											<i className={`bi ${card.badge.icon}`} />{" "}
+											{card.badge.text}
 										</span>
 										{card.bars ? (
 											<div style={{ width: "100%" }}>
 												{card.bars.map((b) => (
 													<div key={b.label} style={{ marginTop: 6 }}>
-														<div className="d-flex justify-content-between align-items-center" style={{ fontSize: 11, marginBottom: 3 }}>
+														<div
+															className="d-flex justify-content-between align-items-center"
+															style={{ fontSize: 11, marginBottom: 3 }}
+														>
 															<span>{b.label}</span>
-															<span style={{ color: "var(--pm-muted)" }}>{b.pct}%</span>
+															<span style={{ color: "var(--pm-muted)" }}>
+																{b.pct}%
+															</span>
 														</div>
 														<div className={styles.barTrack}>
-															<div className={styles.barFill} style={{ width: `${b.pct}%`, background: b.color }} />
+															<div
+																className={styles.barFill}
+																style={{
+																	width: `${b.pct}%`,
+																	background: b.color,
+																}}
+															/>
 														</div>
 													</div>
 												))}
@@ -879,686 +1469,1083 @@ export default function Customers() {
 						</div>
 					</section>
 
-					{/* ======================= ATTENTION / SUGGESTIONS / QUICK ACTIONS ======================= */}
-					<section className={styles.dashboardSection} aria-labelledby="cust-sec-queues">
+					{/* ======================= ACTION CENTRE ======================= */}
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="cust-sec-queues"
+					>
 						<div className={styles.sectionHeading}>
-							<span className={styles.sectionIndex} aria-hidden="true">00</span>
+							<span className={styles.sectionIndex} aria-hidden="true">
+								00
+							</span>
 							<div>
-								<h2 id="cust-sec-queues">Attention, suggestions &amp; quick actions</h2>
-								<p>Open items that need a decision, AI-style suggestions to grow collections, and the actions you use most — each opens the matching workflow.</p>
+								<h2 id="cust-sec-queues">Action centre</h2>
+								<p>
+									Resolve exceptions first, then use guided suggestions to
+									improve transfer outcomes.
+								</p>
 							</div>
+							<button
+								className={`${styles.btnPm} ${styles.btnSm} ${styles.sectionAction}`}
+								onClick={() => setDrawerOpen(true)}
+							>
+								<i className="bi bi-columns-gap" /> Review queue
+							</button>
 						</div>
-						<div className="row g-3 mt-1">
-						<div className="col-lg-8">
-							<div className={styles.card} style={{ height: "100%" }}>
-								<div className="d-flex align-items-center justify-content-between" style={{ gap: 10 }}>
-									<h3 className={styles.fwBold13} style={{ fontSize: 14, margin: 0 }}>
-										<i className="bi bi-exclamation-octagon" style={{ color: "var(--pm-warning)" }} /> Needs your attention
-									</h3>
-									<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("attentionModal")}>
-										View all
-									</button>
+						<div className={styles.card}>
+							<div className={styles.actionCentreHead}>
+								<div className={styles.actionCentreIcon}>
+									<i className="bi bi-exclamation-octagon" />
 								</div>
-								<div className="mt-2">
-									{config.attention.map((a) => (
-										<div className="d-flex align-items-center py-2" key={a.title} style={{ borderBottom: "1px dashed var(--pm-border)" }}>
-											<div className={styles.iconCircle} style={{ background: a.iconBg, color: a.iconColor, width: 34, height: 34, marginRight: 10 }}>
-												<i className={`bi ${a.icon}`} />
-											</div>
-											<div className="flex-grow-1" style={{ minWidth: 0 }}>
-												<div style={{ fontSize: 13, fontWeight: 600 }}>{a.title}</div>
-												<div style={{ fontSize: 12, color: "var(--pm-muted)" }}>{a.sub}</div>
-											</div>
-											<div style={{ fontSize: 12, fontWeight: 700, color: "var(--pm-ink-soft)", whiteSpace: "nowrap", marginRight: 10 }}>
-												{a.count}
-											</div>
-											<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM(a.modal)}>
-												Act
-											</button>
-										</div>
-									))}
+								<div className={styles.actionCentreCopy}>
+									<span className={styles.cardKicker}>Action centre</span>
+									<h3>Attention, suggestions &amp; quick actions</h3>
+									<p>
+										Open operational items, AI routing recommendations and the
+										actions treasury uses most — each opens the matching
+										workflow.
+									</p>
 								</div>
 							</div>
-						</div>
-						<div className="col-lg-4">
-							<div className={styles.card} style={{ height: "100%" }}>
-								<h3 className={styles.fwBold13} style={{ fontSize: 14 }}>
-									<i className="bi bi-lightbulb" style={{ color: "var(--pm-accent)" }} /> Suggestions
-								</h3>
-								<div className="mt-2">
-									{config.suggestions.map((s) => (
-										<div className="d-flex align-items-start py-2" key={s.title} style={{ borderBottom: "1px dashed var(--pm-border)" }}>
-											<div className={styles.iconCircle} style={{ background: s.iconBg, color: s.iconColor, width: 30, height: 30, marginRight: 10 }}>
-												<i className={`bi ${s.icon}`} style={{ fontSize: 13 }} />
-											</div>
-											<div className="flex-grow-1" style={{ minWidth: 0 }}>
-												<div style={{ fontSize: 12.5, fontWeight: 600 }}>{s.title}</div>
-												<div style={{ fontSize: 11.5, color: "var(--pm-muted)" }}>{s.sub}</div>
-											</div>
-										</div>
-									))}
+							<div className={styles.actionCentreStats}>
+								<div className={styles.actionCentreStat}>
+									<strong>{config.attention.length}</strong>
+									<span>Attention</span>
+								</div>
+								<div className={styles.actionCentreStat}>
+									<strong>{config.suggestions.length}</strong>
+									<span>Suggestions</span>
+								</div>
+								<div className={styles.actionCentreStat}>
+									<strong>{config.quickActions.length}</strong>
+									<span>Shortcuts</span>
 								</div>
 							</div>
-						</div>
-					</div>
-
-					{/* ======================= QUICK ACTIONS ======================= */}
-					<div className={styles.card} style={{ marginTop: 16 }}>
-						<div className={styles.quickGrid}>
-							{config.quickActions.map((q) => (
-								<button key={q.label} type="button" className={styles.quickBtn} onClick={() => openM(q.modal)}>
-									<i className={`bi ${q.icon}`} style={{ color: q.color, fontSize: 17 }} />
-									{q.label}
+							<div className={styles.actionCentreActions}>
+								<button
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => setDrawerOpen(true)}
+								>
+									<i className="bi bi-columns-gap" /> Open drawer
 								</button>
-							))}
+							</div>
 						</div>
-					</div>
 					</section>
 
 					{/* ======================= SECTION 01: DIRECTORY / BILLING ======================= */}
-					<section className={styles.dashboardSection} aria-labelledby="cust-sec-directory">
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="cust-sec-directory"
+					>
 						<div className={styles.sectionHeading}>
-							<span className={styles.sectionIndex} aria-hidden="true">01</span>
+							<span className={styles.sectionIndex} aria-hidden="true">
+								01
+							</span>
 							<div>
-								<h2 id="cust-sec-directory">Customer directory &amp; billing — {bizLabel}</h2>
-								<p>Every customer across your businesses with their KYC, billing model and payment health. Switch to Billing &amp; Payments for recurring plans and collection schedules.</p>
+								<h2 id="cust-sec-directory">
+									Customer directory &amp; billing — {bizLabel}
+								</h2>
+								<p>
+									Every customer across your businesses with their KYC, billing
+									model and payment health. Switch to Billing &amp; Payments for
+									recurring plans and collection schedules.
+								</p>
 							</div>
 						</div>
-					<div className="d-flex flex-wrap align-items-center justify-content-end mb-2" style={{ gap: 12 }}>
-						<div className={styles.worldSwitch}>
-							<button
-								type="button"
-								className={`${styles.worldBtn} ${world === "directory" ? styles.worldBtnActive : ""}`}
-								onClick={() => setWorld("directory")}
-							>
-								<i className="bi bi-person-lines-fill" /> Customers
-							</button>
-							<button
-								type="button"
-								className={`${styles.worldBtn} ${world === "billing" ? styles.worldBtnActive : ""}`}
-								onClick={() => setWorld("billing")}
-							>
-								<i className="bi bi-calendar-check" /> Billing &amp; Payments
-							</button>
-						</div>
-					</div>
-
-					{/* ======================= WORLD 1: CUSTOMER DIRECTORY ======================= */}
-					{world === "directory" && (
-						<div className="row g-3 mt-1">
-							{scopedCustomers.map((c) => (
-								<div className="col-lg-4 col-md-6" key={c.id}>
-									<div className={styles.custCard}>
-										<div className={styles.custTop}>
-											<div className={styles.avatar} style={{ background: c.avatar || AVATAR_FALLBACK }}>
-												{c.initials}
-											</div>
-											<div className="flex-grow-1" style={{ minWidth: 0 }}>
-												<p className={styles.custName}>{c.name}</p>
-												<div className={styles.custMeta}>
-													{c.business} · {c.id} · {c.town}, {c.county}
-												</div>
-											</div>
-											<span className={`${styles.chip} ${styles.chipAccent}`}>
-												<i className="bi bi-tag" /> {c.bizId === "land" ? "PLT" : "ORD"}
-											</span>
-										</div>
-										<div className={styles.custChips}>
-											<span className={`${styles.chip} ${kycChip(c.kyc.status).cls}`}>
-												<i className="bi bi-shield-check" /> {kycChip(c.kyc.status).label}
-											</span>
-											<span className={`${styles.chip} ${planChip(c.billing.model).cls}`}>
-												<i className={`bi ${planChip(c.billing.model).icon}`} /> {c.billing.model}
-											</span>
-											<span className={styles.chip}>
-												<i className="bi bi-phone" /> {c.payment.primary}
-											</span>
-											{c.billing.failed > 0 && (
-												<span className={`${styles.chip} ${styles.chipDanger}`}>
-													<i className="bi bi-exclamation-triangle" /> {c.billing.failed} failed
-												</span>
-											)}
-										</div>
-										{c.billing.model !== "One-off" ? (
-											<div className={styles.planStrip}>
-												<div className={styles.stripRow}>
-													<i className="bi bi-calendar-event" style={{ color: "var(--pm-info)" }} />
-													<strong style={{ fontSize: 12.5 }}>
-														{c.billing.amount}
-													</strong>
-													<span style={{ color: "var(--pm-muted)" }}>{c.billing.frequency}</span>
-													<span className={styles.dueToday}>Next {c.billing.nextDue}</span>
-												</div>
-												<div className={styles.stripRow}>
-													<i className="bi bi-hourglass-split" style={{ color: "var(--pm-warning)" }} />
-													<span style={{ color: "var(--pm-muted)" }}>Ends {c.billing.ends}</span>
-													<span className={`${styles.badge} ${c.billing.status === "Active" ? styles.badgeS : styles.badgeW}`}>
-														{c.billing.status}
-													</span>
-												</div>
-											</div>
-										) : (
-											<div className={styles.stripRow}>
-												<i className="bi bi-receipt" style={{ color: "var(--pm-purple)" }} />
-												<span style={{ color: "var(--pm-muted)" }}>Last paid {c.lastPay}</span>
-												<span className={styles.refId} style={{ marginLeft: "auto" }}>
-													{c.refs.join(" · ") || c.id}
-												</span>
-											</div>
-										)}
-										<div className={styles.custActions}>
-											<button type="button" className={styles.custAction} onClick={() => openM("customerDetailModal")}>
-												<i className="bi bi-eye" /> View
-											</button>
-											<button type="button" className={styles.custAction} onClick={() => openM("sendReminderModal")}>
-												<i className="bi bi-bell" /> Remind
-											</button>
-											<button type="button" className={styles.custAction} onClick={() => openM("issueRefundModal")}>
-												<i className="bi bi-arrow-counterclockwise" /> Refund
-											</button>
-											<button type="button" className={styles.custAction} onClick={() => openM("kycRecordModal")}>
-												<i className="bi bi-shield-check" /> KYC
-											</button>
-										</div>
-									</div>
-								</div>
-							))}
-							{scopedCustomers.length === 0 && (
-								<div className="col-12">
-									<div className={styles.card} style={{ textAlign: "center", padding: 28 }}>
-										<i className="bi bi-people" style={{ fontSize: 26, color: "var(--pm-muted)" }} />
-										<p className="mb-1" style={{ fontWeight: 600 }}>No customers for {bizLabel}</p>
-										<small style={{ color: "var(--pm-muted)" }}>Switch business or onboard a new customer.</small>
-									</div>
-								</div>
-							)}
-						</div>
-					)}
-
-					{/* ======================= WORLD 2: BILLING & PAYMENTS ======================= */}
-					{world === "billing" && (
-						<>
-							{/* Recurring plans board */}
-							<div className="mt-2 d-flex flex-wrap align-items-center justify-content-between" style={{ gap: 10 }}>
-								<h3 className={styles.fwBold13} style={{ fontSize: 15, margin: 0 }}>
-									<i className="bi bi-calendar-check" style={{ color: "var(--pm-info)" }} /> Recurring Plans
-								</h3>
-								<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("openAccountModal")}>
-									<i className="bi bi-plus" /> New Billing Plan
+						<div
+							className="d-flex flex-wrap align-items-center justify-content-end mb-2"
+							style={{ gap: 12 }}
+						>
+							<div className={styles.worldSwitch}>
+								<button
+									type="button"
+									className={`${styles.worldBtn} ${world === "directory" ? styles.worldBtnActive : ""}`}
+									onClick={() => setWorld("directory")}
+								>
+									<i className="bi bi-person-lines-fill" /> Customers
+								</button>
+								<button
+									type="button"
+									className={`${styles.worldBtn} ${world === "billing" ? styles.worldBtnActive : ""}`}
+									onClick={() => setWorld("billing")}
+								>
+									<i className="bi bi-calendar-check" /> Billing &amp; Payments
 								</button>
 							</div>
+						</div>
+
+						{/* ======================= WORLD 1: CUSTOMER DIRECTORY ======================= */}
+						{world === "directory" && (
 							<div className="row g-3 mt-1">
-								{scopedPlans.map((p) => (
-									<div className="col-lg-4 col-md-6" key={`${p.customer}-${p.amount}`}>
-										<div className={styles.planCard}>
-											<div className={styles.planHead}>
-												<p className={styles.planName}>{p.customer}</p>
-												<span className={`${styles.badge} ${p.status === "Active" ? styles.badgeS : styles.badgeW}`}>
-													{p.status}
+								{scopedCustomers.map((c) => (
+									<div className="col-lg-4 col-md-6" key={c.id}>
+										<div className={styles.custCard}>
+											<div className={styles.custTop}>
+												<div
+													className={styles.avatar}
+													style={{ background: c.avatar || AVATAR_FALLBACK }}
+												>
+													{c.initials}
+												</div>
+												<div className="flex-grow-1" style={{ minWidth: 0 }}>
+													<p className={styles.custName}>{c.name}</p>
+													<div className={styles.custMeta}>
+														{c.business} · {c.id} · {c.town}, {c.county}
+													</div>
+												</div>
+												<span className={`${styles.chip} ${styles.chipAccent}`}>
+													<i className="bi bi-tag" />{" "}
+													{c.bizId === "land" ? "PLT" : "ORD"}
 												</span>
 											</div>
-											<div className={styles.planAmt}>{p.amount}</div>
-											<div className={styles.planMeta}>
-												<i className="bi bi-arrow-repeat" /> {p.frequency} · {p.duration}
-											</div>
-											<div className={styles.planMeta}>
-												<i className="bi bi-calendar-event" /> Next due <strong style={{ color: "var(--pm-ink)" }}>{p.nextDue}</strong>
-												{p.failed > 0 && (
-													<span style={{ color: "var(--pm-danger)", fontWeight: 700 }}> · {p.failed} failed</span>
+											<div className={styles.custChips}>
+												<span
+													className={`${styles.chip} ${kycChip(c.kyc.status).cls}`}
+												>
+													<i className="bi bi-shield-check" />{" "}
+													{kycChip(c.kyc.status).label}
+												</span>
+												<span
+													className={`${styles.chip} ${planChip(c.billing.model).cls}`}
+												>
+													<i
+														className={`bi ${planChip(c.billing.model).icon}`}
+													/>{" "}
+													{c.billing.model}
+												</span>
+												<span className={styles.chip}>
+													<i className="bi bi-phone" /> {c.payment.primary}
+												</span>
+												{c.billing.failed > 0 && (
+													<span
+														className={`${styles.chip} ${styles.chipDanger}`}
+													>
+														<i className="bi bi-exclamation-triangle" />{" "}
+														{c.billing.failed} failed
+													</span>
 												)}
 											</div>
-											<div className={styles.planActions}>
-												<button type="button" className={styles.planAction} onClick={() => openM("billingPlanDetailModal")}>
-													<i className="bi bi-eye" /> Detail
+											{c.billing.model !== "One-off" ? (
+												<div className={styles.planStrip}>
+													<div className={styles.stripRow}>
+														<i
+															className="bi bi-calendar-event"
+															style={{ color: "var(--pm-info)" }}
+														/>
+														<strong style={{ fontSize: 12.5 }}>
+															{c.billing.amount}
+														</strong>
+														<span style={{ color: "var(--pm-muted)" }}>
+															{c.billing.frequency}
+														</span>
+														<span className={styles.dueToday}>
+															Next {c.billing.nextDue}
+														</span>
+													</div>
+													<div className={styles.stripRow}>
+														<i
+															className="bi bi-hourglass-split"
+															style={{ color: "var(--pm-warning)" }}
+														/>
+														<span style={{ color: "var(--pm-muted)" }}>
+															Ends {c.billing.ends}
+														</span>
+														<span
+															className={`${styles.badge} ${c.billing.status === "Active" ? styles.badgeS : styles.badgeW}`}
+														>
+															{c.billing.status}
+														</span>
+													</div>
+												</div>
+											) : (
+												<div className={styles.stripRow}>
+													<i
+														className="bi bi-receipt"
+														style={{ color: "var(--pm-purple)" }}
+													/>
+													<span style={{ color: "var(--pm-muted)" }}>
+														Last paid {c.lastPay}
+													</span>
+													<span
+														className={styles.refId}
+														style={{ marginLeft: "auto" }}
+													>
+														{c.refs.join(" · ") || c.id}
+													</span>
+												</div>
+											)}
+											<div className={styles.custActions}>
+												<button
+													type="button"
+													className={styles.custAction}
+													onClick={() => openM("customerDetailModal")}
+												>
+													<i className="bi bi-eye" /> View
 												</button>
-												<button type="button" className={styles.planAction} onClick={() => openM("closeAccountModal")}>
-													<i className="bi bi-pause" /> Pause
-												</button>
-												<button type="button" className={styles.planAction} onClick={() => openM("sendReminderModal")}>
+												<button
+													type="button"
+													className={styles.custAction}
+													onClick={() => openM("sendReminderModal")}
+												>
 													<i className="bi bi-bell" /> Remind
+												</button>
+												<button
+													type="button"
+													className={styles.custAction}
+													onClick={() => openM("issueRefundModal")}
+												>
+													<i className="bi bi-arrow-counterclockwise" /> Refund
+												</button>
+												<button
+													type="button"
+													className={styles.custAction}
+													onClick={() => openM("kycRecordModal")}
+												>
+													<i className="bi bi-shield-check" /> KYC
 												</button>
 											</div>
 										</div>
 									</div>
 								))}
+								{scopedCustomers.length === 0 && (
+									<div className="col-12">
+										<div
+											className={styles.card}
+											style={{ textAlign: "center", padding: 28 }}
+										>
+											<i
+												className="bi bi-people"
+												style={{ fontSize: 26, color: "var(--pm-muted)" }}
+											/>
+											<p className="mb-1" style={{ fontWeight: 600 }}>
+												No customers for {bizLabel}
+											</p>
+											<small style={{ color: "var(--pm-muted)" }}>
+												Switch business or onboard a new customer.
+											</small>
+										</div>
+									</div>
+								)}
 							</div>
+						)}
 
-							{/* Payment schedule strip */}
-							<div className={`${styles.card} mt-4`}>
-								<h3 className={styles.fwBold13} style={{ fontSize: 15 }}>
-									<i className="bi bi-graph-up-arrow" style={{ color: "var(--pm-accent)" }} /> Next 7-Day Collections — expected vs actual
-								</h3>
+						{/* ======================= WORLD 2: BILLING & PAYMENTS ======================= */}
+						{world === "billing" && (
+							<>
+								{/* Recurring plans board */}
+								<div
+									className="mt-2 d-flex flex-wrap align-items-center justify-content-between"
+									style={{ gap: 10 }}
+								>
+									<h3
+										className={styles.fwBold13}
+										style={{ fontSize: 15, margin: 0 }}
+									>
+										<i
+											className="bi bi-calendar-check"
+											style={{ color: "var(--pm-info)" }}
+										/>{" "}
+										Recurring Plans
+									</h3>
+									<button
+										className={`${styles.btnPm} ${styles.btnSm}`}
+										onClick={() => openM("openAccountModal")}
+									>
+										<i className="bi bi-plus" /> New Billing Plan
+									</button>
+								</div>
 								<div className="row g-3 mt-1">
-									{config.schedule.map((s) => (
-										<div className="col-lg-3 col-md-4 col-6" key={s.day}>
-											<div style={{ fontSize: 12, fontWeight: 700 }}>{s.day}</div>
-											<div className="d-flex justify-content-between mt-1" style={{ fontSize: 11.5 }}>
-												<span style={{ color: "var(--pm-muted)" }}>Exp {s.expected}</span>
-												<span style={{ color: "var(--pm-info)", fontWeight: 600 }}>{s.actual}</span>
-											</div>
-											<div className={styles.stripBar} style={{ marginTop: 6 }}>
-												<div className={styles.stripFill} style={{ width: `${s.pct}%`, background: s.tone }} />
+									{scopedPlans.map((p) => (
+										<div
+											className="col-lg-4 col-md-6"
+											key={`${p.customer}-${p.amount}`}
+										>
+											<div className={styles.planCard}>
+												<div className={styles.planHead}>
+													<p className={styles.planName}>{p.customer}</p>
+													<span
+														className={`${styles.badge} ${p.status === "Active" ? styles.badgeS : styles.badgeW}`}
+													>
+														{p.status}
+													</span>
+												</div>
+												<div className={styles.planAmt}>{p.amount}</div>
+												<div className={styles.planMeta}>
+													<i className="bi bi-arrow-repeat" /> {p.frequency} ·{" "}
+													{p.duration}
+												</div>
+												<div className={styles.planMeta}>
+													<i className="bi bi-calendar-event" /> Next due{" "}
+													<strong style={{ color: "var(--pm-ink)" }}>
+														{p.nextDue}
+													</strong>
+													{p.failed > 0 && (
+														<span
+															style={{
+																color: "var(--pm-danger)",
+																fontWeight: 700,
+															}}
+														>
+															{" "}
+															· {p.failed} failed
+														</span>
+													)}
+												</div>
+												<div className={styles.planActions}>
+													<button
+														type="button"
+														className={styles.planAction}
+														onClick={() => openM("billingPlanDetailModal")}
+													>
+														<i className="bi bi-eye" /> Detail
+													</button>
+													<button
+														type="button"
+														className={styles.planAction}
+														onClick={() => openM("closeAccountModal")}
+													>
+														<i className="bi bi-pause" /> Pause
+													</button>
+													<button
+														type="button"
+														className={styles.planAction}
+														onClick={() => openM("sendReminderModal")}
+													>
+														<i className="bi bi-bell" /> Remind
+													</button>
+												</div>
 											</div>
 										</div>
 									))}
 								</div>
-							</div>
 
-							{/* Payment methods */}
-							<div className={`${styles.card} mt-4`}>
-								<div className="d-flex flex-wrap align-items-center justify-content-between" style={{ gap: 10 }}>
-									<h3 className={styles.fwBold13} style={{ fontSize: 15, margin: 0 }}>
-										<i className="bi bi-credit-card-2-front" style={{ color: "var(--pm-info)" }} /> Payment Methods on File
+								{/* Payment schedule strip */}
+								<div className={`${styles.card} mt-4`}>
+									<h3 className={styles.fwBold13} style={{ fontSize: 15 }}>
+										<i
+											className="bi bi-graph-up-arrow"
+											style={{ color: "var(--pm-accent)" }}
+										/>{" "}
+										Next 7-Day Collections — expected vs actual
 									</h3>
-									<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("newPaymentMethodModal")}>
-										<i className="bi bi-plus-circle" /> Add Method
-									</button>
+									<div className="row g-3 mt-1">
+										{config.schedule.map((s) => (
+											<div className="col-lg-3 col-md-4 col-6" key={s.day}>
+												<div style={{ fontSize: 12, fontWeight: 700 }}>
+													{s.day}
+												</div>
+												<div
+													className="d-flex justify-content-between mt-1"
+													style={{ fontSize: 11.5 }}
+												>
+													<span style={{ color: "var(--pm-muted)" }}>
+														Exp {s.expected}
+													</span>
+													<span
+														style={{ color: "var(--pm-info)", fontWeight: 600 }}
+													>
+														{s.actual}
+													</span>
+												</div>
+												<div
+													className={styles.stripBar}
+													style={{ marginTop: 6 }}
+												>
+													<div
+														className={styles.stripFill}
+														style={{ width: `${s.pct}%`, background: s.tone }}
+													/>
+												</div>
+											</div>
+										))}
+									</div>
 								</div>
-								<div className="table-responsive mt-2">
-									<table className={styles.tbl}>
-										<thead>
-											<tr>
-												<th>Customer</th>
-												<th>M-Pesa</th>
-												<th>Card</th>
-												<th>Bank</th>
-												<th>Wallet</th>
-												<th>Primary</th>
-												<th>Status</th>
-											</tr>
-										</thead>
-										<tbody>
-											{config.paymentMethods.map((m) => (
-												<tr key={m.customer}>
-													<td style={{ fontWeight: 600 }}>{m.customer}</td>
-													<td>{m.mpesa ?? <span style={{ color: "var(--pm-muted)" }}>—</span>}</td>
-													<td>{m.card ?? <span style={{ color: "var(--pm-muted)" }}>—</span>}</td>
-													<td>{m.bank ?? <span style={{ color: "var(--pm-muted)" }}>—</span>}</td>
-													<td>{m.wallet ?? <span style={{ color: "var(--pm-muted)" }}>—</span>}</td>
-													<td>
-														<span className={`${styles.chip} ${styles.chipAccent}`}>
-															<i className="bi bi-check2-circle" /> {m.primary}
-														</span>
-													</td>
-													<td>
-														<span className={`${styles.chip} ${m.verified ? styles.chipAccent : styles.chipWarn}`}>
-															{m.verified ? "Verified" : "Unverified"}
-														</span>
-													</td>
+
+								{/* Payment methods */}
+								<div className={`${styles.card} mt-4`}>
+									<div
+										className="d-flex flex-wrap align-items-center justify-content-between"
+										style={{ gap: 10 }}
+									>
+										<h3
+											className={styles.fwBold13}
+											style={{ fontSize: 15, margin: 0 }}
+										>
+											<i
+												className="bi bi-credit-card-2-front"
+												style={{ color: "var(--pm-info)" }}
+											/>{" "}
+											Payment Methods on File
+										</h3>
+										<button
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											onClick={() => openM("newPaymentMethodModal")}
+										>
+											<i className="bi bi-plus-circle" /> Add Method
+										</button>
+									</div>
+									<div className="table-responsive mt-2">
+										<table className={styles.tbl}>
+											<thead>
+												<tr>
+													<th>Customer</th>
+													<th>M-Pesa</th>
+													<th>Card</th>
+													<th>Bank</th>
+													<th>Wallet</th>
+													<th>Primary</th>
+													<th>Status</th>
 												</tr>
-											))}
-										</tbody>
-									</table>
+											</thead>
+											<tbody>
+												{config.paymentMethods.map((m) => (
+													<tr key={m.customer}>
+														<td style={{ fontWeight: 600 }}>{m.customer}</td>
+														<td>
+															{m.mpesa ?? (
+																<span style={{ color: "var(--pm-muted)" }}>
+																	—
+																</span>
+															)}
+														</td>
+														<td>
+															{m.card ?? (
+																<span style={{ color: "var(--pm-muted)" }}>
+																	—
+																</span>
+															)}
+														</td>
+														<td>
+															{m.bank ?? (
+																<span style={{ color: "var(--pm-muted)" }}>
+																	—
+																</span>
+															)}
+														</td>
+														<td>
+															{m.wallet ?? (
+																<span style={{ color: "var(--pm-muted)" }}>
+																	—
+																</span>
+															)}
+														</td>
+														<td>
+															<span
+																className={`${styles.chip} ${styles.chipAccent}`}
+															>
+																<i className="bi bi-check2-circle" />{" "}
+																{m.primary}
+															</span>
+														</td>
+														<td>
+															<span
+																className={`${styles.chip} ${m.verified ? styles.chipAccent : styles.chipWarn}`}
+															>
+																{m.verified ? "Verified" : "Unverified"}
+															</span>
+														</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									</div>
 								</div>
-							</div>
-						</>
-					)}
+							</>
+						)}
 					</section>
 
 					{/* ======================= SECTION 02: KYC RECORDS & LOCATION ======================= */}
-					<section className={styles.dashboardSection} aria-labelledby="cust-sec-kyc">
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="cust-sec-kyc"
+					>
 						<div className={styles.sectionHeading}>
-							<span className={styles.sectionIndex} aria-hidden="true">02</span>
+							<span className={styles.sectionIndex} aria-hidden="true">
+								02
+							</span>
 							<div>
 								<h2 id="cust-sec-kyc">KYC records &amp; location</h2>
-								<p>Verification queue, document status and confirmed addresses for every customer, with bulk approve and AML escalation shortcuts.</p>
+								<p>
+									Verification queue, document status and confirmed addresses
+									for every customer, with bulk approve and AML escalation
+									shortcuts.
+								</p>
 							</div>
 						</div>
-					<div className="row g-3">
-						<div className="col-lg-7">
-							<div className={styles.card} style={{ height: "100%" }}>
-								<div className="d-flex flex-wrap align-items-center justify-content-between" style={{ gap: 10 }}>
-									<h3 className={styles.fwBold13} style={{ fontSize: 15, margin: 0 }}>
-										<i className="bi bi-shield-check" style={{ color: "var(--pm-info)" }} /> KYC Queue &amp; Records
-									</h3>
-									<div className="d-flex" style={{ gap: 6 }}>
-										<button
-											type="button"
-											className={`${styles.pill} ${kycTab === "pending" ? styles.pillActive : ""}`}
-											onClick={() => setKycTab("pending")}
+						<div className="row g-3">
+							<div className="col-lg-7">
+								<div className={styles.card} style={{ height: "100%" }}>
+									<div
+										className="d-flex flex-wrap align-items-center justify-content-between"
+										style={{ gap: 10 }}
+									>
+										<h3
+											className={styles.fwBold13}
+											style={{ fontSize: 15, margin: 0 }}
 										>
-											Pending ({scopedKyc.length})
-										</button>
-										<button
-											type="button"
-											className={`${styles.pill} ${kycTab === "all" ? styles.pillActive : ""}`}
-											onClick={() => setKycTab("all")}
-										>
-											All Records
-										</button>
-									</div>
-								</div>
-								<div className="table-responsive mt-2">
-									<table className={styles.tbl}>
-										<thead>
-											<tr>
-												<th>Customer</th>
-												<th>Business</th>
-												<th>Submitted</th>
-												<th>Documents</th>
-												<th>Risk</th>
-												<th />
-											</tr>
-										</thead>
-										<tbody>
-											{(kycTab === "pending" ? scopedKyc : scopedCustomers).map((k) => {
-												const cust = k as Customer;
-												const queue = k as (typeof config.kycQueue)[number];
-												return (
-													<tr key={cust.id ?? queue.customer}>
-														<td style={{ fontWeight: 600 }}>{cust.name ?? queue.customer}</td>
-														<td>{cust.business ?? queue.business}</td>
-														<td>{queue.submitted ?? "Verified"}</td>
-														<td>{(queue.docs ?? cust.kyc.docs.join(", "))}</td>
-														<td>
-															<span className={`${styles.badge} ${queue.tone ? styles[queue.tone] : styles.badgeS}`}>
-																	{queue.risk ?? cust.kyc.status}
-																</span>
-														</td>
-														<td>
-															<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("kycReviewModal")}>
-																Review
-															</button>
-														</td>
-													</tr>
-												);
-											})}
-										</tbody>
-									</table>
-								</div>								<div className="d-flex flex-wrap align-items-center justify-content-between mt-2" style={{ gap: 8 }}>
-									<small style={{ color: "var(--pm-muted)" }}>
-										<i className="bi bi-info-circle" /> 201 customers at Level 2, 38 at Level 3.
-									</small>
-									<div className="d-flex flex-wrap" style={{ gap: 6 }}>
-										<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("bulkKycApproveModal")}>
-											<i className="bi bi-check2-all" /> Auto-approve 18 low-risk
-										</button>
-										<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("amlReviewModal")}>
-											<i className="bi bi-shield-exclamation" /> AML Review
-										</button>
-										<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("kycHealthModal")}>
-											View KYC health →
-										</button>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div className="col-lg-5">
-							<div className={styles.kycBlock} style={{ height: "100%" }}>
-								<h3 className={styles.fwBold13} style={{ fontSize: 15, marginBottom: 10 }}>
-									<i className="bi bi-geo-alt" style={{ color: "var(--pm-accent)" }} /> Verified Location — {bizLabel}
-								</h3>
-								{scopedCustomers.slice(0, 3).map((c) => (
-									<div key={c.id} className="mb-2">
-										<div style={{ fontSize: 13, fontWeight: 700 }}>
-											{c.name}
-											<span className={`${styles.chip} ${styles.chipInfo}`} style={{ marginLeft: 8 }}>
-												{c.county} · {c.town}
-											</span>
-										</div>
-										<div className={styles.locRow}>
-											<i className="bi bi-pin-map" />
-											{c.address}
+											<i
+												className="bi bi-shield-check"
+												style={{ color: "var(--pm-info)" }}
+											/>{" "}
+											KYC Queue &amp; Records
+										</h3>
+										<div className="d-flex" style={{ gap: 6 }}>
 											<button
 												type="button"
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												style={{ marginLeft: "auto" }}
-												onClick={() => openM("locationVerifyModal")}
+												className={`${styles.pill} ${kycTab === "pending" ? styles.pillActive : ""}`}
+												onClick={() => setKycTab("pending")}
 											>
-												Verify
+												Pending ({scopedKyc.length})
+											</button>
+											<button
+												type="button"
+												className={`${styles.pill} ${kycTab === "all" ? styles.pillActive : ""}`}
+												onClick={() => setKycTab("all")}
+											>
+												All Records
 											</button>
 										</div>
 									</div>
-								))}
-								<div className={styles.kycDoc} style={{ marginTop: 12 }}>
-									<i className="bi bi-file-earmark-person" />
-									<div>
-										<div style={{ fontSize: 12.5, fontWeight: 700 }}>KYC documents on file</div>
-										<div style={{ fontSize: 11.5, color: "var(--pm-muted)" }}>
-											ID, Passport, CR12, Utility — 100% capture rate
+									<div className="table-responsive mt-2">
+										<table className={styles.tbl}>
+											<thead>
+												<tr>
+													<th>Customer</th>
+													<th>Business</th>
+													<th>Submitted</th>
+													<th>Documents</th>
+													<th>Risk</th>
+													<th />
+												</tr>
+											</thead>
+											<tbody>
+												{(kycTab === "pending"
+													? scopedKyc
+													: scopedCustomers
+												).map((k) => {
+													const cust = k as Customer;
+													const queue = k as (typeof config.kycQueue)[number];
+													return (
+														<tr key={cust.id ?? queue.customer}>
+															<td style={{ fontWeight: 600 }}>
+																{cust.name ?? queue.customer}
+															</td>
+															<td>{cust.business ?? queue.business}</td>
+															<td>{queue.submitted ?? "Verified"}</td>
+															<td>{queue.docs ?? cust.kyc.docs.join(", ")}</td>
+															<td>
+																<span
+																	className={`${styles.badge} ${queue.tone ? styles[queue.tone] : styles.badgeS}`}
+																>
+																	{queue.risk ?? cust.kyc.status}
+																</span>
+															</td>
+															<td>
+																<button
+																	className={`${styles.btnPm} ${styles.btnSm}`}
+																	onClick={() => openM("kycReviewModal")}
+																>
+																	Review
+																</button>
+															</td>
+														</tr>
+													);
+												})}
+											</tbody>
+										</table>
+									</div>{" "}
+									<div
+										className="d-flex flex-wrap align-items-center justify-content-between mt-2"
+										style={{ gap: 8 }}
+									>
+										<small style={{ color: "var(--pm-muted)" }}>
+											<i className="bi bi-info-circle" /> 201 customers at Level
+											2, 38 at Level 3.
+										</small>
+										<div className="d-flex flex-wrap" style={{ gap: 6 }}>
+											<button
+												className={`${styles.btnPm} ${styles.btnSm}`}
+												onClick={() => openM("bulkKycApproveModal")}
+											>
+												<i className="bi bi-check2-all" /> Auto-approve 18
+												low-risk
+											</button>
+											<button
+												className={`${styles.btnPm} ${styles.btnSm}`}
+												onClick={() => openM("amlReviewModal")}
+											>
+												<i className="bi bi-shield-exclamation" /> AML Review
+											</button>
+											<button
+												className={`${styles.btnPm} ${styles.btnSm}`}
+												onClick={() => openM("kycHealthModal")}
+											>
+												View KYC health →
+											</button>
 										</div>
 									</div>
-									<button className={`${styles.btnPm} ${styles.btnSm}`} style={{ marginLeft: "auto" }} onClick={() => openM("kycRecordModal")}>
-										Open
-									</button>
+								</div>
+							</div>
+							<div className="col-lg-5">
+								<div className={styles.kycBlock} style={{ height: "100%" }}>
+									<h3
+										className={styles.fwBold13}
+										style={{ fontSize: 15, marginBottom: 10 }}
+									>
+										<i
+											className="bi bi-geo-alt"
+											style={{ color: "var(--pm-accent)" }}
+										/>{" "}
+										Verified Location — {bizLabel}
+									</h3>
+									{scopedCustomers.slice(0, 3).map((c) => (
+										<div key={c.id} className="mb-2">
+											<div style={{ fontSize: 13, fontWeight: 700 }}>
+												{c.name}
+												<span
+													className={`${styles.chip} ${styles.chipInfo}`}
+													style={{ marginLeft: 8 }}
+												>
+													{c.county} · {c.town}
+												</span>
+											</div>
+											<div className={styles.locRow}>
+												<i className="bi bi-pin-map" />
+												{c.address}
+												<button
+													type="button"
+													className={`${styles.btnPm} ${styles.btnSm}`}
+													style={{ marginLeft: "auto" }}
+													onClick={() => openM("locationVerifyModal")}
+												>
+													Verify
+												</button>
+											</div>
+										</div>
+									))}
+									<div className={styles.kycDoc} style={{ marginTop: 12 }}>
+										<i className="bi bi-file-earmark-person" />
+										<div>
+											<div style={{ fontSize: 12.5, fontWeight: 700 }}>
+												KYC documents on file
+											</div>
+											<div style={{ fontSize: 11.5, color: "var(--pm-muted)" }}>
+												ID, Passport, CR12, Utility — 100% capture rate
+											</div>
+										</div>
+										<button
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											style={{ marginLeft: "auto" }}
+											onClick={() => openM("kycRecordModal")}
+										>
+											Open
+										</button>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
 					</section>
 
 					{/* ======================= SECTION 03: REMINDERS & COMMUNICATION ======================= */}
-					<section className={styles.dashboardSection} aria-labelledby="cust-sec-reminders">
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="cust-sec-reminders"
+					>
 						<div className={styles.sectionHeading}>
-							<span className={styles.sectionIndex} aria-hidden="true">03</span>
+							<span className={styles.sectionIndex} aria-hidden="true">
+								03
+							</span>
 							<div>
 								<h2 id="cust-sec-reminders">Reminders &amp; communication</h2>
-								<p>Automated renewal and failed-payment triggers, plus a full log of every SMS, email and WhatsApp sent to your customers.</p>
+								<p>
+									Automated renewal and failed-payment triggers, plus a full log
+									of every SMS, email and WhatsApp sent to your customers.
+								</p>
 							</div>
 						</div>
-					<div className="row g-3">
-						<div className="col-lg-7">
-							<div className={styles.card} style={{ height: "100%" }}>
-								<h3 className={styles.fwBold13} style={{ fontSize: 15 }}>
-									<i className="bi bi-bell" style={{ color: "var(--pm-warning)" }} /> Reminder Triggers
-								</h3>
-								<div className="mt-2">
-									{config.remTriggers.map((r) => (
-										<div className={styles.remCard} key={r.title} style={{ marginBottom: 8 }}>
-											<div className={styles.remIcon} style={{ background: r.iconBg, color: r.iconColor }}>
-												<i className={`bi ${r.icon}`} />
-											</div>
-											<div className={styles.remBody}>
-												<p className={styles.remTitle}>{r.title}</p>
-												<div className={styles.remSub}>{r.sub}</div>
-											</div>
-											<span className={`${styles.chip} ${styles.chipInfo}`}>{r.count}</span>
-											<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM(r.modal)}>
-												Compose
-											</button>
-										</div>
-									))}
-								</div>
-							</div>
-						</div>
-						<div className="col-lg-5">
-							<div className={styles.card} style={{ height: "100%" }}>
-								<div className="d-flex align-items-center justify-content-between" style={{ gap: 10 }}>
-									<h3 className={styles.fwBold13} style={{ fontSize: 15, margin: 0 }}>
-										<i className="bi bi-chat-dots" style={{ color: "var(--pm-accent)" }} /> Communication Log
+						<div className="row g-3">
+							<div className="col-lg-7">
+								<div className={styles.card} style={{ height: "100%" }}>
+									<h3 className={styles.fwBold13} style={{ fontSize: 15 }}>
+										<i
+											className="bi bi-bell"
+											style={{ color: "var(--pm-warning)" }}
+										/>{" "}
+										Reminder Triggers
 									</h3>
-									<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("commModal")}>
-										<i className="bi bi-sliders" /> Preferences
-									</button>
-								</div>
-								<div className="mt-2">
-									{config.commLog.map((l) => (
-										<div className={styles.remCard} key={`${l.to}-${l.when}`} style={{ marginBottom: 8, padding: "10px 12px" }}>
-											<div className={styles.remBody}>
-												<p className={styles.remTitle} style={{ fontSize: 12.5 }}>
-													{l.to} — {l.subject}
-												</p>
-												<div className={styles.remSub}>{l.when}</div>
+									<div className="mt-2">
+										{config.remTriggers.map((r) => (
+											<div
+												className={styles.remCard}
+												key={r.title}
+												style={{ marginBottom: 8 }}
+											>
+												<div
+													className={styles.remIcon}
+													style={{ background: r.iconBg, color: r.iconColor }}
+												>
+													<i className={`bi ${r.icon}`} />
+												</div>
+												<div className={styles.remBody}>
+													<p className={styles.remTitle}>{r.title}</p>
+													<div className={styles.remSub}>{r.sub}</div>
+												</div>
+												<span className={`${styles.chip} ${styles.chipInfo}`}>
+													{r.count}
+												</span>
+												<button
+													className={`${styles.btnPm} ${styles.btnSm}`}
+													onClick={() => openM(r.modal)}
+												>
+													Compose
+												</button>
 											</div>
-											<span className={`${styles.channelPill} ${l.channel === "SMS" ? styles.channelSms : l.channel === "WhatsApp" ? styles.channelWa : styles.channelMail}`}>
-												<i className={`bi ${l.channel === "SMS" ? "bi-chat-left-text" : l.channel === "WhatsApp" ? "bi-whatsapp" : "bi-envelope"}`} /> {l.channel}
-											</span>
-											<span className={`${styles.chip} ${l.status === "Delivered" ? styles.chipAccent : styles.chipDanger}`}>
-												{l.status}
-											</span>
-										</div>
-									))}
+										))}
+									</div>
+								</div>
+							</div>
+							<div className="col-lg-5">
+								<div className={styles.card} style={{ height: "100%" }}>
+									<div
+										className="d-flex align-items-center justify-content-between"
+										style={{ gap: 10 }}
+									>
+										<h3
+											className={styles.fwBold13}
+											style={{ fontSize: 15, margin: 0 }}
+										>
+											<i
+												className="bi bi-chat-dots"
+												style={{ color: "var(--pm-accent)" }}
+											/>{" "}
+											Communication Log
+										</h3>
+										<button
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											onClick={() => openM("commModal")}
+										>
+											<i className="bi bi-sliders" /> Preferences
+										</button>
+									</div>
+									<div className="mt-2">
+										{config.commLog.map((l) => (
+											<div
+												className={styles.remCard}
+												key={`${l.to}-${l.when}`}
+												style={{ marginBottom: 8, padding: "10px 12px" }}
+											>
+												<div className={styles.remBody}>
+													<p
+														className={styles.remTitle}
+														style={{ fontSize: 12.5 }}
+													>
+														{l.to} — {l.subject}
+													</p>
+													<div className={styles.remSub}>{l.when}</div>
+												</div>
+												<span
+													className={`${styles.channelPill} ${l.channel === "SMS" ? styles.channelSms : l.channel === "WhatsApp" ? styles.channelWa : styles.channelMail}`}
+												>
+													<i
+														className={`bi ${l.channel === "SMS" ? "bi-chat-left-text" : l.channel === "WhatsApp" ? "bi-whatsapp" : "bi-envelope"}`}
+													/>{" "}
+													{l.channel}
+												</span>
+												<span
+													className={`${styles.chip} ${l.status === "Delivered" ? styles.chipAccent : styles.chipDanger}`}
+												>
+													{l.status}
+												</span>
+											</div>
+										))}
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
 					</section>
 
 					{/* ======================= SECTION 04: REFUNDS ======================= */}
-					<section className={styles.dashboardSection} aria-labelledby="cust-sec-refunds">
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="cust-sec-refunds"
+					>
 						<div className={styles.sectionHeading}>
-							<span className={styles.sectionIndex} aria-hidden="true">04</span>
+							<span className={styles.sectionIndex} aria-hidden="true">
+								04
+							</span>
 							<div>
 								<h2 id="cust-sec-refunds">Refunds</h2>
-								<p>Full and partial refunds against original payments, linked back to the Fees page profit math.</p>
+								<p>
+									Full and partial refunds against original payments, linked
+									back to the Fees page profit math.
+								</p>
 							</div>
 						</div>
-					<div className={styles.card}>
-						<div className="d-flex flex-wrap align-items-center justify-content-between" style={{ gap: 10 }}>
-							<h3 className={styles.fwBold13} style={{ fontSize: 15, margin: 0 }}>
-								<i className="bi bi-arrow-counterclockwise" style={{ color: "var(--pm-purple)" }} /> Refunds — {bizLabel}
-							</h3>
-							<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("issueRefundModal")}>
-								<i className="bi bi-plus" /> Issue Refund
-							</button>
-						</div>
-						<div className="table-responsive mt-2">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										<th>Ref</th>
-										<th>Customer</th>
-										<th>Original Payment</th>
-										<th>Amount</th>
-										<th>Reason</th>
-										<th>Status</th>
-									</tr>
-								</thead>
-								<tbody>
-									{scopedRefunds.map((r) => (
-										<tr key={r.ref}>
-											<td className={styles.refId}>{r.ref}</td>
-											<td style={{ fontWeight: 600 }}>{r.customer}</td>
-											<td>{r.payment}</td>
-											<td style={{ fontWeight: 700 }}>{r.amount}</td>
-											<td>{r.reason}</td>
-											<td>
-												<span className={`${styles.badge} ${styles[r.tone]}`}>{r.status}</span>
-											</td>
+						<div className={styles.card}>
+							<div
+								className="d-flex flex-wrap align-items-center justify-content-between"
+								style={{ gap: 10 }}
+							>
+								<h3
+									className={styles.fwBold13}
+									style={{ fontSize: 15, margin: 0 }}
+								>
+									<i
+										className="bi bi-arrow-counterclockwise"
+										style={{ color: "var(--pm-purple)" }}
+									/>{" "}
+									Refunds — {bizLabel}
+								</h3>
+								<button
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => openM("issueRefundModal")}
+								>
+									<i className="bi bi-plus" /> Issue Refund
+								</button>
+							</div>
+							<div className="table-responsive mt-2">
+								<table className={styles.tbl}>
+									<thead>
+										<tr>
+											<th>Ref</th>
+											<th>Customer</th>
+											<th>Original Payment</th>
+											<th>Amount</th>
+											<th>Reason</th>
+											<th>Status</th>
 										</tr>
-									))}
-								</tbody>
-							</table>
+									</thead>
+									<tbody>
+										{scopedRefunds.map((r) => (
+											<tr key={r.ref}>
+												<td className={styles.refId}>{r.ref}</td>
+												<td style={{ fontWeight: 600 }}>{r.customer}</td>
+												<td>{r.payment}</td>
+												<td style={{ fontWeight: 700 }}>{r.amount}</td>
+												<td>{r.reason}</td>
+												<td>
+													<span className={`${styles.badge} ${styles[r.tone]}`}>
+														{r.status}
+													</span>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+							<small style={{ color: "var(--pm-muted)" }}>
+								<i className="bi bi-info-circle" /> Refunds reduce your
+								Fees-page profit by the refunded amount + PayMo fee.
+							</small>
 						</div>
-						<small style={{ color: "var(--pm-muted)" }}>
-							<i className="bi bi-info-circle" /> Refunds reduce your Fees-page profit by the refunded amount + PayMo fee.
-						</small>
-					</div>
 					</section>
 
 					{/* ======================= SECTION 05: PERMISSIONS, REPORTS & RECEIPTS ======================= */}
-					<section className={styles.dashboardSection} aria-labelledby="cust-sec-permissions">
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="cust-sec-permissions"
+					>
 						<div className={styles.sectionHeading}>
-							<span className={styles.sectionIndex} aria-hidden="true">05</span>
+							<span className={styles.sectionIndex} aria-hidden="true">
+								05
+							</span>
 							<div>
-								<h2 id="cust-sec-permissions">Permissions, reports &amp; receipts</h2>
-								<p>What you're allowed to do for your customers, plus one-click statements, receipts and audit exports.</p>
+								<h2 id="cust-sec-permissions">
+									Permissions, reports &amp; receipts
+								</h2>
+								<p>
+									What you're allowed to do for your customers, plus one-click
+									statements, receipts and audit exports.
+								</p>
 							</div>
 						</div>
-					<div className="row g-3">
-						<div className="col-lg-6">
-							<div className={styles.card} style={{ height: "100%" }}>
-								<h3 className={styles.fwBold13} style={{ fontSize: 15 }}>
-									<i className="bi bi-shield-lock" style={{ color: "var(--pm-purple)" }} /> My Customer Permissions
-								</h3>
-								<div className="mt-2">
-									{config.perms.map((p) => (
-										<div className={styles.permItem} key={p.title}>
-											<span className={`${styles.permDot} ${p.granted ? styles.permOk : styles.permPending}`} />
-											<div style={{ minWidth: 0 }}>
-												<div className={styles.permTitle} style={{ fontSize: 13 }}>{p.title}</div>
-												<div className={styles.permSub}>{p.sub}</div>
+						<div className="row g-3">
+							<div className="col-lg-6">
+								<div className={styles.card} style={{ height: "100%" }}>
+									<h3 className={styles.fwBold13} style={{ fontSize: 15 }}>
+										<i
+											className="bi bi-shield-lock"
+											style={{ color: "var(--pm-purple)" }}
+										/>{" "}
+										My Customer Permissions
+									</h3>
+									<div className="mt-2">
+										{config.perms.map((p) => (
+											<div className={styles.permItem} key={p.title}>
+												<span
+													className={`${styles.permDot} ${p.granted ? styles.permOk : styles.permPending}`}
+												/>
+												<div style={{ minWidth: 0 }}>
+													<div
+														className={styles.permTitle}
+														style={{ fontSize: 13 }}
+													>
+														{p.title}
+													</div>
+													<div className={styles.permSub}>{p.sub}</div>
+												</div>
+												{p.granted ? (
+													<span className={`${styles.badge} ${styles.badgeS}`}>
+														Granted
+													</span>
+												) : (
+													<button
+														type="button"
+														className={styles.permReq}
+														onClick={() => openM("permissionModal")}
+													>
+														Request
+													</button>
+												)}
 											</div>
-											{p.granted ? (
-												<span className={`${styles.badge} ${styles.badgeS}`}>Granted</span>
-											) : (
-												<button type="button" className={styles.permReq} onClick={() => openM("permissionModal")}>
-													Request
-												</button>
-											)}
-										</div>
-									))}
+										))}
+									</div>
+								</div>
+							</div>
+							<div className="col-lg-6">
+								<div className={styles.card} style={{ height: "100%" }}>
+									<h3 className={styles.fwBold13} style={{ fontSize: 15 }}>
+										<i
+											className="bi bi-file-earmark-bar-graph"
+											style={{ color: "var(--pm-info)" }}
+										/>{" "}
+										Reports, Receipts &amp; Audit Trail
+									</h3>
+									<div className="mt-2">
+										{[
+											"Per-customer statements",
+											"Transaction receipts",
+											"Billing & reminder reports",
+											"Refund audit trail",
+										].map((r) => (
+											<div className={styles.permItem} key={r}>
+												<span
+													className={`${styles.permDot} ${styles.permOk}`}
+												/>
+												<div
+													className={styles.permTitle}
+													style={{ fontSize: 13 }}
+												>
+													{r}
+												</div>
+												<span
+													className={`${styles.chip} ${styles.chipInfo}`}
+													style={{ marginLeft: "auto" }}
+												>
+													Ready
+												</span>
+											</div>
+										))}
+									</div>
+									<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
+										<button
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											onClick={() => openM("customerReportModal")}
+										>
+											<i className="bi bi-file-earmark-text" /> Generate Receipt
+										</button>
+										<button
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											onClick={() => openM("statementModal")}
+										>
+											<i className="bi bi-receipt" /> Statement
+										</button>
+										<button
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											onClick={() => openM("reportModal")}
+										>
+											<i className="bi bi-bar-chart" /> Reports
+										</button>
+										<button
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											onClick={() => openM("caseExportModal")}
+										>
+											<i className="bi bi-box-arrow-down" /> Export
+										</button>
+										<button
+											className={`${styles.btnPm} ${styles.btnSm}`}
+											onClick={() => openM("feeCalcModal")}
+										>
+											<i className="bi bi-calculator" /> Fee Preview
+										</button>
+									</div>
 								</div>
 							</div>
 						</div>
-						<div className="col-lg-6">
-							<div className={styles.card} style={{ height: "100%" }}>
-								<h3 className={styles.fwBold13} style={{ fontSize: 15 }}>
-									<i className="bi bi-file-earmark-bar-graph" style={{ color: "var(--pm-info)" }} /> Reports, Receipts &amp; Audit Trail
-								</h3>
-								<div className="mt-2">
-									{["Per-customer statements", "Transaction receipts", "Billing & reminder reports", "Refund audit trail"].map((r) => (
-										<div className={styles.permItem} key={r}>
-											<span className={`${styles.permDot} ${styles.permOk}`} />
-											<div className={styles.permTitle} style={{ fontSize: 13 }}>{r}</div>
-											<span className={`${styles.chip} ${styles.chipInfo}`} style={{ marginLeft: "auto" }}>
-												Ready
-											</span>
-										</div>
-									))}
-								</div>
-								<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-									<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("customerReportModal")}>
-										<i className="bi bi-file-earmark-text" /> Generate Receipt
-									</button>
-									<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("statementModal")}>
-										<i className="bi bi-receipt" /> Statement
-									</button>
-									<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("reportModal")}>
-										<i className="bi bi-bar-chart" /> Reports
-									</button>
-									<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("caseExportModal")}>
-										<i className="bi bi-box-arrow-down" /> Export
-									</button>
-									<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("feeCalcModal")}>
-										<i className="bi bi-calculator" /> Fee Preview
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
 					</section>
 
 					{/* ======================= SECTION 06: SUPPORT TICKETS ======================= */}
-					<section className={styles.dashboardSection} aria-labelledby="cust-sec-support">
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="cust-sec-support"
+					>
 						<div className={styles.sectionHeading}>
-							<span className={styles.sectionIndex} aria-hidden="true">06</span>
+							<span className={styles.sectionIndex} aria-hidden="true">
+								06
+							</span>
 							<div>
 								<h2 id="cust-sec-support">Support tickets</h2>
-								<p>Customer-raised issues — failed payments, KYC re-uploads and refund status queries.</p>
+								<p>
+									Customer-raised issues — failed payments, KYC re-uploads and
+									refund status queries.
+								</p>
 							</div>
 						</div>
-					<div className={styles.card}>
-						<div className="d-flex flex-wrap align-items-center justify-content-between" style={{ gap: 10 }}>
-							<h3 className={styles.fwBold13} style={{ fontSize: 15, margin: 0 }}>
-								<i className="bi bi-headset" style={{ color: "var(--pm-warning)" }} /> Support Tickets
-							</h3>
-							<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("createTicketModal")}>
-								<i className="bi bi-plus" /> New Ticket
-							</button>
-						</div>
-						<div className="table-responsive mt-2">
-							<table className={styles.tbl}>
-								<thead>
-									<tr>
-										<th>Ticket</th>
-										<th>Customer</th>
-										<th>Subject</th>
-										<th>Priority</th>
-										<th>Status</th>
-										<th>Updated</th>
-									</tr>
-								</thead>									<tbody>
+						<div className={styles.card}>
+							<div
+								className="d-flex flex-wrap align-items-center justify-content-between"
+								style={{ gap: 10 }}
+							>
+								<h3
+									className={styles.fwBold13}
+									style={{ fontSize: 15, margin: 0 }}
+								>
+									<i
+										className="bi bi-headset"
+										style={{ color: "var(--pm-warning)" }}
+									/>{" "}
+									Support Tickets
+								</h3>
+								<button
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => openM("createTicketModal")}
+								>
+									<i className="bi bi-plus" /> New Ticket
+								</button>
+							</div>
+							<div className="table-responsive mt-2">
+								<table className={styles.tbl}>
+									<thead>
+										<tr>
+											<th>Ticket</th>
+											<th>Customer</th>
+											<th>Subject</th>
+											<th>Priority</th>
+											<th>Status</th>
+											<th>Updated</th>
+										</tr>
+									</thead>{" "}
+									<tbody>
 										{config.tickets.map((t) => (
-											<tr key={t.t} style={{ cursor: "pointer" }} onClick={() => openM("ticketDetailModal")}>
+											<tr
+												key={t.t}
+												style={{ cursor: "pointer" }}
+												onClick={() => openM("ticketDetailModal")}
+											>
 												<td className={styles.refId}>{t.t}</td>
 												<td style={{ fontWeight: 600 }}>{t.c}</td>
 												<td>{t.s}</td>
 												<td>
-													<span className={`${styles.badge} ${styles[priorityTone(t.p)]}`}>{t.p}</span>
+													<span
+														className={`${styles.badge} ${styles[priorityTone(t.p)]}`}
+													>
+														{t.p}
+													</span>
 												</td>
 												<td>
-													<span className={`${styles.chip} ${t.st === "Closed" ? styles.chipAccent : t.st === "Open" ? styles.chipInfo : styles.chipWarn}`}>
+													<span
+														className={`${styles.chip} ${t.st === "Closed" ? styles.chipAccent : t.st === "Open" ? styles.chipInfo : styles.chipWarn}`}
+													>
 														{t.st}
 													</span>
 												</td>
@@ -1566,71 +2553,118 @@ export default function Customers() {
 											</tr>
 										))}
 									</tbody>
-							</table>
+								</table>
+							</div>
 						</div>
-					</div>
 					</section>
 
 					{/* ======================= SECTION 07: LINKED WALLETS & PAYOUTS ======================= */}
-					<section className={styles.dashboardSection} aria-labelledby="cust-sec-wallets">
+					<section
+						className={styles.dashboardSection}
+						aria-labelledby="cust-sec-wallets"
+					>
 						<div className={styles.sectionHeading}>
-							<span className={styles.sectionIndex} aria-hidden="true">07</span>
+							<span className={styles.sectionIndex} aria-hidden="true">
+								07
+							</span>
 							<div>
 								<h2 id="cust-sec-wallets">Linked wallets &amp; payouts</h2>
-								<p>External destinations for refunds and PSP settlements — M-Pesa, bank and internal business wallets.</p>
+								<p>
+									External destinations for refunds and PSP settlements —
+									M-Pesa, bank and internal business wallets.
+								</p>
 							</div>
 						</div>
-					<div className={styles.card}>
-						<h3 className={styles.fwBold13} style={{ fontSize: 15 }}>
-							<i className="bi bi-wallet2" style={{ color: "var(--pm-accent)" }} /> Linked Wallets &amp; Payouts
-						</h3>
-						<div className="row g-3 mt-1">
-							{config.walletLinks.map((w) => (
-								<div className="col-lg-4" key={w.name}>
-									<div className={styles.kycDoc}>
-										<i className="bi bi-wallet2" />
-										<div>
-											<div style={{ fontSize: 13, fontWeight: 700 }}>{w.name}</div>
-											<div style={{ fontSize: 11.5, color: "var(--pm-muted)" }}>{w.sub}</div>
+						<div className={styles.card}>
+							<h3 className={styles.fwBold13} style={{ fontSize: 15 }}>
+								<i
+									className="bi bi-wallet2"
+									style={{ color: "var(--pm-accent)" }}
+								/>{" "}
+								Linked Wallets &amp; Payouts
+							</h3>
+							<div className="row g-3 mt-1">
+								{config.walletLinks.map((w) => (
+									<div className="col-lg-4" key={w.name}>
+										<div className={styles.kycDoc}>
+											<i className="bi bi-wallet2" />
+											<div>
+												<div style={{ fontSize: 13, fontWeight: 700 }}>
+													{w.name}
+												</div>
+												<div
+													style={{ fontSize: 11.5, color: "var(--pm-muted)" }}
+												>
+													{w.sub}
+												</div>
+											</div>
+											<span
+												className={`${styles.badge} ${styles[w.tone]}`}
+												style={{ marginLeft: "auto" }}
+											>
+												{w.status}
+											</span>
 										</div>
-										<span className={`${styles.badge} ${styles[w.tone]}`} style={{ marginLeft: "auto" }}>
-											{w.status}
-										</span>
 									</div>
-								</div>
-							))}
+								))}
+							</div>
+							<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
+								<button
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => openM("linkExternalModal")}
+								>
+									<i className="bi bi-plus-circle" /> Link Wallet
+								</button>
+								<button
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => openM("apiKeyModal")}
+								>
+									<i className="bi bi-key" /> Manage API Keys
+								</button>
+							</div>
 						</div>
-						<div className="d-flex flex-wrap mt-3" style={{ gap: 8 }}>
-							<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("linkExternalModal")}>
-								<i className="bi bi-plus-circle" /> Link Wallet
-							</button>
-							<button className={`${styles.btnPm} ${styles.btnSm}`} onClick={() => openM("apiKeyModal")}>
-								<i className="bi bi-key" /> Manage API Keys
-							</button>
-						</div>
-					</div>
 					</section>
 
 					{/* ======================= FOOTER ======================= */}
 					<footer className={styles.pageFooter}>
 						<span>
-							<i className="bi bi-shield-lock" aria-hidden="true" /> PayMo Business ·
-							Customers workspace
+							<i className="bi bi-shield-lock" aria-hidden="true" /> PayMo
+							Business · Customers workspace
 						</span>
 						<nav aria-label="Workspace sections">
-							<button type="button" className={styles.textButton} onClick={() => scrollToSection("cust-sec-directory")}>
+							<button
+								type="button"
+								className={styles.textButton}
+								onClick={() => scrollToSection("cust-sec-directory")}
+							>
 								Directory
 							</button>
-							<button type="button" className={styles.textButton} onClick={() => scrollToSection("cust-sec-kyc")}>
+							<button
+								type="button"
+								className={styles.textButton}
+								onClick={() => scrollToSection("cust-sec-kyc")}
+							>
 								KYC
 							</button>
-							<button type="button" className={styles.textButton} onClick={() => scrollToSection("cust-sec-reminders")}>
+							<button
+								type="button"
+								className={styles.textButton}
+								onClick={() => scrollToSection("cust-sec-reminders")}
+							>
 								Reminders
 							</button>
-							<button type="button" className={styles.textButton} onClick={() => scrollToSection("cust-sec-refunds")}>
+							<button
+								type="button"
+								className={styles.textButton}
+								onClick={() => scrollToSection("cust-sec-refunds")}
+							>
 								Refunds
 							</button>
-							<button type="button" className={styles.textButton} onClick={() => scrollToSection("cust-sec-support")}>
+							<button
+								type="button"
+								className={styles.textButton}
+								onClick={() => scrollToSection("cust-sec-support")}
+							>
 								Support
 							</button>
 						</nav>
@@ -1639,15 +2673,24 @@ export default function Customers() {
 			</main>
 
 			{/* ======================= FLOATING COMMAND BAR ======================= */}
-			<div className={styles.floatingBar} role="toolbar" aria-label="Customer quick actions">
-				<button type="button" className={styles.floatingPrimary} onClick={() => openM("onboardCustomerModal")}>
+			<div
+				className={styles.floatingBar}
+				role="toolbar"
+				aria-label="Customer quick actions"
+			>
+				<button
+					type="button"
+					className={styles.floatingPrimary}
+					onClick={() => openM("onboardCustomerModal")}
+				>
 					<i className="bi bi-person-plus" aria-hidden="true" /> Onboard
 				</button>
 				<button type="button" onClick={() => openM("sendReminderModal")}>
 					<i className="bi bi-bell" aria-hidden="true" /> Remind
 				</button>
 				<button type="button" onClick={() => openM("issueRefundModal")}>
-					<i className="bi bi-arrow-counterclockwise" aria-hidden="true" /> Refund
+					<i className="bi bi-arrow-counterclockwise" aria-hidden="true" />{" "}
+					Refund
 				</button>
 				<button type="button" onClick={() => openM("kycHealthModal")}>
 					<i className="bi bi-shield-check" aria-hidden="true" /> KYC queue
@@ -1674,7 +2717,23 @@ export default function Customers() {
 			</div>
 
 			{/* ======================= MODAL LAYER ======================= */}
-			<CustomersModals active={activeModal} onClose={closeM} onOpen={openM} onToast={pushToast} />
+			<AttentionDrawer
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				onAction={handleDrawerAction}
+				pageName="Customers"
+				pageIcon="bi-people"
+				attention={drawerAttention}
+				suggestions={drawerSuggestions}
+				quickActions={drawerQuickActions}
+				description="Open operational items, AI routing recommendations and the actions treasury uses most — each opens the matching workflow."
+			/>
+			<CustomersModals
+				active={activeModal}
+				onClose={closeM}
+				onOpen={openM}
+				onToast={pushToast}
+			/>
 		</div>
 	);
 }

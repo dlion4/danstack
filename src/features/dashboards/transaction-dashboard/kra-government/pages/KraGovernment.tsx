@@ -3,6 +3,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { type ReactNode, useEffect, useState } from "react";
+import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import type {
+	AttentionItem,
+	QuickActionItem,
+} from "../../shared/data/attentionFeed";
 import KraGovernmentModals from "../components/KraGovernmentModals";
 import styles from "../styles/kraGovernment.module.css";
 
@@ -746,10 +751,46 @@ export default function KraGovernment() {
 	const config = data ?? initialMockData;
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [entity, setEntity] = useState("all");
 
 	const openM = (id: string) => setActiveModal(id);
 	const closeM = () => setActiveModal(null);
+
+	const handleDrawerAction = (modal: string) => {
+		if (modal) openM(modal);
+	};
+
+	const drawerAttention = config.attention.map(
+		(item): AttentionItem => ({
+			icon: item.icon.replace(/^bi-/, ""),
+			iconBg: item.iconBg,
+			iconColor: item.iconColor,
+			title: item.title,
+			sub: item.sub,
+			actionLabel: item.actionLabel,
+			modal: item.modal,
+		}),
+	);
+	const drawerSuggestions = config.suggestions.map(
+		(item): AttentionItem => ({
+			icon: item.icon.replace(/^bi-/, ""),
+			iconBg: item.iconBg,
+			iconColor: item.iconColor,
+			title: item.title,
+			sub: item.sub,
+			actionLabel: item.actionLabel,
+			modal: item.modal,
+		}),
+	);
+	const drawerQuickActions = config.quickActions.map(
+		(action): QuickActionItem => ({
+			icon: action.icon.replace(/^bi-/, ""),
+			iconColor: action.color,
+			label: action.label,
+			modal: action.modal,
+		}),
+	);
 
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
@@ -961,127 +1002,56 @@ export default function KraGovernment() {
 						<SectionHeading
 							index="1.2"
 							id="kra-sec-queue"
-							title="Needs your attention"
-							description="File due returns, settle overdue assessments and act on smart tax recommendations without leaving the dashboard."
+							title="Action centre"
+							description="Resolve exceptions first, then use guided suggestions to improve transfer outcomes."
+							action={
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => setDrawerOpen(true)}
+								>
+									<i className="bi bi-columns-gap" aria-hidden="true" /> Review
+									queue
+								</button>
+							}
 						/>
-						<div className={styles.attentionGrid}>
-							<div className={styles.listCard}>
-								<div className={styles.listCardHeader}>
-									<h3 className={styles.listCardTitle}>
-										<i
-											className="bi bi-exclamation-circle"
-											aria-hidden="true"
-										/>{" "}
-										Attention Required
-									</h3>
-									<div className={styles.headerButtonRow}>
-										<button
-											type="button"
-											className={`${styles.btnPm} ${styles.btnSm}`}
-											onClick={() => openM("govNotifModal")}
-											aria-label="Government notifications"
-										>
-											<i className="bi bi-bell" aria-hidden="true" />
-										</button>
-										<button
-											type="button"
-											className={`${styles.btnPm} ${styles.btnSm}`}
-											onClick={() => openM("attentionModal")}
-										>
-											View all
-										</button>
-									</div>
-								</div>
-								{config.attention.map((item) => (
-									<div className={styles.actionRow} key={item.title}>
-										<div
-											className={styles.iconCircle}
-											style={{
-												background: item.iconBg,
-												color: item.iconColor,
-											}}
-											aria-hidden="true"
-										>
-											<i className={`bi ${item.icon}`} />
-										</div>
-										<div className={styles.actionRowMain}>
-											<div className={styles.actionRowTitle}>{item.title}</div>
-											<div className={styles.actionRowSub}>{item.sub}</div>
-										</div>
-										<div className={styles.actionRowActions}>
-											<button
-												type="button"
-												className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
-												onClick={() => openM(item.modal)}
-											>
-												{item.actionLabel}
-											</button>
-										</div>
-									</div>
-								))}
-							</div>
-							<div className={styles.listCard}>
-								<div className={styles.listCardHeader}>
-									<h3 className={styles.listCardTitle}>
-										<i className="bi bi-lightbulb" aria-hidden="true" /> Smart
-										Suggestions
-									</h3>
-									<span className={`${styles.badge} ${styles.badgeP}`}>
-										<i className="bi bi-stars" aria-hidden="true" /> AI
-									</span>
-								</div>
-								{config.suggestions.map((item) => (
-									<div className={styles.actionRow} key={item.title}>
-										<div
-											className={styles.iconCircle}
-											style={{
-												background: item.iconBg,
-												color: item.iconColor,
-											}}
-											aria-hidden="true"
-										>
-											<i className={`bi ${item.icon}`} />
-										</div>
-										<div className={styles.actionRowMain}>
-											<div className={styles.actionRowTitle}>{item.title}</div>
-											<div className={styles.actionRowSub}>{item.sub}</div>
-										</div>
-										<div className={styles.actionRowActions}>
-											<button
-												type="button"
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => openM(item.modal)}
-											>
-												{item.actionLabel}
-											</button>
-										</div>
-									</div>
-								))}
-							</div>
-							<div className={styles.listCard}>
+						<div className={styles.card}>
+							<div className={styles.listCardHeader}>
 								<h3 className={styles.listCardTitle}>
-									<i className="bi bi-lightning-charge" aria-hidden="true" />{" "}
-									Quick Actions
+									<i className="bi bi-exclamation-octagon" aria-hidden="true" />{" "}
+									Attention, suggestions &amp; quick actions
 								</h3>
-								<p className={styles.listCardSub}>
-									Frequent tax &amp; government workflows
-								</p>
-								<div className={styles.quickGrid}>
-									{config.quickActions.map((qa) => (
-										<button
-											type="button"
-											className={styles.quickActionCard}
-											key={qa.label}
-											onClick={() => openM(qa.modal)}
-										>
-											<i
-												className={`bi ${qa.icon}`}
-												style={{ color: qa.color }}
-											/>
-											<span>{qa.label}</span>
-										</button>
-									))}
+								<span className={`${styles.badge} ${styles.badgeW}`}>
+									{config.attention.length} attention
+								</span>
+							</div>
+							<p className={styles.listCardSub}>
+								Open operational items, AI routing recommendations and the
+								actions treasury uses most — each opens the matching workflow.
+							</p>
+							<div className={styles.actionCentreStats}>
+								<div className={styles.actionCentreStat}>
+									<strong>{config.attention.length}</strong>
+									<span>Attention</span>
 								</div>
+								<div className={styles.actionCentreStat}>
+									<strong>{config.suggestions.length}</strong>
+									<span>Suggestions</span>
+								</div>
+								<div className={styles.actionCentreStat}>
+									<strong>{config.quickActions.length}</strong>
+									<span>Shortcuts</span>
+								</div>
+							</div>
+							<div className={styles.actionCentreActions}>
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => setDrawerOpen(true)}
+								>
+									<i className="bi bi-columns-gap" aria-hidden="true" /> Open
+									drawer
+								</button>
 							</div>
 						</div>
 					</section>
@@ -1582,6 +1552,17 @@ export default function KraGovernment() {
 				</button>
 			</nav>
 
+			<AttentionDrawer
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				onAction={handleDrawerAction}
+				pageName="KRA & government"
+				pageIcon="bi-building"
+				attention={drawerAttention}
+				suggestions={drawerSuggestions}
+				quickActions={drawerQuickActions}
+				description="Open operational items, AI routing recommendations and the actions treasury uses most — each opens the matching workflow."
+			/>
 			<KraGovernmentModals
 				active={activeModal}
 				onClose={closeM}

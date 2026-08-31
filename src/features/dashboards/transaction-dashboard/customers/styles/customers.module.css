@@ -481,6 +481,82 @@
 	text-transform: uppercase;
 }
 
+.sectionAction {
+	margin-left: auto;
+	flex: 0 0 auto;
+}
+
+/* ======================= ACTION CENTRE COMPACT ======================= */
+.actionCentreHead {
+	display: flex;
+	align-items: center;
+	gap: 0.85rem;
+}
+.actionCentreIcon {
+	width: 52px;
+	height: 52px;
+	flex: 0 0 52px;
+	display: grid;
+	place-items: center;
+	border-radius: 14px;
+	background: var(--pm-warning-soft);
+	color: var(--pm-warning);
+	font-size: 1.35rem;
+}
+.actionCentreCopy {
+	min-width: 0;
+}
+.actionCentreCopy h3 {
+	margin: 0.08rem 0 0;
+	color: var(--pm-ink);
+	font-family: var(--pm-font-display);
+	font-size: 0.97rem;
+	font-weight: 700;
+	letter-spacing: -0.015em;
+}
+.actionCentreCopy p {
+	max-width: 680px;
+	margin: 0.28rem 0 0;
+	color: var(--pm-muted);
+	font-size: 0.75rem;
+	line-height: 1.55;
+}
+.actionCentreStats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.55rem;
+	margin-top: 1rem;
+}
+.actionCentreStat {
+	min-width: 118px;
+	padding: 0.65rem 0.8rem;
+	border: 1px solid var(--pm-border);
+	border-radius: 12px;
+	background: var(--pm-surface-2);
+	text-align: center;
+}
+.actionCentreStat strong {
+	display: block;
+	color: var(--pm-ink);
+	font-family: var(--pm-font-display);
+	font-size: 1.12rem;
+	letter-spacing: -0.03em;
+}
+.actionCentreStat span {
+	display: block;
+	margin-top: 2px;
+	color: var(--pm-muted);
+	font-size: 0.66rem;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+}
+.actionCentreActions {
+	display: flex;
+	gap: 0.5rem;
+	margin-top: 1rem;
+}
+
 /* ======================= FLOATING COMMAND BAR / FOOTER ======================= */
 .floatingBar {
 	position: fixed;

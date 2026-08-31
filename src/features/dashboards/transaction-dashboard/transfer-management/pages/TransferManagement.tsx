@@ -13,6 +13,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
+import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import type {
+	AttentionItem,
+	QuickActionItem,
+} from "../../shared/data/attentionFeed";
 import {
 	type TransferManagementData,
 	TransferManagementModals,
@@ -510,14 +515,40 @@ const toneBadge: Record<Tone, string> = {
 	neutral: styles.badgeNeutral,
 };
 
-const toneIcon: Record<Tone, string> = {
-	success: styles.iconGreen,
-	info: styles.iconBlue,
-	warn: styles.iconAmber,
-	danger: styles.iconRed,
-	purple: styles.iconViolet,
-	neutral: styles.iconNeutral,
+const toneBg: Record<Tone, string> = {
+	success: "var(--tm-green-soft)",
+	info: "var(--tm-info-soft)",
+	warn: "var(--tm-warning-soft)",
+	danger: "var(--tm-danger-soft)",
+	purple: "var(--tm-violet-soft)",
+	neutral: "#f2f4f8",
 };
+
+const toneColor: Record<Tone, string> = {
+	success: "#067647",
+	info: "#175cd3",
+	warn: "#93370d",
+	danger: "#b42318",
+	purple: "#5925dc",
+	neutral: "#475467",
+};
+
+const toAttention = (row: Row): AttentionItem => ({
+	icon: row.icon.replace(/^bi-/, ""),
+	iconBg: toneBg[row.tone],
+	iconColor: toneColor[row.tone],
+	title: row.title,
+	sub: row.sub,
+	actionLabel: row.action,
+	modal: row.modal,
+});
+
+const toQuickAction = (action: QuickAction): QuickActionItem => ({
+	icon: action.icon.replace(/^bi-/, ""),
+	iconColor: toneColor[action.tone],
+	label: action.label,
+	modal: action.modal,
+});
 
 const kpiIcons = [
 	"bi-send-check",
@@ -617,12 +648,21 @@ export default function TransferManagement() {
 		[data],
 	);
 	const [modalState, setModalState] = useState<Record<string, boolean>>({});
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [historyQuery, setHistoryQuery] = useState("");
 	const [historyStatus, setHistoryStatus] = useState("all");
 
 	const openModal = (id: string) => setModalState({ [id]: true });
 	const closeModal = (id: string) =>
 		setModalState((current) => ({ ...current, [id]: false }));
+
+	const handleDrawerAction = (modal: string) => {
+		if (modal) openModal(modal);
+	};
+
+	const drawerAttention = content.attention.map(toAttention);
+	const drawerSuggestions = content.suggestions.map(toAttention);
+	const drawerQuickActions = content.quickActions.map(toQuickAction);
 
 	const filteredHistory = useMemo(() => {
 		const query = historyQuery.trim().toLowerCase();
@@ -804,106 +844,46 @@ export default function TransferManagement() {
 								<button
 									type="button"
 									className={styles.btn}
-									onClick={() => openModal("attentionModal")}
+									onClick={() => setDrawerOpen(true)}
 								>
-									<i className="bi bi-list-check" /> Review queue
+									<i className="bi bi-columns-gap" /> Review queue
 								</button>
 							}
 						/>
-						<div className={styles.attentionGrid}>
-							<article className={`${styles.card} ${styles.listCard}`}>
-								<div className={styles.cardHeader}>
-									<div>
-										<span className={styles.cardKicker}>Requires review</span>
-										<h3>Transfer exceptions</h3>
-									</div>
-									<span className={`${styles.badge} ${styles.badgeWarn}`}>
-										{content.attention.length} open
-									</span>
-								</div>
-								<div className={styles.listBody}>
-									{content.attention.map((item) => (
-										<div className={styles.actionRow} key={item.title}>
-											<div className={styles.actionRowMain}>
-												<span
-													className={`${styles.rowIcon} ${toneIcon[item.tone]}`}
-												>
-													<i className={`bi ${item.icon}`} />
-												</span>
-												<div>
-													<strong>{item.title}</strong>
-													<span>{item.sub}</span>
-												</div>
-											</div>
-											<button
-												type="button"
-												className={styles.btn}
-												onClick={() => openModal(item.modal)}
-											>
-												{item.action}
-											</button>
-										</div>
-									))}
-								</div>
-							</article>
-
-							<article className={`${styles.card} ${styles.listCard}`}>
-								<div className={styles.cardHeader}>
-									<div>
-										<span className={styles.cardKicker}>PayMo insight</span>
-										<h3>Smart suggestions</h3>
-									</div>
-									<span className={`${styles.badge} ${styles.badgePurple}`}>
-										<i className="bi bi-stars" /> Guided
-									</span>
-								</div>
-								<div className={styles.listBody}>
-									{content.suggestions.map((item) => (
-										<div className={styles.actionRow} key={item.title}>
-											<div className={styles.actionRowMain}>
-												<span
-													className={`${styles.rowIcon} ${toneIcon[item.tone]}`}
-												>
-													<i className={`bi ${item.icon}`} />
-												</span>
-												<div>
-													<strong>{item.title}</strong>
-													<span>{item.sub}</span>
-												</div>
-											</div>
-											<button
-												type="button"
-												className={styles.btn}
-												onClick={() => openModal(item.modal)}
-											>
-												{item.action}
-											</button>
-										</div>
-									))}
-								</div>
-							</article>
-						</div>
-
-						<article className={`${styles.card} ${styles.quickActionCard}`}>
-							<div className={styles.quickActionIntro}>
-								<span className={styles.cardKicker}>Workflow launcher</span>
-								<h3>Start with the right rail</h3>
+						<article className={`${styles.card} ${styles.actionCentreCard}`}>
+							<div className={styles.actionCentreIcon}>
+								<i className="bi bi-exclamation-octagon" />
+							</div>
+							<div className={styles.actionCentreCopy}>
+								<span className={styles.cardKicker}>Action centre</span>
+								<h3>Attention, suggestions & quick actions</h3>
 								<p>
-									Every action opens a guided, reviewable transfer workflow.
+									Open operational items, AI routing recommendations and the
+									actions treasury uses most — each opens the matching workflow.
 								</p>
 							</div>
-							<div className={styles.quickGrid}>
-								{content.quickActions.map((action) => (
-									<button
-										type="button"
-										key={action.label}
-										className={styles.quickBtn}
-										onClick={() => openModal(action.modal)}
-									>
-										<i className={`bi ${action.icon}`} />
-										<span>{action.label}</span>
-									</button>
-								))}
+							<div className={styles.actionCentreStats}>
+								<div className={styles.actionCentreStat}>
+									<strong>{content.attention.length}</strong>
+									<span>Attention</span>
+								</div>
+								<div className={styles.actionCentreStat}>
+									<strong>{content.suggestions.length}</strong>
+									<span>Suggestions</span>
+								</div>
+								<div className={styles.actionCentreStat}>
+									<strong>{content.quickActions.length}</strong>
+									<span>Shortcuts</span>
+								</div>
+							</div>
+							<div className={styles.actionCentreActions}>
+								<button
+									type="button"
+									className={`${styles.btn} ${styles.btnPrimary}`}
+									onClick={() => setDrawerOpen(true)}
+								>
+									<i className="bi bi-columns-gap" /> Open drawer
+								</button>
 							</div>
 						</article>
 					</section>
@@ -1564,6 +1544,18 @@ export default function TransferManagement() {
 					</nav>
 				</footer>
 			</main>
+
+			<AttentionDrawer
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				onAction={handleDrawerAction}
+				pageName="Transfer management"
+				pageIcon="bi-arrow-repeat"
+				attention={drawerAttention}
+				suggestions={drawerSuggestions}
+				quickActions={drawerQuickActions}
+				description="Open operational items, AI routing recommendations and the actions treasury uses most — each opens the matching workflow."
+			/>
 
 			<TransferManagementModals
 				modalState={modalState}

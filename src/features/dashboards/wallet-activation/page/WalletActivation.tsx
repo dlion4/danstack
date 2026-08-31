@@ -2,6 +2,11 @@
 
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { useEffect, useMemo, useRef, useState } from "react";
+import AttentionDrawer from "../../transaction-dashboard/shared/components/AttentionDrawer";
+import type {
+	AttentionItem as DrawerAttentionItem,
+	QuickActionItem,
+} from "../../transaction-dashboard/shared/data/attentionFeed";
 import AccountFlowChart from "../components/AccountFlowChart";
 import { WalletActivationModals } from "../modals/WalletActivationModals";
 import styles from "../styles/walletActivation.module.css";
@@ -727,6 +732,7 @@ function CommandPalette({
 
 export default function WalletActivation() {
 	const [modalState, setModalState] = useState<Record<string, boolean>>({});
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [copied, setCopied] = useState(false);
 	const [tab, setTab] = useState<"overview" | "flow" | "dashboards" | "manage">(
 		"overview",
@@ -756,6 +762,65 @@ export default function WalletActivation() {
 	};
 	const closeModal = (id: string) =>
 		setModalState((prev) => ({ ...prev, [id]: false }));
+
+	const handleDrawerAction = (modal: string) => {
+		if (modal) openModal(modal);
+	};
+
+	const journeyTone: Record<
+		"done" | "current" | "pending",
+		{ iconBg: string; iconColor: string; modal: string; actionLabel: string }
+	> = {
+		done: {
+			iconBg: "var(--success-bg)",
+			iconColor: "var(--success)",
+			modal: "tourGuideModal",
+			actionLabel: "Replay",
+		},
+		current: {
+			iconBg: "var(--info-bg)",
+			iconColor: "var(--info)",
+			modal: "activeLinksModal",
+			actionLabel: "View",
+		},
+		pending: {
+			iconBg: "var(--warning-bg)",
+			iconColor: "var(--warning)",
+			modal: "activateDashboardModal",
+			actionLabel: "Activate",
+		},
+	};
+	const drawerAttention = journeySteps.map((step): DrawerAttentionItem => {
+		const tone = journeyTone[step.state as "done" | "current" | "pending"];
+		return {
+			icon: step.icon.replace(/^bi\s+/, "").replace(/^bi-/, ""),
+			iconBg: tone.iconBg,
+			iconColor: tone.iconColor,
+			title: step.title,
+			sub: `${step.meta} · ${step.date}`,
+			actionLabel: tone.actionLabel,
+			modal: tone.modal,
+		};
+	});
+	const drawerSuggestions = activity.map(
+		(item): DrawerAttentionItem => ({
+			icon: item.icon.replace(/^bi\s+/, "").replace(/^bi-/, ""),
+			iconBg: item.bg,
+			iconColor: item.color,
+			title: item.title,
+			sub: item.meta.join(" · "),
+			actionLabel: "Open",
+			modal: "activeLinksModal",
+		}),
+	);
+	const drawerQuickActions = features.map(
+		(action): QuickActionItem => ({
+			icon: action.icon.replace(/^bi\s+/, "").replace(/^bi-/, ""),
+			iconColor: action.color,
+			label: action.label,
+			modal: action.modal,
+		}),
+	);
 
 	const flash = (msg: string) => {
 		setToast(msg);
@@ -1021,105 +1086,62 @@ export default function WalletActivation() {
 									<h3 className={styles.sectionTitle}>
 										<span className={styles.sectionIndex}>02</span>
 										<i
-											className="bi bi-signpost-split"
-											style={{ color: "var(--success)" }}
+											className="bi bi-exclamation-octagon"
+											style={{ color: "var(--warning)" }}
 										></i>{" "}
-										Activation Journey
+										Action centre
 									</h3>
 									<p className={styles.sectionSub}>
-										Every milestone your wallet passed on the way to anchoring
-										your hub.
+										Resolve exceptions first, then use guided suggestions to
+										improve activation outcomes.
 									</p>
 								</div>
 								<button
 									type="button"
 									className={`${styles.button} ${styles.buttonSm}`}
-									onClick={() => openModal("tourGuideModal")}
+									onClick={() => setDrawerOpen(true)}
 								>
-									<i className="bi bi-play-circle"></i> Replay Tour
+									<i className="bi bi-columns-gap"></i> Review queue
 								</button>
 							</div>
-							<div className={styles.journeyStrip}>
-								{journeySteps.map((step, i) => (
-									<div
-										key={step.title}
-										className={`${styles.journeyItem} ${step.state === "done" ? styles.journeyDone : step.state === "current" ? styles.journeyCurrent : styles.journeyPending}`}
+							<div className={styles.actionCentreCard}>
+								<span className={styles.actionCentreIcon}>
+									<i className="bi bi-exclamation-octagon"></i>
+								</span>
+								<span className={styles.actionCentreCopy}>
+									<span className={styles.actionCentreKicker}>
+										Action centre
+									</span>
+									<strong>Attention, suggestions &amp; quick actions</strong>
+									<span>
+										Open operational items, AI routing recommendations and the
+										actions treasury uses most — each opens the matching
+										workflow.
+									</span>
+								</span>
+								<span className={styles.actionCentreStats}>
+									<span className={styles.actionCentreStat}>
+										<strong>{drawerAttention.length}</strong>
+										<span>Attention</span>
+									</span>
+									<span className={styles.actionCentreStat}>
+										<strong>{drawerSuggestions.length}</strong>
+										<span>Suggestions</span>
+									</span>
+									<span className={styles.actionCentreStat}>
+										<strong>{drawerQuickActions.length}</strong>
+										<span>Shortcuts</span>
+									</span>
+								</span>
+								<span className={styles.actionCentreActions}>
+									<button
+										type="button"
+										className={`${styles.button} ${styles.buttonSm}`}
+										onClick={() => setDrawerOpen(true)}
 									>
-										<span className={styles.journeyDot}>
-											<i
-												className={`bi ${step.state === "pending" ? "bi-dot" : step.icon}`}
-											></i>
-										</span>
-										{step.state === "current" && (
-											<span className={styles.journeyPulse}></span>
-										)}
-										{i < journeySteps.length - 1 && (
-											<span className={styles.journeyLine}></span>
-										)}
-										<div className={styles.journeyItemBody}>
-											<span className={styles.journeyTitle}>
-												{step.title}
-												{step.state === "current" && (
-													<span className={styles.journeyTag}>
-														<i className="bi bi-arrow-repeat"></i> In progress
-													</span>
-												)}
-												{step.state === "pending" && (
-													<span className={styles.journeyTag}>
-														<i className="bi bi-hourglass-split"></i> Up next
-													</span>
-												)}
-											</span>
-											<span className={styles.journeyMeta}>{step.meta}</span>
-											<span className={styles.journeyDate}>{step.date}</span>
-										</div>
-									</div>
-								))}
-							</div>
-						</section>
-					</Reveal>
-
-					<Reveal delay={120}>
-						<section className={styles.section}>
-							<div className={styles.sectionHead}>
-								<div>
-									<h3 className={styles.sectionTitle}>
-										<span className={styles.sectionIndex}>03</span>
-										<i
-											className="bi bi-clock-history"
-											style={{ color: "var(--info)" }}
-										></i>{" "}
-										Recent Activity
-									</h3>
-									<p className={styles.sectionSub}>
-										Latest events across your linked dashboards.
-									</p>
-								</div>
-							</div>
-							<div className={styles.activityCard}>
-								{activity.map((a) => (
-									<div className={styles.activityRow} key={a.title}>
-										<span
-											className={styles.activityIcon}
-											style={{ background: a.bg, color: a.color }}
-										>
-											<i className={a.icon}></i>
-										</span>
-										<span className={styles.activityBody}>
-											<span className={styles.activityTitle}>{a.title}</span>
-											<span className={styles.activityMeta}>
-												{a.meta.join(" · ")}
-											</span>
-										</span>
-										{a.amt && (
-											<span
-												className={`${styles.activityAmt} ${a.dir === "in" ? styles.activityIn : styles.activityOut}`}
-											>
-												{a.amt}
-											</span>
-										)}
-									</div>
-								))}
+										<i className="bi bi-columns-gap"></i> Open drawer
+									</button>
+								</span>
 							</div>
 						</section>
 					</Reveal>
@@ -1286,6 +1308,19 @@ export default function WalletActivation() {
 					<i className="bi bi-check-circle-fill"></i> {toast}
 				</div>
 			)}
+
+			{/* ==================== ACTION CENTRE DRAWER ==================== */}
+			<AttentionDrawer
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				onAction={handleDrawerAction}
+				pageName="Wallet activation"
+				pageIcon="bi-wallet2"
+				attention={drawerAttention}
+				suggestions={drawerSuggestions}
+				quickActions={drawerQuickActions}
+				description="Open operational items, AI routing recommendations and the actions treasury uses most — each opens the matching workflow."
+			/>
 
 			{/* ==================== MODALS ==================== */}
 			<WalletActivationModals

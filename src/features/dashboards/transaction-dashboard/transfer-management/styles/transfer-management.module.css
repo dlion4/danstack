@@ -25,6 +25,25 @@
 	--tm-violet: #7a5af8;
 	--tm-violet-soft: #f0ebfe;
 	--tm-radius: 16px;
+
+	/* Cross-page Action centre aliases so shared drawer tokens resolve here. */
+	--pm-accent: var(--tm-green);
+	--pm-accent-soft: var(--tm-green-soft);
+	--pm-blue: var(--tm-info);
+	--pm-blue-soft: var(--tm-info-soft);
+	--pm-danger: var(--tm-danger);
+	--pm-danger-soft: var(--tm-danger-soft);
+	--pm-green: var(--tm-green);
+	--pm-green-dark: var(--tm-green-dark);
+	--pm-green-soft: var(--tm-green-soft);
+	--pm-info: var(--tm-info);
+	--pm-info-soft: var(--tm-info-soft);
+	--pm-purple: var(--tm-violet);
+	--pm-purple-soft: var(--tm-violet-soft);
+	--pm-violet: var(--tm-violet);
+	--pm-violet-soft: var(--tm-violet-soft);
+	--pm-warning: var(--tm-warning);
+	--pm-warning-soft: var(--tm-warning-soft);
 	--tm-shadow:
 		0 1px 2px rgba(16, 24, 40, 0.05), 0 8px 24px -12px rgba(16, 24, 40, 0.12);
 	--tm-shadow-lg: 0 24px 60px -16px rgba(16, 24, 40, 0.28);
@@ -689,6 +708,74 @@
 	transform: translateY(-1px);
 }
 
+/* ── Action centre compact summary ───────────────────────────────────────── */
+.actionCentreCard {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
+	align-items: center;
+	gap: 1rem;
+}
+.actionCentreIcon {
+	width: 52px;
+	height: 52px;
+	display: grid;
+	place-items: center;
+	border-radius: 14px;
+	background: var(--tm-warning-soft);
+	color: var(--tm-warning);
+	font-size: 1.35rem;
+}
+.actionCentreCopy {
+	min-width: 0;
+}
+.actionCentreCopy h3 {
+	margin: 0.08rem 0 0;
+	color: var(--tm-ink);
+	font-family: "Sora", "Inter", sans-serif;
+	font-size: 0.97rem;
+	font-weight: 700;
+	letter-spacing: -0.015em;
+}
+.actionCentreCopy p {
+	max-width: 660px;
+	margin: 0.26rem 0 0;
+	color: var(--tm-muted);
+	font-size: 0.72rem;
+	line-height: 1.5;
+}
+.actionCentreStats {
+	display: flex;
+	gap: 0.45rem;
+}
+.actionCentreStat {
+	min-width: 72px;
+	padding: 0.55rem 0.65rem;
+	border: 1px solid var(--tm-border);
+	border-radius: 11px;
+	background: #fafbfd;
+	text-align: center;
+}
+.actionCentreStat strong {
+	display: block;
+	color: var(--tm-ink);
+	font-family: "Sora", "Inter", sans-serif;
+	font-size: 1.08rem;
+	letter-spacing: -0.03em;
+}
+.actionCentreStat span {
+	display: block;
+	margin-top: 1px;
+	color: var(--tm-muted);
+	font-size: 0.58rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+.actionCentreActions {
+	display: flex;
+	gap: 0.5rem;
+}
+
 /* ── Tables and operational cards ────────────────────────────────────────── */
 .domesticGrid,
 .internationalGrid {
@@ -1325,6 +1412,18 @@
 	}
 	.quickActionCard {
 		grid-template-columns: 1fr;
+	}
+	.actionCentreCard {
+		grid-template-columns: auto 1fr;
+	}
+	.actionCentreStats {
+		grid-column: 1 / -1;
+	}
+	.actionCentreActions {
+		grid-column: 1 / -1;
+	}
+	.actionCentreActions .btn {
+		width: 100%;
 	}
 	.tableToolbar {
 		align-items: stretch;

@@ -25,8 +25,13 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { cx } from "@/features/Layouts/shell/data/shellData";
+import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import type {
+	AttentionItem,
+	QuickActionItem,
+} from "../../shared/data/attentionFeed";
 import {
 	type LiquidityData,
 	LiquidityModals,
@@ -42,14 +47,6 @@ const toneBadge: Record<Tone, string> = {
 	info: s.badgeInfo,
 	purple: s.badgePurple,
 	neutral: s.badgeOutline,
-};
-const toneIcon: Record<Tone, string> = {
-	success: s.toneSuccess,
-	warn: s.toneWarn,
-	danger: s.toneDanger,
-	info: s.toneInfo,
-	purple: s.tonePurple,
-	neutral: s.toneNeutral,
 };
 type ToneColor = "pri" | "warn" | "danger" | "info" | "purple" | "muted";
 function toneColor(t: ToneColor): string {
@@ -704,11 +701,16 @@ export default function Liquidity({
 	initialBusiness?: "land" | "co2";
 }) {
 	const [modalState, setModalState] = useState<Record<string, boolean>>({});
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [world, setWorld] = useState<"floats" | "wallets">("floats");
 	const [biz, setBiz] = useState(initialBusiness ?? "all");
 	const [toasts, setToasts] = useState<
 		{ id: number; message: string; variant: "success" | "danger" }[]
 	>([]);
+
+	const handleDrawerAction = (modal: string) => {
+		if (modal) openModal(modal);
+	};
 
 	/* keep the business filter in sync when a deep link (e.g. a float-link chip
 	 * from the Reconciliation page) changes the ?business= search param while
@@ -756,25 +758,40 @@ export default function Liquidity({
 		(m) => m.business === "—" || inScope(m.business),
 	);
 
-	const renderRow = (item: Row) => (
-		<div className={s.rowItem} key={item.title}>
-			<div className={s.rowLead}>
-				<div className={cx(s.rowIcon, toneIcon[item.tone])}>
-					<i className={cx("bi", item.icon)} />
-				</div>
-				<div style={{ minWidth: 0 }}>
-					<div className={s.rowTitle}>{item.title}</div>
-					<div className={s.rowSub}>{item.sub}</div>
-				</div>
-			</div>
-			<button
-				type="button"
-				className={cx(s.btn, s.btnSm)}
-				onClick={() => openModal(item.modal)}
-			>
-				{item.action}
-			</button>
-		</div>
+	const rowBg: Record<Tone, string> = {
+		success: "var(--success-bg)",
+		warn: "var(--warning-bg)",
+		danger: "var(--danger-bg)",
+		info: "var(--info-bg)",
+		purple: "var(--purple-bg)",
+		neutral: "var(--surface-2)",
+	};
+	const rowColor: Record<Tone, string> = {
+		success: "var(--success)",
+		warn: "var(--warning)",
+		danger: "var(--danger)",
+		info: "var(--info)",
+		purple: "var(--purple)",
+		neutral: "var(--ink-500)",
+	};
+	const toAttention = (item: Row): AttentionItem => ({
+		icon: item.icon.replace(/^bi-/, ""),
+		iconBg: rowBg[item.tone],
+		iconColor: rowColor[item.tone],
+		title: item.title,
+		sub: item.sub,
+		actionLabel: item.action,
+		modal: item.modal,
+	});
+	const drawerAttention = c.attention.map(toAttention);
+	const drawerSuggestions = c.suggestions.map(toAttention);
+	const drawerQuickActions = c.quickActions.map(
+		(action): QuickActionItem => ({
+			icon: action.icon.replace(/^bi-/, ""),
+			iconColor: toneColor(action.tone),
+			label: action.label,
+			modal: action.modal,
+		}),
 	);
 
 	return (
@@ -1585,7 +1602,7 @@ export default function Liquidity({
 					</>
 				)}
 
-				{/* ---------- ATTENTION / SUGGESTIONS / QUICK ACTIONS ---------- */}
+				{/* ---------- ACTION CENTRE ---------- */}
 				<section
 					className={s.dashboardSection}
 					aria-labelledby="liq-sec-queues"
@@ -1593,53 +1610,54 @@ export default function Liquidity({
 					<SectionHeading
 						index={world === "floats" ? "05" : "03"}
 						id="liq-sec-queues"
-						title="Attention, suggestions & quick actions"
-						description="Open float items, AI liquidity recommendations and the actions you use most — each opens the matching workflow."
+						title="Action centre"
+						description="Resolve exceptions first, then use guided suggestions to improve transfer outcomes."
+						action={
+							<button
+								type="button"
+								className={cx(s.btn, s.btnSm)}
+								onClick={() => setDrawerOpen(true)}
+							>
+								<i className="bi bi-columns-gap" /> Review queue
+							</button>
+						}
 					/>
-					<div className={s.queueGrid}>
-						<div className={cx(s.card, s.queueCard)}>
-							<div className={s.sectionHead}>
-								<h3 className={s.sectionTitle}>Attention Required</h3>
-								<button
-									type="button"
-									className={cx(s.btn, s.btnSm)}
-									onClick={() => openModal("attentionModal")}
-								>
-									View all
-								</button>
-							</div>
-							{c.attention.map(renderRow)}
+					<div className={cx(s.card, s.actionCentreCard)}>
+						<div className={s.actionCentreIcon}>
+							<i className="bi bi-exclamation-octagon" />
 						</div>
-						<div className={cx(s.card, s.queueCard)}>
-							<div className={s.sectionHead}>
-								<h3 className={s.sectionTitle}>Smart Suggestions</h3>
-								<span className={cx(s.badge, s.badgePurple)}>
-									<i className="bi bi-stars" /> AI
-								</span>
-							</div>
-							{c.suggestions.map(renderRow)}
+						<div className={s.actionCentreCopy}>
+							<span className={cx(s.cardKicker, s.cardKicker)}>
+								Action centre
+							</span>
+							<h3>Attention, suggestions &amp; quick actions</h3>
+							<p>
+								Open operational items, AI routing recommendations and the
+								actions treasury uses most — each opens the matching workflow.
+							</p>
 						</div>
-						<div className={cx(s.card, s.queueCard)}>
-							<div style={{ marginBottom: 16 }}>
-								<h3 className={s.sectionTitle}>Quick Actions</h3>
-								<p className={s.sectionSub}>Frequent liquidity workflows</p>
+						<div className={s.actionCentreStats}>
+							<div className={s.actionCentreStat}>
+								<strong>{c.attention.length}</strong>
+								<span>Attention</span>
 							</div>
-							<div className={s.qaGrid}>
-								{c.quickActions.map((qa) => (
-									<button
-										key={qa.label}
-										type="button"
-										className={s.qaBtn}
-										onClick={() => openModal(qa.modal)}
-									>
-										<i
-											className={cx("bi", qa.icon)}
-											style={{ color: toneColor(qa.tone) }}
-										/>
-										{qa.label}
-									</button>
-								))}
+							<div className={s.actionCentreStat}>
+								<strong>{c.suggestions.length}</strong>
+								<span>Suggestions</span>
 							</div>
+							<div className={s.actionCentreStat}>
+								<strong>{c.quickActions.length}</strong>
+								<span>Shortcuts</span>
+							</div>
+						</div>
+						<div className={s.actionCentreActions}>
+							<button
+								type="button"
+								className={cx(s.btn, s.btnPrimary)}
+								onClick={() => setDrawerOpen(true)}
+							>
+								<i className="bi bi-columns-gap" /> Open drawer
+							</button>
 						</div>
 					</div>
 				</section>
@@ -1793,6 +1811,17 @@ export default function Liquidity({
 			)}
 
 			{/* ---------- ALL MODALS (state-driven) ---------- */}
+			<AttentionDrawer
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				onAction={handleDrawerAction}
+				pageName="Liquidity"
+				pageIcon="bi-droplet"
+				attention={drawerAttention}
+				suggestions={drawerSuggestions}
+				quickActions={drawerQuickActions}
+				description="Open operational items, AI routing recommendations and the actions treasury uses most — each opens the matching workflow."
+			/>
 			<LiquidityModals
 				modalState={modalState}
 				openModal={openModal}
@@ -1809,11 +1838,13 @@ function SectionHeading({
 	id,
 	title,
 	description,
+	action,
 }: {
 	index: string;
 	id: string;
 	title: string;
 	description: string;
+	action?: ReactNode;
 }) {
 	return (
 		<div className={s.sectionHeading}>
@@ -1824,6 +1855,7 @@ function SectionHeading({
 				<h2 id={id}>{title}</h2>
 				<p>{description}</p>
 			</div>
+			{action ? <div className={s.sectionAction}>{action}</div> : null}
 		</div>
 	);
 }

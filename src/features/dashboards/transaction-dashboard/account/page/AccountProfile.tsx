@@ -3,6 +3,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { type ReactNode, useEffect, useState } from "react";
+import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import type {
+	AttentionItem,
+	QuickActionItem,
+} from "../../shared/data/attentionFeed";
 import AccountProfileModals from "../modals/AccountProfileModals";
 import styles from "../styles/accountProfile.module.css";
 
@@ -738,6 +743,129 @@ function SectionHeading({
 }
 
 /* ---------------------------------------------------------------------------
+   Action centre data
+   ------------------------------------------------------------------------- */
+const accountAttention: AttentionItem[] = [
+	{
+		icon: "bi-exclamation-circle",
+		iconBg: "var(--pm-danger-soft)",
+		iconColor: "var(--pm-danger)",
+		title: "Daily limit 64% used",
+		sub: "KES 320,000 / 500,000 · 18:00 reset",
+		actionLabel: "Manage",
+		modal: "transactionLimitsModal",
+	},
+	{
+		icon: "bi-clock",
+		iconBg: "var(--pm-warning-soft)",
+		iconColor: "#b54708",
+		title: "External account pending",
+		sub: "Standard Chartered USD awaiting verification",
+		actionLabel: "Verify",
+		modal: "externalAccountsModal",
+	},
+	{
+		icon: "bi-shield-exclamation",
+		iconBg: "var(--pm-blue-soft)",
+		iconColor: "var(--pm-blue)",
+		title: "OTP threshold review",
+		sub: "International transfers set at KES 10,000",
+		actionLabel: "Adjust",
+		modal: "securityLimitsModal",
+	},
+];
+
+const accountSuggestions: AttentionItem[] = [
+	{
+		icon: "bi-lightning-charge",
+		iconBg: "var(--pm-green-soft)",
+		iconColor: "var(--pm-green-dark)",
+		title: "Enable instant client payouts",
+		sub: "Auto-deposit collections to linked accounts",
+		actionLabel: "Setup",
+		modal: "autoPayoutsModal",
+	},
+	{
+		icon: "bi-graph-up-arrow",
+		iconBg: "var(--pm-blue-soft)",
+		iconColor: "var(--pm-blue)",
+		title: "Increase business limits",
+		sub: "TechVentures at 24% of daily limit",
+		actionLabel: "Upgrade",
+		modal: "businessLimitsModal",
+	},
+	{
+		icon: "bi-shield-check",
+		iconBg: "var(--pm-warning-soft)",
+		iconColor: "#b54708",
+		title: "Add OTP for bill payments",
+		sub: "Currently disabled · recommended for security",
+		actionLabel: "Enable",
+		modal: "securityLimitsModal",
+	},
+	{
+		icon: "bi-shield-lock",
+		iconBg: "var(--pm-violet-soft)",
+		iconColor: "var(--pm-violet)",
+		title: "Turn on 2FA on new devices",
+		sub: "Protect logins from unrecognised devices",
+		actionLabel: "Enable",
+		modal: "enable2FAModal",
+	},
+];
+
+const accountQuickActions: QuickActionItem[] = [
+	{
+		icon: "bi-sliders",
+		iconColor: "var(--pm-green)",
+		label: "Limits",
+		modal: "transactionLimitsModal",
+	},
+	{
+		icon: "bi-link-45deg",
+		iconColor: "var(--pm-green-dark)",
+		label: "Link Account",
+		modal: "externalAccountsModal",
+	},
+	{
+		icon: "bi-arrow-repeat",
+		iconColor: "var(--pm-blue)",
+		label: "Auto Payout",
+		modal: "autoPayoutsModal",
+	},
+	{
+		icon: "bi-shield-lock",
+		iconColor: "var(--pm-danger)",
+		label: "Security",
+		modal: "securityLimitsModal",
+	},
+	{
+		icon: "bi-globe",
+		iconColor: "var(--pm-violet)",
+		label: "Countries",
+		modal: "countryRestrictionsModal",
+	},
+	{
+		icon: "bi-cash-coin",
+		iconColor: "#b54708",
+		label: "Fees",
+		modal: "feeStructureModal",
+	},
+	{
+		icon: "bi-building",
+		iconColor: "var(--pm-violet)",
+		label: "Business",
+		modal: "businessLimitsModal",
+	},
+	{
+		icon: "bi-diagram-3",
+		iconColor: "var(--pm-green)",
+		label: "Hierarchy",
+		modal: "accountHierarchyModal",
+	},
+];
+
+/* ---------------------------------------------------------------------------
    Page
    ------------------------------------------------------------------------- */
 export default function AccountProfile() {
@@ -766,10 +894,15 @@ export default function AccountProfile() {
 	};
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [filter, setFilter] = useState("all");
 
 	const openM = (id: string) => setActiveModal(id);
 	const closeM = () => setActiveModal(null);
+
+	const handleDrawerAction = (modal: string) => {
+		if (modal) openM(modal);
+	};
 
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
@@ -984,225 +1117,61 @@ export default function AccountProfile() {
 					</div>
 				</div>
 
-				{/* ==================== ATTENTION / SUGGESTIONS / QUICK ==================== */}
-				<div className={styles.attentionGrid}>
-					<div className={styles.listCard}>
-						<div className={styles.listCardHeader}>
-							<div className={styles.listCardTitle}>
-								<i className="bi bi-exclamation-triangle" aria-hidden="true" />{" "}
-								Attention Required
-							</div>
+				{/* ==================== ACTION CENTRE ==================== */}
+				<div className={styles.dashboardSection}>
+					<SectionHeading
+						index="0.1"
+						title="Action centre"
+						sub="Resolve exceptions first, then use guided suggestions to improve transfer outcomes."
+						actions={
 							<button
 								type="button"
 								className={`${styles.btnPm} ${styles.btnSm}`}
-								onClick={() => openM("attentionModal")}
+								onClick={() => setDrawerOpen(true)}
 							>
-								View all
+								<i className="bi bi-columns-gap" aria-hidden="true" /> Open
+								drawer
 							</button>
-						</div>
-						<div className={styles.listCardSub}>
-							Items that need your action today.
-						</div>
-						{[
-							{
-								icon: "bi-exclamation-circle",
-								iconBg: "var(--pm-danger-soft)",
-								iconColor: "var(--pm-danger)",
-								title: "Daily limit 64% used",
-								sub: "KES 320,000 / 500,000 · 18:00 reset",
-								label: "Manage",
-								modal: "transactionLimitsModal",
-							},
-							{
-								icon: "bi-clock",
-								iconBg: "var(--pm-warning-soft)",
-								iconColor: "#b54708",
-								title: "External account pending",
-								sub: "Standard Chartered USD awaiting verification",
-								label: "Verify",
-								modal: "externalAccountsModal",
-							},
-							{
-								icon: "bi-shield-exclamation",
-								iconBg: "var(--pm-blue-soft)",
-								iconColor: "var(--pm-blue)",
-								title: "OTP threshold review",
-								sub: "International transfers set at KES 10,000",
-								label: "Adjust",
-								modal: "securityLimitsModal",
-							},
-						].map((item) => (
-							<div className={styles.actionRow} key={item.title}>
-								<div
-									className={styles.iconCircle}
-									style={{ background: item.iconBg, color: item.iconColor }}
-								>
-									<i className={`bi ${item.icon}`} aria-hidden="true" />
-								</div>
-								<div className={styles.actionRowMain}>
-									<div className={styles.actionRowTitle}>{item.title}</div>
-									<div className={styles.actionRowSub}>{item.sub}</div>
-								</div>
-								<div className={styles.actionRowActions}>
-									<button
-										type="button"
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => openM(item.modal)}
-									>
-										{item.label}
-									</button>
-								</div>
-							</div>
-						))}
-					</div>
-
+						}
+					/>
 					<div className={styles.listCard}>
 						<div className={styles.listCardHeader}>
 							<div className={styles.listCardTitle}>
-								<i className="bi bi-stars" aria-hidden="true" /> Smart
-								Suggestions
+								<i className="bi bi-exclamation-octagon" aria-hidden="true" />{" "}
+								Attention, suggestions &amp; quick actions
 							</div>
 							<span className={styles.smartBadge}>
-								<i className="bi bi-stars" aria-hidden="true" /> AI
+								<i className="bi bi-stars" aria-hidden="true" />{" "}
+								{accountAttention.length + accountSuggestions.length} open
 							</span>
 						</div>
 						<div className={styles.listCardSub}>
-							Personalised moves for your money.
+							Open operational items, AI routing recommendations and the actions
+							treasury uses most — each opens the matching workflow.
 						</div>
-						{[
-							{
-								icon: "bi-lightning-charge",
-								iconBg: "var(--pm-green-soft)",
-								iconColor: "var(--pm-green-dark)",
-								title: "Enable instant client payouts",
-								sub: "Auto-deposit collections to linked accounts",
-								label: "Setup",
-								modal: "autoPayoutsModal",
-							},
-							{
-								icon: "bi-graph-up-arrow",
-								iconBg: "var(--pm-blue-soft)",
-								iconColor: "var(--pm-blue)",
-								title: "Increase business limits",
-								sub: "TechVentures at 24% of daily limit",
-								label: "Upgrade",
-								modal: "businessLimitsModal",
-							},
-							{
-								icon: "bi-shield-check",
-								iconBg: "var(--pm-warning-soft)",
-								iconColor: "#b54708",
-								title: "Add OTP for bill payments",
-								sub: "Currently disabled · recommended for security",
-								label: "Enable",
-								modal: "securityLimitsModal",
-							},
-							{
-								icon: "bi-shield-lock",
-								iconBg: "var(--pm-violet-soft)",
-								iconColor: "var(--pm-violet)",
-								title: "Turn on 2FA on new devices",
-								sub: "Protect logins from unrecognised devices",
-								label: "Enable",
-								modal: "enable2FAModal",
-							},
-						].map((item) => (
-							<div className={styles.actionRow} key={item.title}>
-								<div
-									className={styles.iconCircle}
-									style={{ background: item.iconBg, color: item.iconColor }}
-								>
-									<i className={`bi ${item.icon}`} aria-hidden="true" />
-								</div>
-								<div className={styles.actionRowMain}>
-									<div className={styles.actionRowTitle}>{item.title}</div>
-									<div className={styles.actionRowSub}>{item.sub}</div>
-								</div>
-								<div className={styles.actionRowActions}>
-									<button
-										type="button"
-										className={`${styles.btnPm} ${styles.btnSm}`}
-										onClick={() => openM(item.modal)}
-									>
-										{item.label}
-									</button>
-								</div>
+						<div className={styles.actionCentreStats}>
+							<div className={styles.actionCentreStat}>
+								<strong>{accountAttention.length}</strong>
+								<span>Attention</span>
 							</div>
-						))}
-					</div>
-
-					<div className={styles.listCard}>
-						<div className={styles.listCardHeader}>
-							<div className={styles.listCardTitle}>
-								<i className="bi bi-bolt" aria-hidden="true" /> Quick Actions
+							<div className={styles.actionCentreStat}>
+								<strong>{accountSuggestions.length}</strong>
+								<span>Suggestions</span>
+							</div>
+							<div className={styles.actionCentreStat}>
+								<strong>{accountQuickActions.length}</strong>
+								<span>Shortcuts</span>
 							</div>
 						</div>
-						<div className={styles.listCardSub}>Money &amp; account tasks</div>
-						<div className={styles.quickGrid}>
-							{[
-								{
-									icon: "bi-sliders",
-									color: "var(--pm-green)",
-									label: "Limits",
-									modal: "transactionLimitsModal",
-								},
-								{
-									icon: "bi-link-45deg",
-									color: "var(--pm-green-dark)",
-									label: "Link Account",
-									modal: "externalAccountsModal",
-								},
-								{
-									icon: "bi-arrow-repeat",
-									color: "var(--pm-blue)",
-									label: "Auto Payout",
-									modal: "autoPayoutsModal",
-								},
-								{
-									icon: "bi-shield-lock",
-									color: "var(--pm-danger)",
-									label: "Security",
-									modal: "securityLimitsModal",
-								},
-								{
-									icon: "bi-globe",
-									color: "var(--pm-violet)",
-									label: "Countries",
-									modal: "countryRestrictionsModal",
-								},
-								{
-									icon: "bi-cash-coin",
-									color: "#b54708",
-									label: "Fees",
-									modal: "feeStructureModal",
-								},
-								{
-									icon: "bi-building",
-									color: "var(--pm-violet)",
-									label: "Business",
-									modal: "businessLimitsModal",
-								},
-								{
-									icon: "bi-diagram-3",
-									color: "var(--pm-green)",
-									label: "Hierarchy",
-									modal: "accountHierarchyModal",
-								},
-							].map((action) => (
-								<button
-									type="button"
-									className={styles.quickActionCard}
-									key={action.label}
-									onClick={() => openM(action.modal)}
-								>
-									<i
-										className={`bi ${action.icon}`}
-										style={{ color: action.color }}
-										aria-hidden="true"
-									/>
-									{action.label}
-								</button>
-							))}
+						<div className={styles.actionCentreActions}>
+							<button
+								type="button"
+								className={`${styles.btnPm} ${styles.btnSm}`}
+								onClick={() => setDrawerOpen(true)}
+							>
+								<i className="bi bi-columns-gap" aria-hidden="true" /> Review
+								queue
+							</button>
 						</div>
 					</div>
 				</div>
@@ -2756,6 +2725,17 @@ export default function AccountProfile() {
 			</div>
 
 			{/* ==================== MODALS ==================== */}
+			<AttentionDrawer
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				onAction={handleDrawerAction}
+				pageName="Account"
+				pageIcon="bi-person-badge"
+				attention={accountAttention}
+				suggestions={accountSuggestions}
+				quickActions={accountQuickActions}
+				description="Open operational items, AI routing recommendations and the actions treasury uses most — each opens the matching workflow."
+			/>
 			<AccountProfileModals
 				active={activeModal}
 				onClose={closeM}
