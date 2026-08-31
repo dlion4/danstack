@@ -3,6 +3,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { type ReactNode, useEffect, useState } from "react";
+import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import type {
+	AttentionItem as DrawerAttentionItem,
+	QuickActionItem,
+} from "../../shared/data/attentionFeed";
 import SettlementModals from "../components/SettlementModals";
 import styles from "../styles/settlement.module.css";
 
@@ -713,6 +718,7 @@ export default function Settlement() {
 	const config = data ?? initialMockData;
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [world, setWorld] = useState<"customers" | "internal">("customers");
 	const [biz, setBiz] = useState<string>("all");
 	const [ledgerTab, setLedgerTab] = useState<
@@ -721,6 +727,28 @@ export default function Settlement() {
 
 	const openM = (id: string) => setActiveModal(id);
 	const closeM = () => setActiveModal(null);
+	const handleDrawerAction = (modal: string) => {
+		if (modal) openM(modal);
+	};
+	const toDrawerItem = (item: SrItem): DrawerAttentionItem => ({
+		icon: item.icon.replace(/^bi-/, ""),
+		iconBg: item.iconBg,
+		iconColor: item.iconColor,
+		title: item.title,
+		sub: item.sub,
+		actionLabel: item.actionLabel,
+		modal: item.modal,
+	});
+	const drawerAttention = config.attention.map(toDrawerItem);
+	const drawerSuggestions = config.suggestions.map(toDrawerItem);
+	const drawerQuickActions = config.quickActions.map(
+		(action): QuickActionItem => ({
+			icon: action.icon.replace(/^bi-/, ""),
+			iconColor: action.color,
+			label: action.label,
+			modal: action.modal,
+		}),
+	);
 
 	useEffect(() => {
 		const params = new URLSearchParams(window.location.search);
@@ -1224,124 +1252,54 @@ export default function Settlement() {
 						<SectionHeading
 							index="1.2"
 							id="set-sec-queue"
-							title="Needs your attention"
-							description="Resolve exceptions and act on smart recommendations without leaving the dashboard."
+							title="Action centre"
+							description="Resolve exceptions first, then use guided suggestions to improve transfer outcomes."
+							action={
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => setDrawerOpen(true)}
+								>
+									<i className="bi bi-columns-gap" aria-hidden="true" /> Review
+									queue
+								</button>
+							}
 						/>
-						<div className={styles.attentionGrid}>
-							<div className={styles.listCard}>
-								<div className={styles.listCardHeader}>
-									<h3 className={styles.listCardTitle}>
-										<i
-											className="bi bi-exclamation-circle"
-											aria-hidden="true"
-										/>{" "}
-										Attention Required
-									</h3>
-									<div className={styles.headerButtonRow}>
-										<button
-											type="button"
-											className={`${styles.btnPm} ${styles.btnSm}`}
-											onClick={() => openM("notifModal")}
-											aria-label="Notifications"
-										>
-											<i className="bi bi-bell" aria-hidden="true" />
-										</button>
-										<button
-											type="button"
-											className={`${styles.btnPm} ${styles.btnSm}`}
-											onClick={() => openM("attentionModal")}
-										>
-											View all
-										</button>
-									</div>
-								</div>
-								{config.attention.map((item) => (
-									<div className={styles.actionRow} key={item.title}>
-										<div
-											className={styles.iconCircle}
-											style={{
-												background: item.iconBg,
-												color: item.iconColor,
-											}}
-											aria-hidden="true"
-										>
-											<i className={item.icon} />
-										</div>
-										<div className={styles.actionRowMain}>
-											<div className={styles.actionRowTitle}>{item.title}</div>
-											<div className={styles.actionRowSub}>{item.sub}</div>
-										</div>
-										<div className={styles.actionRowActions}>
-											<button
-												type="button"
-												className={`${styles.btnPm} ${styles.btnSm} ${item.actionTone ? styles[item.actionTone] : ""}`}
-												onClick={() => openM(item.modal)}
-											>
-												{item.actionLabel}
-											</button>
-										</div>
-									</div>
-								))}
+						<div className={styles.actionCentreCard}>
+							<div className={styles.actionCentreIcon}>
+								<i className="bi bi-exclamation-octagon" aria-hidden="true" />
 							</div>
-							<div className={styles.listCard}>
-								<div className={styles.listCardHeader}>
-									<h3 className={styles.listCardTitle}>
-										<i className="bi bi-lightbulb" aria-hidden="true" /> Smart
-										Suggestions
-									</h3>
-									<span className={`${styles.badge} ${styles.badgeP}`}>
-										<i className="bi bi-stars" aria-hidden="true" /> AI
-									</span>
-								</div>
-								{config.suggestions.map((item) => (
-									<div className={styles.actionRow} key={item.title}>
-										<div
-											className={styles.iconCircle}
-											style={{
-												background: item.iconBg,
-												color: item.iconColor,
-											}}
-											aria-hidden="true"
-										>
-											<i className={item.icon} />
-										</div>
-										<div className={styles.actionRowMain}>
-											<div className={styles.actionRowTitle}>{item.title}</div>
-											<div className={styles.actionRowSub}>{item.sub}</div>
-										</div>
-										<div className={styles.actionRowActions}>
-											<button
-												type="button"
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => openM(item.modal)}
-											>
-												{item.actionLabel}
-											</button>
-										</div>
-									</div>
-								))}
-							</div>
-							<div className={styles.listCard}>
-								<h3 className={styles.listCardTitle}>
-									<i className="bi bi-lightning-charge" aria-hidden="true" />{" "}
-									Quick Actions
-								</h3>
-								<p className={styles.listCardSub}>
-									Frequent settlement workflows
+							<div className={styles.actionCentreCopy}>
+								<span className={styles.actionCentreKicker}>Action centre</span>
+								<h3>Attention, suggestions &amp; quick actions</h3>
+								<p>
+									Open operational items, AI routing recommendations and the
+									actions treasury uses most — each opens the matching workflow.
 								</p>
-								<div className={styles.quickGrid}>
-									{config.quickActions.map((qa) => (
-										<button
-											type="button"
-											className={styles.quickActionCard}
-											key={qa.label}
-											onClick={() => openM(qa.modal)}
-										>
-											<i className={qa.icon} style={{ color: qa.color }} />
-											<span>{qa.label}</span>
-										</button>
-									))}
+							</div>
+							<div className={styles.actionCentreStats}>
+								<div className={styles.actionCentreStat}>
+									<strong>{config.attention.length}</strong>
+									<span>Attention</span>
 								</div>
+								<div className={styles.actionCentreStat}>
+									<strong>{config.suggestions.length}</strong>
+									<span>Suggestions</span>
+								</div>
+								<div className={styles.actionCentreStat}>
+									<strong>{config.quickActions.length}</strong>
+									<span>Shortcuts</span>
+								</div>
+							</div>
+							<div className={styles.actionCentreActions}>
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm} ${styles.btnPmP}`}
+									onClick={() => setDrawerOpen(true)}
+								>
+									<i className="bi bi-columns-gap" aria-hidden="true" /> Open
+									drawer
+								</button>
 							</div>
 						</div>
 					</section>
@@ -2259,6 +2217,17 @@ export default function Settlement() {
 				</button>
 			</nav>
 
+			<AttentionDrawer
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				onAction={handleDrawerAction}
+				pageName="Settlement"
+				pageIcon="bi-bank"
+				attention={drawerAttention}
+				suggestions={drawerSuggestions}
+				quickActions={drawerQuickActions}
+				description="Open operational items, AI routing recommendations and the actions treasury uses most — each opens the matching workflow."
+			/>
 			<SettlementModals active={activeModal} onClose={closeM} onOpen={openM} />
 		</div>
 	);

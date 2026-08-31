@@ -11,7 +11,12 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
+import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import type {
+	AttentionItem as DrawerAttentionItem,
+	QuickActionItem,
+} from "../../shared/data/attentionFeed";
 import MobileMoneyModals, {
 	type MobileMoneyData,
 } from "../components/MobileMoneyModals";
@@ -584,24 +589,6 @@ async function fetchMobileMoney(): Promise<MobileMoneyConfig> {
 const cx = (...parts: Array<string | false | null | undefined>) =>
 	parts.filter(Boolean).join(" ");
 
-const severityMeta: Record<
-	AttentionItem["severity"],
-	{ icon: string; cls: IconTone }
-> = {
-	danger: { icon: "bi-exclamation-octagon-fill", cls: "iconDanger" },
-	warn: { icon: "bi-exclamation-triangle-fill", cls: "iconAmber" },
-	info: { icon: "bi-link-45deg", cls: "iconBlue" },
-};
-
-const priorityMeta: Record<
-	Suggestion["priority"],
-	{ label: string; badge: string }
-> = {
-	high: { label: "High priority", badge: styles.badgeDanger },
-	medium: { label: "Medium priority", badge: styles.badgeWarn },
-	low: { label: "Low priority", badge: styles.badgeInfo },
-};
-
 export default function MobileMoney() {
 	const { data: remoteData, error } = useQuery({
 		queryKey: ["paymo-mobile-money"],
@@ -613,10 +600,63 @@ export default function MobileMoney() {
 	const c = remoteData ?? initialMockData;
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [toasts, setToasts] = useState<
 		Array<{ id: number; message: string; danger?: boolean }>
 	>([]);
 	const [walletQuery, setWalletQuery] = useState("");
+
+	const severityAttention: Record<
+		AttentionItem["severity"],
+		{ iconBg: string; iconColor: string; icon: string }
+	> = {
+		danger: {
+			iconBg: "var(--mm-danger-soft)",
+			iconColor: "var(--mm-danger)",
+			icon: "bi-exclamation-octagon-fill",
+		},
+		warn: {
+			iconBg: "var(--mm-warning-soft)",
+			iconColor: "var(--mm-warning)",
+			icon: "bi-exclamation-triangle-fill",
+		},
+		info: {
+			iconBg: "var(--mm-info-soft)",
+			iconColor: "var(--mm-info)",
+			icon: "bi-link-45deg",
+		},
+	};
+	const drawerAttention = c.attention.map((item): DrawerAttentionItem => {
+		const sev = severityAttention[item.severity];
+		return {
+			icon: sev.icon.replace(/^bi-/, ""),
+			iconBg: sev.iconBg,
+			iconColor: sev.iconColor,
+			title: item.title,
+			sub: item.detail,
+			actionLabel: item.actionLabel,
+			modal: item.modal,
+		};
+	});
+	const drawerSuggestions = c.suggestions.map(
+		(item): DrawerAttentionItem => ({
+			icon: item.icon.replace(/^bi-/, ""),
+			iconBg: "var(--mm-green-soft)",
+			iconColor: "var(--mm-green-dark)",
+			title: item.title,
+			sub: item.detail,
+			actionLabel: item.actionLabel,
+			modal: item.modal,
+		}),
+	);
+	const drawerQuickActions = c.quickActions.map(
+		(action): QuickActionItem => ({
+			icon: action.icon.replace(/^bi-/, ""),
+			iconColor: "var(--mm-green-dark)",
+			label: action.label,
+			modal: action.modal,
+		}),
+	);
 
 	useEffect(() => {
 		if (!toasts.length) return;
@@ -631,6 +671,9 @@ export default function MobileMoney() {
 		]);
 
 	const go = (modalId: string | null) => setActiveModal(modalId);
+	const handleDrawerAction = (modal: string) => {
+		if (modal) go(modal);
+	};
 
 	const scrollTo = (sectionId: string) => {
 		document
@@ -767,7 +810,7 @@ export default function MobileMoney() {
 						</div>
 					</section>
 
-					{/* ── Section 01 — Queues ────────────────────────────── */}
+					{/* ── Section 01 — Action centre ───────────────────── */}
 					<section
 						className={styles.dashboardSection}
 						aria-labelledby="mm-sec-queues"
@@ -775,134 +818,54 @@ export default function MobileMoney() {
 						<SectionHeading
 							index="01"
 							id="mm-sec-queues"
-							title="Attention, suggestions & quick actions"
-							description="Open operational items, AI cost-saving recommendations and the mobile money workflows teams use most."
+							title="Action centre"
+							description="Resolve exceptions first, then use guided suggestions to improve transfer outcomes."
+							action={
+								<button
+									type="button"
+									className={styles.textButton}
+									onClick={() => setDrawerOpen(true)}
+								>
+									<i className="bi-columns-gap" aria-hidden="true" /> Review
+									queue
+								</button>
+							}
 						/>
-						<div className={styles.queueGrid}>
-							<div className={cx(styles.card, styles.queueCard)}>
-								<div className={styles.cardHead}>
-									<div>
-										<span className={styles.cardKicker}>Operations queue</span>
-										<h3>
-											<i
-												className="bi-exclamation-triangle"
-												aria-hidden="true"
-											/>{" "}
-											Attention required
-										</h3>
-										<p>{c.attention.length} items need a decision today.</p>
-									</div>
-									<button
-										type="button"
-										className={styles.textButton}
-										onClick={() => go("attentionModal")}
-									>
-										View all <i className="bi-arrow-right" aria-hidden="true" />
-									</button>
-								</div>
-								{c.attention.map((item) => {
-									const sev = severityMeta[item.severity];
-									return (
-										<div className={styles.actionRow} key={item.id}>
-											<div className={styles.actionLead}>
-												<span
-													className={cx(styles.actionIcon, styles[sev.cls])}
-												>
-													<i className={`bi ${sev.icon}`} aria-hidden="true" />
-												</span>
-												<div>
-													<div className={styles.actionTitle}>{item.title}</div>
-													<div className={styles.actionSub}>{item.detail}</div>
-												</div>
-											</div>
-											<button
-												type="button"
-												className={styles.textButton}
-												onClick={() => go(item.modal)}
-											>
-												{item.actionLabel}{" "}
-												<i className="bi-arrow-right" aria-hidden="true" />
-											</button>
-										</div>
-									);
-								})}
+						<div className={cx(styles.card, styles.actionCentreCard)}>
+							<div className={styles.actionCentreIcon}>
+								<i className="bi-exclamation-octagon" aria-hidden="true" />
 							</div>
-
-							<div className={cx(styles.card, styles.queueCard)}>
-								<div className={styles.cardHead}>
-									<div>
-										<span className={styles.cardKicker}>
-											AI money-movement copilot
-										</span>
-										<h3>
-											<i className="bi-stars" aria-hidden="true" /> Smart
-											suggestions
-										</h3>
-										<p>Routing-engine tips based on today's fees and flow.</p>
-									</div>
-									<span className={cx(styles.badge, styles.badgeViolet)}>
-										<i className="bi-stars" aria-hidden="true" /> AI
-									</span>
-								</div>
-								{c.suggestions.map((sug) => (
-									<div className={styles.actionRow} key={sug.id}>
-										<div className={styles.actionLead}>
-											<span className={cx(styles.actionIcon, styles.iconGreen)}>
-												<i className={`bi ${sug.icon}`} aria-hidden="true" />
-											</span>
-											<div>
-												<div className={styles.actionTitle}>
-													<span
-														className={cx(
-															styles.badge,
-															priorityMeta[sug.priority].badge,
-														)}
-														style={{ marginRight: 6 }}
-													>
-														{priorityMeta[sug.priority].label}
-													</span>
-													{sug.title}
-												</div>
-												<div className={styles.actionSub}>{sug.detail}</div>
-											</div>
-										</div>
-										<button
-											type="button"
-											className={styles.textButton}
-											onClick={() => go(sug.modal)}
-										>
-											{sug.actionLabel}{" "}
-											<i className="bi-check2" aria-hidden="true" />
-										</button>
-									</div>
-								))}
+							<div className={styles.actionCentreCopy}>
+								<span className={styles.cardKicker}>Action centre</span>
+								<h3>Attention, suggestions &amp; quick actions</h3>
+								<p>
+									Open operational items, AI routing recommendations and the
+									actions treasury uses most — each opens the matching workflow.
+								</p>
 							</div>
-
-							<div className={cx(styles.card, styles.queueCard)}>
-								<div className={styles.cardHead}>
-									<div>
-										<span className={styles.cardKicker}>Workspace</span>
-										<h3>
-											<i className="bi-lightning-charge" aria-hidden="true" />{" "}
-											Quick actions
-										</h3>
-										<p>Jump straight into a mobile money workflow.</p>
-									</div>
+							<div className={styles.actionCentreStats}>
+								<div className={styles.actionCentreStat}>
+									<strong>{c.attention.length}</strong>
+									<span>Attention</span>
 								</div>
-								<div className={styles.qaGrid}>
-									{c.quickActions.map((qa) => (
-										<button
-											type="button"
-											key={qa.id}
-											className={styles.qaBtn}
-											onClick={() => go(qa.modal)}
-										>
-											<i className={`bi ${qa.icon}`} aria-hidden="true" />
-											{qa.label}
-											<small>{qa.detail}</small>
-										</button>
-									))}
+								<div className={styles.actionCentreStat}>
+									<strong>{c.suggestions.length}</strong>
+									<span>Suggestions</span>
 								</div>
+								<div className={styles.actionCentreStat}>
+									<strong>{c.quickActions.length}</strong>
+									<span>Shortcuts</span>
+								</div>
+							</div>
+							<div className={styles.actionCentreActions}>
+								<button
+									type="button"
+									className={styles.textButton}
+									onClick={() => setDrawerOpen(true)}
+								>
+									<i className="bi-columns-gap" aria-hidden="true" /> Open
+									drawer
+								</button>
 							</div>
 						</div>
 					</section>
@@ -1798,6 +1761,17 @@ export default function MobileMoney() {
 				))}
 			</div>
 
+			<AttentionDrawer
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				onAction={handleDrawerAction}
+				pageName="Mobile money"
+				pageIcon="bi-phone"
+				attention={drawerAttention}
+				suggestions={drawerSuggestions}
+				quickActions={drawerQuickActions}
+				description="Open operational items, AI routing recommendations and the actions treasury uses most — each opens the matching workflow."
+			/>
 			<MobileMoneyModals data={modalData} />
 		</div>
 	);
@@ -1821,11 +1795,13 @@ function SectionHeading({
 	id,
 	title,
 	description,
+	action,
 }: {
 	index: string;
 	id: string;
 	title: string;
 	description: string;
+	action?: ReactNode;
 }) {
 	return (
 		<div className={styles.sectionHeading}>
@@ -1836,6 +1812,7 @@ function SectionHeading({
 				<h2 id={id}>{title}</h2>
 				<p>{description}</p>
 			</div>
+			{action ? <div className={styles.sectionAction}>{action}</div> : null}
 		</div>
 	);
 }

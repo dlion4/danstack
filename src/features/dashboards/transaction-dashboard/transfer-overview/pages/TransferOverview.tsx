@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { type ReactNode, useEffect, useMemo, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import TransferOverviewModals from "../components/TransferOverviewModals";
@@ -675,115 +675,48 @@ export default function TransferOverview() {
 								<button
 									type="button"
 									className={styles.btnPm}
-									onClick={() => setActiveModal("attentionModal")}
+									onClick={() => setActiveModal("attentionDrawer")}
 								>
-									<i className="bi bi-list-check" /> Review queue
+									<i className="bi bi-columns-gap" /> Open attention queue
 								</button>
 							}
 						/>
-						<div className={styles.attentionGrid}>
-							<article className={`${styles.card} ${styles.listCard}`}>
-								<div className={styles.cardHeader}>
-									<div>
-										<span className={styles.cardKicker}>Action center</span>
-										<h3>Transfer exceptions</h3>
-									</div>
-									<span className={`${styles.badge} ${styles.badgeW}`}>
-										{config.attention.length} open
-									</span>
-								</div>
-								<div className={styles.listBody}>
-									{config.attention.map((item) => (
-										<div key={item.title} className={styles.actionRow}>
-											<div className={styles.actionRowMain}>
-												<span
-													className={styles.iconCircle}
-													style={{
-														background: item.iconBg,
-														color: item.iconColor,
-													}}
-												>
-													<i className={`bi ${item.icon}`} />
-												</span>
-												<div>
-													<strong>{item.title}</strong>
-													<span>{item.sub}</span>
-												</div>
-											</div>
-											<button
-												type="button"
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => setActiveModal(item.modal)}
-											>
-												{item.actionLabel}
-											</button>
-										</div>
-									))}
-								</div>
-							</article>
-
-							<article className={`${styles.card} ${styles.listCard}`}>
-								<div className={styles.cardHeader}>
-									<div>
-										<span className={styles.cardKicker}>Smart guidance</span>
-										<h3>Suggested next moves</h3>
-									</div>
-									<span className={`${styles.badge} ${styles.badgeP}`}>
-										<i className="bi bi-stars" /> Insights
-									</span>
-								</div>
-								<div className={styles.listBody}>
-									{config.suggestions.map((item) => (
-										<div key={item.title} className={styles.actionRow}>
-											<div className={styles.actionRowMain}>
-												<span
-													className={styles.iconCircle}
-													style={{
-														background: item.iconBg,
-														color: item.iconColor,
-													}}
-												>
-													<i className={`bi ${item.icon}`} />
-												</span>
-												<div>
-													<strong>{item.title}</strong>
-													<span>{item.sub}</span>
-												</div>
-											</div>
-											<button
-												type="button"
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => setActiveModal(item.modal)}
-											>
-												{item.actionLabel}
-											</button>
-										</div>
-									))}
-								</div>
-							</article>
-						</div>
-
-						<article className={`${styles.card} ${styles.quickActionCard}`}>
-							<div className={styles.quickActionIntro}>
-								<span className={styles.cardKicker}>Shortcuts</span>
-								<h3>Start a workflow</h3>
-								<p>Frequent transaction tasks, one click away.</p>
+						<article
+							className={`${styles.card} ${styles.attentionSummaryCard}`}
+						>
+							<div className={styles.attentionSummaryIcon}>
+								<i className="bi bi-exclamation-octagon" />
 							</div>
-							<div className={styles.quickGrid}>
-								{config.quickActions.map((action) => (
-									<button
-										type="button"
-										key={action.label}
-										className={styles.quickBtn}
-										onClick={() => setActiveModal(action.modal)}
-									>
-										<span style={{ color: action.iconColor }}>
-											<i className={`bi ${action.icon}`} />
-										</span>
-										{action.label}
-										<i className="bi bi-arrow-right" />
-									</button>
-								))}
+							<div className={styles.attentionSummaryCopy}>
+								<span className={styles.cardKicker}>Action center</span>
+								<h3>Transfer exceptions & next moves</h3>
+								<p>
+									Resolve exceptions, act on intelligent suggestions and start
+									frequent workflows from one place.
+								</p>
+							</div>
+							<div className={styles.attentionSummaryStats}>
+								<div className={styles.attentionSummaryStat}>
+									<strong>{config.attention.length}</strong>
+									<span>Exceptions</span>
+								</div>
+								<div className={styles.attentionSummaryStat}>
+									<strong>{config.suggestions.length}</strong>
+									<span>Suggestions</span>
+								</div>
+								<div className={styles.attentionSummaryStat}>
+									<strong>{config.quickActions.length}</strong>
+									<span>Shortcuts</span>
+								</div>
+							</div>
+							<div className={styles.attentionSummaryActions}>
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnSm}`}
+									onClick={() => setActiveModal("attentionDrawer")}
+								>
+									<i className="bi bi-list-check" /> Review queue
+								</button>
 							</div>
 						</article>
 					</section>
@@ -1218,6 +1151,9 @@ export default function TransferOverview() {
 				active={activeModal}
 				onClose={() => setActiveModal(null)}
 				onOpen={setActiveModal}
+				attention={config.attention}
+				suggestions={config.suggestions}
+				quickActions={config.quickActions}
 			/>
 		</div>
 	);
