@@ -31,6 +31,7 @@ import { Link } from "@tanstack/react-router";
 import { type ReactNode, useEffect, useState } from "react";
 import { cx } from "@/features/Layouts/shell/data/shellData";
 import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import AttentionHubFab from "../../shared/components/AttentionHubFab";
 import type {
 	AttentionItem as DrawerAttentionItem,
 	QuickActionItem,
@@ -1027,64 +1028,6 @@ export default function Reconciliation() {
 					</div>
 				</section>
 
-				{/* ---------- ATTENTION / SUGGESTIONS / QUICK ACTIONS ---------- */}
-				<section
-					className={s.dashboardSection}
-					aria-labelledby="rec-sec-queues"
-				>
-					<SectionHeading
-						index="02"
-						id="rec-sec-queues"
-						title="Action centre"
-						description="Resolve exceptions first, then use guided suggestions to improve transfer outcomes."
-						action={
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => setDrawerOpen(true)}
-							>
-								<i className="bi bi-columns-gap" /> Review queue
-							</button>
-						}
-					/>
-					<div className={cx(s.card, s.actionCentreCard)}>
-						<div className={s.actionCentreIcon}>
-							<i className="bi bi-exclamation-octagon" />
-						</div>
-						<div className={s.actionCentreCopy}>
-							<span className={s.cardKicker}>Action centre</span>
-							<h3>Attention, suggestions &amp; quick actions</h3>
-							<p>
-								Open operational items, AI routing recommendations and the
-								actions treasury uses most — each opens the matching workflow.
-							</p>
-						</div>
-						<div className={s.actionCentreStats}>
-							<div className={s.actionCentreStat}>
-								<strong>{c.attention.length}</strong>
-								<span>Attention</span>
-							</div>
-							<div className={s.actionCentreStat}>
-								<strong>{c.suggestions.length}</strong>
-								<span>Suggestions</span>
-							</div>
-							<div className={s.actionCentreStat}>
-								<strong>{c.quickActions.length}</strong>
-								<span>Shortcuts</span>
-							</div>
-						</div>
-						<div className={s.actionCentreActions}>
-							<button
-								type="button"
-								className={cx(s.btn, s.btnSm)}
-								onClick={() => setDrawerOpen(true)}
-							>
-								<i className="bi bi-columns-gap" /> Open drawer
-							</button>
-						</div>
-					</div>
-				</section>
-
 				{/* ---------- SECTION Overview Dashboard ---------- */}
 				<section
 					className={s.dashboardSection}
@@ -1921,6 +1864,12 @@ export default function Reconciliation() {
 			)}
 
 			{/* ---------- ACTION CENTRE DRAWER ---------- */}
+			<AttentionHubFab
+				count={drawerAttention.length}
+				hidden={drawerOpen}
+				onClick={() => setDrawerOpen(true)}
+			/>
+
 			<AttentionDrawer
 				open={drawerOpen}
 				onClose={() => setDrawerOpen(false)}

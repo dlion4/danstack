@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import AttentionHubFab from "../../shared/components/AttentionHubFab";
 import TransferOverviewModals from "../components/TransferOverviewModals";
 import styles from "../styles/transfer-overview.module.css";
 
@@ -664,70 +665,11 @@ export default function TransferOverview() {
 
 					<section
 						className={styles.dashboardSection}
-						aria-labelledby="attention-heading"
-					>
-						<SectionHeading
-							id="attention-heading"
-							index="1.2"
-							title="Needs your attention"
-							description="Resolve exceptions and act on intelligent recommendations without leaving the dashboard."
-							action={
-								<button
-									type="button"
-									className={styles.btnPm}
-									onClick={() => setActiveModal("attentionDrawer")}
-								>
-									<i className="bi bi-columns-gap" /> Open attention queue
-								</button>
-							}
-						/>
-						<article
-							className={`${styles.card} ${styles.attentionSummaryCard}`}
-						>
-							<div className={styles.attentionSummaryIcon}>
-								<i className="bi bi-exclamation-octagon" />
-							</div>
-							<div className={styles.attentionSummaryCopy}>
-								<span className={styles.cardKicker}>Action center</span>
-								<h3>Transfer exceptions & next moves</h3>
-								<p>
-									Resolve exceptions, act on intelligent suggestions and start
-									frequent workflows from one place.
-								</p>
-							</div>
-							<div className={styles.attentionSummaryStats}>
-								<div className={styles.attentionSummaryStat}>
-									<strong>{config.attention.length}</strong>
-									<span>Exceptions</span>
-								</div>
-								<div className={styles.attentionSummaryStat}>
-									<strong>{config.suggestions.length}</strong>
-									<span>Suggestions</span>
-								</div>
-								<div className={styles.attentionSummaryStat}>
-									<strong>{config.quickActions.length}</strong>
-									<span>Shortcuts</span>
-								</div>
-							</div>
-							<div className={styles.attentionSummaryActions}>
-								<button
-									type="button"
-									className={`${styles.btnPm} ${styles.btnSm}`}
-									onClick={() => setActiveModal("attentionDrawer")}
-								>
-									<i className="bi bi-list-check" /> Review queue
-								</button>
-							</div>
-						</article>
-					</section>
-
-					<section
-						className={styles.dashboardSection}
 						aria-labelledby="portfolio-heading"
 					>
 						<SectionHeading
 							id="portfolio-heading"
-							index="1.3"
+							index="1.2"
 							title="Transfer portfolio"
 							description="Search and monitor recent money movement across every connected rail."
 							action={
@@ -917,7 +859,7 @@ export default function TransferOverview() {
 					>
 						<SectionHeading
 							id="relationships-heading"
-							index="1.4"
+							index="1.3"
 							title="Recipients & schedules"
 							description="Keep frequent payees close and recurring transfers predictable."
 						/>
@@ -1025,7 +967,7 @@ export default function TransferOverview() {
 					>
 						<SectionHeading
 							id="analytics-heading"
-							index="1.5"
+							index="1.4"
 							title="Transfer analytics"
 							description="Patterns that help your team optimise timing, rails and recipient concentration."
 							action={
@@ -1146,6 +1088,12 @@ export default function TransferOverview() {
 					</nav>
 				</footer>
 			</main>
+
+			<AttentionHubFab
+				count={config.attention.length}
+				hidden={activeModal === "attentionDrawer"}
+				onClick={() => setActiveModal("attentionDrawer")}
+			/>
 
 			<TransferOverviewModals
 				active={activeModal}

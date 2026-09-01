@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import AttentionHubFab from "../../shared/components/AttentionHubFab";
 import type {
 	AttentionItem,
 	QuickActionItem,
@@ -1469,69 +1470,6 @@ export default function Customers() {
 						</div>
 					</section>
 
-					{/* ======================= ACTION CENTRE ======================= */}
-					<section
-						className={styles.dashboardSection}
-						aria-labelledby="cust-sec-queues"
-					>
-						<div className={styles.sectionHeading}>
-							<span className={styles.sectionIndex} aria-hidden="true">
-								00
-							</span>
-							<div>
-								<h2 id="cust-sec-queues">Action centre</h2>
-								<p>
-									Resolve exceptions first, then use guided suggestions to
-									improve transfer outcomes.
-								</p>
-							</div>
-							<button
-								className={`${styles.btnPm} ${styles.btnSm} ${styles.sectionAction}`}
-								onClick={() => setDrawerOpen(true)}
-							>
-								<i className="bi bi-columns-gap" /> Review queue
-							</button>
-						</div>
-						<div className={styles.card}>
-							<div className={styles.actionCentreHead}>
-								<div className={styles.actionCentreIcon}>
-									<i className="bi bi-exclamation-octagon" />
-								</div>
-								<div className={styles.actionCentreCopy}>
-									<span className={styles.cardKicker}>Action centre</span>
-									<h3>Attention, suggestions &amp; quick actions</h3>
-									<p>
-										Open operational items, AI routing recommendations and the
-										actions treasury uses most — each opens the matching
-										workflow.
-									</p>
-								</div>
-							</div>
-							<div className={styles.actionCentreStats}>
-								<div className={styles.actionCentreStat}>
-									<strong>{config.attention.length}</strong>
-									<span>Attention</span>
-								</div>
-								<div className={styles.actionCentreStat}>
-									<strong>{config.suggestions.length}</strong>
-									<span>Suggestions</span>
-								</div>
-								<div className={styles.actionCentreStat}>
-									<strong>{config.quickActions.length}</strong>
-									<span>Shortcuts</span>
-								</div>
-							</div>
-							<div className={styles.actionCentreActions}>
-								<button
-									className={`${styles.btnPm} ${styles.btnSm}`}
-									onClick={() => setDrawerOpen(true)}
-								>
-									<i className="bi bi-columns-gap" /> Open drawer
-								</button>
-							</div>
-						</div>
-					</section>
-
 					{/* ======================= SECTION 01: DIRECTORY / BILLING ======================= */}
 					<section
 						className={styles.dashboardSection}
@@ -2717,6 +2655,12 @@ export default function Customers() {
 			</div>
 
 			{/* ======================= MODAL LAYER ======================= */}
+			<AttentionHubFab
+				count={drawerAttention.length}
+				hidden={drawerOpen}
+				onClick={() => setDrawerOpen(true)}
+			/>
+
 			<AttentionDrawer
 				open={drawerOpen}
 				onClose={() => setDrawerOpen(false)}
