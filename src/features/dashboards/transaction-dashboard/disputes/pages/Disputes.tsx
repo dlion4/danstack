@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { type ReactNode, useEffect, useState } from "react";
 import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import AttentionHubFab from "../../shared/components/AttentionHubFab";
 import type {
 	AttentionItem,
 	QuickActionItem,
@@ -878,67 +879,6 @@ export default function Disputes() {
 
 					<section
 						className={styles.dashboardSection}
-						aria-labelledby="dis-sec-queue"
-					>
-						<SectionHeading
-							index="1.2"
-							id="dis-sec-queue"
-							title="Action centre"
-							description="Resolve exceptions first, then use guided suggestions to improve transfer outcomes."
-							action={
-								<button
-									type="button"
-									className={`${styles.btnPm} ${styles.btnSm}`}
-									onClick={() => setDrawerOpen(true)}
-								>
-									<i className="bi bi-columns-gap" aria-hidden="true" /> Review
-									queue
-								</button>
-							}
-						/>
-						<div className={styles.card}>
-							<div className={styles.listCardHeader}>
-								<h3 className={styles.listCardTitle}>
-									<i className="bi bi-exclamation-octagon" aria-hidden="true" />{" "}
-									Attention, suggestions &amp; quick actions
-								</h3>
-								<span className={`${styles.badge} ${styles.badgeW}`}>
-									{config.attention.length} attention
-								</span>
-							</div>
-							<p className={styles.listCardSub}>
-								Open operational items, AI routing recommendations and the
-								actions treasury uses most — each opens the matching workflow.
-							</p>
-							<div className={styles.actionCentreStats}>
-								<div className={styles.actionCentreStat}>
-									<strong>{config.attention.length}</strong>
-									<span>Attention</span>
-								</div>
-								<div className={styles.actionCentreStat}>
-									<strong>{config.suggestions.length}</strong>
-									<span>Suggestions</span>
-								</div>
-								<div className={styles.actionCentreStat}>
-									<strong>{config.quickActions.length}</strong>
-									<span>Shortcuts</span>
-								</div>
-							</div>
-							<div className={styles.actionCentreActions}>
-								<button
-									type="button"
-									className={`${styles.btnPm} ${styles.btnSm}`}
-									onClick={() => setDrawerOpen(true)}
-								>
-									<i className="bi bi-columns-gap" aria-hidden="true" /> Open
-									drawer
-								</button>
-							</div>
-						</div>
-					</section>
-
-					<section
-						className={styles.dashboardSection}
 						aria-labelledby="dis-sec-filing"
 					>
 						<SectionHeading
@@ -1433,6 +1373,12 @@ export default function Disputes() {
 					<i className="bi bi-plus-circle" aria-hidden="true" /> New Dispute
 				</button>
 			</nav>
+
+			<AttentionHubFab
+				count={drawerAttention.length}
+				hidden={drawerOpen}
+				onClick={() => setDrawerOpen(true)}
+			/>
 
 			<AttentionDrawer
 				open={drawerOpen}

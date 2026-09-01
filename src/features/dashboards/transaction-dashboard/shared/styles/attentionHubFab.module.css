@@ -1,0 +1,114 @@
+/* ===========================================================================
+ * attentionHubFab.module.css — right-edge Attention hub launcher
+ * ----------------------------------------------------------------------------
+ * Glass pill matching the bottom floatingBar. Collapsed to an icon; hover or
+ * focus expands left to reveal the hub name, then click opens the drawer.
+ * ========================================================================== */
+
+.fab {
+	position: fixed;
+	z-index: 40;
+	right: 1.15rem;
+	bottom: 5.6rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0;
+	min-height: 46px;
+	padding: 0.32rem;
+	border: 1px solid rgba(230, 233, 240, 0.92);
+	border-radius: 13px;
+	background: rgba(255, 255, 255, 0.94);
+	box-shadow: 0 20px 45px -20px rgba(16, 24, 40, 0.45);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	color: #101828;
+	font-family: inherit;
+	cursor: pointer;
+	transition:
+		gap 0.22s ease,
+		padding 0.22s ease,
+		background 0.18s ease,
+		box-shadow 0.18s ease,
+		transform 0.18s ease;
+}
+
+.fab:hover,
+.fab:focus-visible {
+	gap: 0.5rem;
+	padding-right: 0.85rem;
+	background: rgba(255, 255, 255, 0.98);
+	box-shadow: 0 22px 48px -18px rgba(16, 24, 40, 0.5);
+	transform: translateY(-1px);
+}
+
+.fab:focus-visible {
+	outline: 2px solid #12b76a;
+	outline-offset: 3px;
+}
+
+.icon {
+	position: relative;
+	width: 37px;
+	height: 37px;
+	flex: 0 0 37px;
+	display: grid;
+	place-items: center;
+	border-radius: 9px;
+	background: #fef0c7;
+	color: #f79009;
+	font-size: 1.02rem;
+}
+
+.label {
+	max-width: 0;
+	overflow: hidden;
+	opacity: 0;
+	white-space: nowrap;
+	color: #344054;
+	font-size: 0.69rem;
+	font-weight: 650;
+	letter-spacing: -0.01em;
+	transform: translateX(6px);
+	transition:
+		max-width 0.22s ease,
+		opacity 0.18s ease,
+		transform 0.22s ease;
+}
+
+.fab:hover .label,
+.fab:focus-visible .label {
+	max-width: 11.5rem;
+	opacity: 1;
+	transform: none;
+}
+
+.badge {
+	position: absolute;
+	top: -5px;
+	right: -5px;
+	min-width: 16px;
+	height: 16px;
+	padding: 0 4px;
+	border: 2px solid #fff;
+	border-radius: 99px;
+	background: #f04438;
+	color: #fff;
+	font-size: 0.58rem;
+	font-weight: 750;
+	line-height: 12px;
+	text-align: center;
+}
+
+@media (max-width: 767.98px) {
+	.fab {
+		right: 0.75rem;
+		bottom: 4.85rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.fab,
+	.label {
+		transition: none;
+	}
+}

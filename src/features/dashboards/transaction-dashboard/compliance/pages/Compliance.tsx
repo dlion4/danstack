@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import AttentionHubFab from "../../shared/components/AttentionHubFab";
 import type {
 	AttentionItem,
 	QuickActionItem,
@@ -1105,64 +1106,6 @@ export default function Compliance() {
 						</div>
 					</section>
 
-					{/* ======================= 1.2 ACTION CENTRE ======================= */}
-					<section
-						className={styles.dashboardSection}
-						aria-labelledby="compliance-attention-heading"
-					>
-						<SectionHeading
-							id="compliance-attention-heading"
-							index="1.2"
-							title="Action centre"
-							description="Resolve exceptions first, then use guided suggestions to improve transfer outcomes."
-							action={
-								<button
-									type="button"
-									className={styles.btnPm}
-									onClick={() => setDrawerOpen(true)}
-								>
-									<i className="bi bi-columns-gap" /> Review queue
-								</button>
-							}
-						/>
-						<article className={`${styles.card} ${styles.actionCentreCard}`}>
-							<div className={styles.actionCentreIcon}>
-								<i className="bi bi-exclamation-octagon" />
-							</div>
-							<div className={styles.actionCentreCopy}>
-								<span className={styles.cardKicker}>Action centre</span>
-								<h3>Attention, suggestions &amp; quick actions</h3>
-								<p>
-									Open operational items, AI routing recommendations and the
-									actions treasury uses most — each opens the matching workflow.
-								</p>
-							</div>
-							<div className={styles.actionCentreStats}>
-								<div className={styles.actionCentreStat}>
-									<strong>{config.attention.length}</strong>
-									<span>Attention</span>
-								</div>
-								<div className={styles.actionCentreStat}>
-									<strong>{config.suggestions.length}</strong>
-									<span>Suggestions</span>
-								</div>
-								<div className={styles.actionCentreStat}>
-									<strong>{config.quickActions.length}</strong>
-									<span>Shortcuts</span>
-								</div>
-							</div>
-							<div className={styles.actionCentreActions}>
-								<button
-									type="button"
-									className={`${styles.btnPm} ${styles.btnPmP}`}
-									onClick={() => setDrawerOpen(true)}
-								>
-									<i className="bi bi-columns-gap" /> Open drawer
-								</button>
-							</div>
-						</article>
-					</section>
-
 					{/* ======================= 1.3 REAL-TIME MONITORING ======================= */}
 					<section
 						className={styles.dashboardSection}
@@ -1731,6 +1674,12 @@ export default function Compliance() {
 			</main>
 
 			{/* ======================= ALL MODALS ======================= */}
+			<AttentionHubFab
+				count={drawerAttention.length}
+				hidden={drawerOpen}
+				onClick={() => setDrawerOpen(true)}
+			/>
+
 			<AttentionDrawer
 				open={drawerOpen}
 				onClose={() => setDrawerOpen(false)}

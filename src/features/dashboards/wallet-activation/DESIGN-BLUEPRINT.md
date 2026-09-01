@@ -2,7 +2,7 @@
 
 **Route:** `/wallet-activation` (standalone — no AppShell; own console chrome)
 **Source files:** `src/features/dashboards/wallet-activation/`
-**Page override:** minimal auth/hub-style hub (per user direction) — reduced cards/sections, tabs, small feature cards, retained flowchart.
+**Page override:** AuthKit console (same primitives as `/auth` Hub.tsx) — compact hero, SegTabs, hover Cards, drawers/modals. No in-page Action centre. Retained flowchart + 17 shared-primitive modals.
 
 ---
 
@@ -97,16 +97,15 @@ Numbered `01`–`05` (`sectionIndex`), icon tinted by tone, title, sub-copy; act
 
 ## 9. PAGE HIERARCHY (numbered sections)
 
-- **Console** — crumb + search + help.
-- **Hero** — identity + status + stats + 3 actions + account strip.
-- **Tabs** — Overview | Live Flow | Dashboards | Manage.
-- **01 Quick Actions** — 8 feature cards (Activate, Link, Manage Links, Relocate, Permissions, Alert Routing, Limits, Guided Tour).
-- **02 Activation Journey** — 6-step compact strip.
-- **03 Recent Activity** — 5 rows.
-- **04 Your Dashboards** — 8 dashboard cards.
-- **05 Security, Privacy & Support** — 6 utility cards (Privacy, Preferences, Support, Sample Receipt, Activation Proof, Revoke All).
-- **⌘K Command Palette** — search overlay (14 commands + `go:` routes).
-- **Toast** — copy/action feedback.
+- **Console** — crumb + ⌘K + help.
+- **Hero** — identity + 2 chips + 3 stats + Activate/Link.
+- **Tabs** — Overview | Dashboards | Live flow | Manage.
+- **Overview** — 4 primary action cards (Activate, Link, Relocate, Manage links) + compact Journey/Activity cards (details in drawers).
+- **Dashboards** — Hub-style workspace cards with Preview / Open / Activate; chip filter.
+- **Live flow** — retained `AccountFlowChart`.
+- **Manage** — permissions, alerts, limits, privacy, prefs, tour, support, revoke, receipts.
+- **⌘K Command Palette** — AuthKit Modal (14 commands + `go:` routes).
+- **Toast** — AuthKit toaster.
 
 ## 10. KPI / STAT CARDS
 

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { type ReactNode, useEffect, useState } from "react";
 import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import AttentionHubFab from "../../shared/components/AttentionHubFab";
 import type {
 	AttentionItem,
 	QuickActionItem,
@@ -1113,65 +1114,6 @@ export default function AccountProfile() {
 								</span>
 								ID · Passport · Address · Selfie
 							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* ==================== ACTION CENTRE ==================== */}
-				<div className={styles.dashboardSection}>
-					<SectionHeading
-						index="0.1"
-						title="Action centre"
-						sub="Resolve exceptions first, then use guided suggestions to improve transfer outcomes."
-						actions={
-							<button
-								type="button"
-								className={`${styles.btnPm} ${styles.btnSm}`}
-								onClick={() => setDrawerOpen(true)}
-							>
-								<i className="bi bi-columns-gap" aria-hidden="true" /> Open
-								drawer
-							</button>
-						}
-					/>
-					<div className={styles.listCard}>
-						<div className={styles.listCardHeader}>
-							<div className={styles.listCardTitle}>
-								<i className="bi bi-exclamation-octagon" aria-hidden="true" />{" "}
-								Attention, suggestions &amp; quick actions
-							</div>
-							<span className={styles.smartBadge}>
-								<i className="bi bi-stars" aria-hidden="true" />{" "}
-								{accountAttention.length + accountSuggestions.length} open
-							</span>
-						</div>
-						<div className={styles.listCardSub}>
-							Open operational items, AI routing recommendations and the actions
-							treasury uses most — each opens the matching workflow.
-						</div>
-						<div className={styles.actionCentreStats}>
-							<div className={styles.actionCentreStat}>
-								<strong>{accountAttention.length}</strong>
-								<span>Attention</span>
-							</div>
-							<div className={styles.actionCentreStat}>
-								<strong>{accountSuggestions.length}</strong>
-								<span>Suggestions</span>
-							</div>
-							<div className={styles.actionCentreStat}>
-								<strong>{accountQuickActions.length}</strong>
-								<span>Shortcuts</span>
-							</div>
-						</div>
-						<div className={styles.actionCentreActions}>
-							<button
-								type="button"
-								className={`${styles.btnPm} ${styles.btnSm}`}
-								onClick={() => setDrawerOpen(true)}
-							>
-								<i className="bi bi-columns-gap" aria-hidden="true" /> Review
-								queue
-							</button>
 						</div>
 					</div>
 				</div>
@@ -2725,6 +2667,11 @@ export default function AccountProfile() {
 			</div>
 
 			{/* ==================== MODALS ==================== */}
+			<AttentionHubFab
+				count={accountAttention.length}
+				hidden={drawerOpen}
+				onClick={() => setDrawerOpen(true)}
+			/>
 			<AttentionDrawer
 				open={drawerOpen}
 				onClose={() => setDrawerOpen(false)}
