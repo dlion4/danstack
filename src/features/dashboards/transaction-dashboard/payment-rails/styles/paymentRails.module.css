@@ -33,6 +33,30 @@
 		0 1px 2px rgba(16, 24, 40, 0.05), 0 8px 24px -12px rgba(16, 24, 40, 0.12);
 	--pr-shadow-lg: 0 24px 60px -16px rgba(16, 24, 40, 0.28);
 
+	/* Cross-page Action centre aliases so shared drawer tokens resolve here. */
+	--pm-accent: var(--pr-green);
+	--pm-accent-soft: var(--pr-green-soft);
+	--pm-blue: var(--pr-info);
+	--pm-blue-soft: var(--pr-info-soft);
+	--pm-danger: var(--pr-danger);
+	--pm-danger-soft: var(--pr-danger-soft);
+	--pm-green: var(--pr-green);
+	--pm-green-dark: var(--pr-green-dark);
+	--pm-green-soft: var(--pr-green-soft);
+	--pm-info: var(--pr-info);
+	--pm-info-soft: var(--pr-info-soft);
+	--pm-ink: var(--pr-ink);
+	--pm-ink-soft: var(--pr-ink-soft);
+	--pm-muted: var(--pr-muted);
+	--pm-purple: var(--pr-violet);
+	--pm-purple-soft: var(--pr-violet-soft);
+	--pm-surface: var(--pr-bg);
+	--pm-surface-2: #f8f9fc;
+	--pm-violet: var(--pr-violet);
+	--pm-violet-soft: var(--pr-violet-soft);
+	--pm-warning: var(--pr-warning);
+	--pm-warning-soft: var(--pr-warning-soft);
+
 	min-height: 100vh;
 	background: var(--pr-bg);
 	color: var(--pr-ink);
@@ -343,6 +367,10 @@
 	color: var(--pr-muted);
 	font-size: 0.78rem;
 }
+.sectionAction {
+	margin-left: auto;
+	flex: 0 0 auto;
+}
 .card {
 	min-width: 0;
 	padding: 1.2rem;
@@ -594,6 +622,73 @@
 }
 .queueCard .actionRow:last-child {
 	margin-bottom: 0;
+}
+.actionCentreCard {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
+	align-items: center;
+	gap: 1rem;
+}
+.actionCentreIcon {
+	width: 52px;
+	height: 52px;
+	display: grid;
+	place-items: center;
+	border-radius: 14px;
+	background: var(--pr-warning-soft);
+	color: var(--pr-warning);
+	font-size: 1.35rem;
+}
+.actionCentreCopy {
+	min-width: 0;
+}
+.actionCentreCopy h3 {
+	margin: 0.08rem 0 0;
+	color: var(--pr-ink);
+	font-family: "Sora", "Inter", sans-serif;
+	font-size: 0.97rem;
+	font-weight: 700;
+	letter-spacing: -0.015em;
+}
+.actionCentreCopy p {
+	max-width: 660px;
+	margin: 0.26rem 0 0;
+	color: var(--pr-muted);
+	font-size: 0.72rem;
+	line-height: 1.5;
+}
+.actionCentreStats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.45rem;
+}
+.actionCentreStat {
+	min-width: 72px;
+	padding: 0.55rem 0.65rem;
+	border: 1px solid var(--pr-border);
+	border-radius: 11px;
+	background: #fafbfd;
+	text-align: center;
+}
+.actionCentreStat strong {
+	display: block;
+	color: var(--pr-ink);
+	font-family: "Sora", "Inter", sans-serif;
+	font-size: 1.08rem;
+	letter-spacing: -0.03em;
+}
+.actionCentreStat span {
+	display: block;
+	margin-top: 1px;
+	color: var(--pr-muted);
+	font-size: 0.58rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+.actionCentreActions {
+	display: flex;
+	gap: 0.5rem;
 }
 .actionRow {
 	display: flex;
@@ -1158,6 +1253,19 @@
 	}
 	.queueGrid {
 		grid-template-columns: 1fr;
+	}
+	.actionCentreCard {
+		grid-template-columns: auto 1fr;
+	}
+	.actionCentreStats {
+		grid-column: 1 / -1;
+	}
+	.actionCentreActions {
+		grid-column: 1 / -1;
+	}
+	.actionCentreActions .textButton {
+		width: 100%;
+		justify-content: center;
 	}
 	.perfGrid {
 		grid-template-columns: repeat(2, minmax(0, 1fr));

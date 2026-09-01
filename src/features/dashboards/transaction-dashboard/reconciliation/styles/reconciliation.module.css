@@ -38,10 +38,29 @@
 
 	/* Neutral Colors */
 	--pm-ink: #101828;
+	--pm-ink-soft: #344054;
 	--pm-muted: #667085;
 	--pm-bg: #f2f4f8;
 	--pm-card: #ffffff;
 	--pm-border: #e6e9f0;
+
+	/* Cross-page Action centre aliases so shared drawer tokens resolve here. */
+	--pm-accent: var(--pri);
+	--pm-accent-soft: var(--pm-green-soft);
+	--pm-blue: var(--info);
+	--pm-blue-soft: var(--info-bg);
+	--pm-danger: var(--danger);
+	--pm-danger-soft: var(--danger-bg);
+	--pm-info: var(--info);
+	--pm-info-soft: var(--info-bg);
+	--pm-purple: var(--purple);
+	--pm-purple-soft: var(--purple-bg);
+	--pm-surface: var(--pm-bg);
+	--pm-surface-2: #f8f9fc;
+	--pm-violet: var(--purple);
+	--pm-violet-soft: var(--purple-bg);
+	--pm-warning: var(--warning);
+	--pm-warning-soft: var(--warning-bg);
 
 	--surface: #f2f4f8;
 	--surface-elev: #ffffff;
@@ -374,6 +393,10 @@
 	color: var(--ink-500);
 	font-size: 0.78rem;
 }
+.sectionAction {
+	margin-left: auto;
+	flex: 0 0 auto;
+}
 
 /* ── KPI row (used for the World stats grid) ────────────────────────────── */
 .kpiGrid {
@@ -404,6 +427,73 @@
 .queueCard {
 	display: flex;
 	flex-direction: column;
+}
+.actionCentreCard {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
+	align-items: center;
+	gap: 1rem;
+}
+.actionCentreIcon {
+	width: 52px;
+	height: 52px;
+	display: grid;
+	place-items: center;
+	border-radius: 14px;
+	background: var(--warning-bg);
+	color: var(--warning);
+	font-size: 1.35rem;
+}
+.actionCentreCopy {
+	min-width: 0;
+}
+.actionCentreCopy h3 {
+	margin: 0.08rem 0 0;
+	color: var(--pm-ink);
+	font-family: var(--font-display);
+	font-size: 0.97rem;
+	font-weight: 700;
+	letter-spacing: -0.015em;
+}
+.actionCentreCopy p {
+	max-width: 660px;
+	margin: 0.26rem 0 0;
+	color: var(--ink-500);
+	font-size: 0.72rem;
+	line-height: 1.5;
+}
+.actionCentreStats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.45rem;
+}
+.actionCentreStat {
+	min-width: 72px;
+	padding: 0.55rem 0.65rem;
+	border: 1px solid var(--pm-border);
+	border-radius: 11px;
+	background: #fafbfd;
+	text-align: center;
+}
+.actionCentreStat strong {
+	display: block;
+	color: var(--pm-ink);
+	font-family: var(--font-display);
+	font-size: 1.08rem;
+	letter-spacing: -0.03em;
+}
+.actionCentreStat span {
+	display: block;
+	margin-top: 1px;
+	color: var(--ink-500);
+	font-size: 0.58rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+.actionCentreActions {
+	display: flex;
+	gap: 0.5rem;
 }
 .cardKicker,
 .kicker {
@@ -2083,6 +2173,16 @@
 
 	.queueGrid {
 		grid-template-columns: 1fr;
+	}
+
+	.actionCentreCard {
+		grid-template-columns: auto 1fr;
+	}
+	.actionCentreStats {
+		grid-column: 1 / -1;
+	}
+	.actionCentreActions {
+		grid-column: 1 / -1;
 	}
 
 	.floatingBar {

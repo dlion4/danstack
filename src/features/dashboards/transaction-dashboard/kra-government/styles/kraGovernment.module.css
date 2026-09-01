@@ -639,6 +639,43 @@
 	font-size: 1.05rem;
 }
 
+.actionCentreStats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.55rem;
+	margin-top: 0.4rem;
+}
+.actionCentreStat {
+	min-width: 118px;
+	padding: 0.65rem 0.8rem;
+	border: 1px solid var(--pm-border);
+	border-radius: 12px;
+	background: var(--pm-surface-2);
+	text-align: center;
+}
+.actionCentreStat strong {
+	display: block;
+	color: var(--pm-ink);
+	font-family: "Sora", "Inter", sans-serif;
+	font-size: 1.12rem;
+	letter-spacing: -0.03em;
+}
+.actionCentreStat span {
+	display: block;
+	margin-top: 2px;
+	color: var(--pm-muted);
+	font-size: 0.66rem;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+}
+.actionCentreActions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin-top: 0.6rem;
+}
+
 /* ---------------------------------------------------------------------------
    10. Tables
    ------------------------------------------------------------------------- */

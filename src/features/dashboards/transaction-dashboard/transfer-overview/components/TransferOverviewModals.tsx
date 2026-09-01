@@ -18,9 +18,34 @@ interface ModalsProps {
 	active: string | null;
 	onClose: () => void;
 	onOpen: (id: string) => void;
+	attention: AttentionItem[];
+	suggestions: AttentionItem[];
+	quickActions: QuickActionItem[];
 }
 
 type Size = "md" | "lg" | "xl";
+
+interface AttentionItem {
+	icon: string;
+	iconBg: string;
+	iconColor: string;
+	title: string;
+	sub: string;
+	actionLabel: string;
+	modal: string;
+}
+
+interface QuickActionItem {
+	icon: string;
+	iconColor: string;
+	label: string;
+	modal: string;
+}
+
+interface CrossPageAttentionItem extends AttentionItem {
+	page: string;
+	pageIcon: string;
+}
 
 interface MBoxProps {
 	id: string;
@@ -150,6 +175,179 @@ const ISSUE_TYPES = [
 const METHODS = ["M-Pesa", "Bank Transfer", "International"];
 const BEN_TYPES = ["M-Pesa", "Bank Account", "PayMo Wallet", "International"];
 
+/* ============================================================================
+   Attention inbox — items that surface across every transaction-dashboard page.
+   Tab 1 (All attention) merges this list with the current page's exceptions.
+   Tab 2 (Transfer overview) filters to only the transfer-overview page.
+   ========================================================================== */
+const CROSS_PAGE_ATTENTION: CrossPageAttentionItem[] = [
+	{
+		icon: "bi-person-exclamation",
+		iconBg: "var(--pm-danger-soft)",
+		iconColor: "var(--pm-danger)",
+		title: "Bulk file has 4 invalid phone numbers",
+		sub: "Initiate transfer · review before any KES are released",
+		actionLabel: "Review",
+		modal: "bulkTransferModal",
+		page: "Initiate transfer",
+		pageIcon: "bi-send",
+	},
+	{
+		icon: "bi-calendar-x",
+		iconBg: "var(--pm-warning-soft)",
+		iconColor: "var(--pm-warning)",
+		title: "3 scheduled transfers are paused on funding source",
+		sub: "Transfer management · M-Pesa number changed",
+		actionLabel: "Update",
+		modal: "editScheduleModal",
+		page: "Transfer management",
+		pageIcon: "bi-arrow-repeat",
+	},
+	{
+		icon: "bi-graph-down-arrow",
+		iconBg: "var(--pm-info-soft)",
+		iconColor: "var(--pm-info)",
+		title: "M-Pesa volume dropped 22% versus the 7-day average",
+		sub: "Analytics · review rail mix before acting",
+		actionLabel: "Analyse",
+		modal: "transferAnalyticsModal",
+		page: "Analytics",
+		pageIcon: "bi-bar-chart-line",
+	},
+	{
+		icon: "bi-shield-exclamation",
+		iconBg: "var(--pm-danger-soft)",
+		iconColor: "var(--pm-danger)",
+		title: "2 matching-name sanctions alerts awaiting review",
+		sub: "Compliance · SAR window closes in 72 hours",
+		actionLabel: "Review",
+		modal: "transferAnalyticsModal",
+		page: "Compliance",
+		pageIcon: "bi-shield-check",
+	},
+	{
+		icon: "bi-person-vcard",
+		iconBg: "var(--pm-warning-soft)",
+		iconColor: "var(--pm-warning)",
+		title: "4 customer profiles missing KYC documents",
+		sub: "Customers · service restricted until verified",
+		actionLabel: "Open",
+		modal: "manageBeneficiariesModal",
+		page: "Customers",
+		pageIcon: "bi-people",
+	},
+	{
+		icon: "bi-arrow-counterclockwise",
+		iconBg: "var(--pm-danger-soft)",
+		iconColor: "var(--pm-danger)",
+		title: "5 chargebacks approach the 7-day response window",
+		sub: "Disputes · evidence due before end of week",
+		actionLabel: "Respond",
+		modal: "disputeTransferModal",
+		page: "Disputes",
+		pageIcon: "bi-exclamation-diamond",
+	},
+	{
+		icon: "bi-cash-stack",
+		iconBg: "var(--pm-info-soft)",
+		iconColor: "var(--pm-info)",
+		title: "New fee schedule takes effect in 48 hours",
+		sub: "Fees · customers will see updated pricing",
+		actionLabel: "Review",
+		modal: "transferLimitsModal",
+		page: "Fees",
+		pageIcon: "bi-percent",
+	},
+	{
+		icon: "bi-currency-exchange",
+		iconBg: "var(--pm-purple-soft)",
+		iconColor: "var(--pm-purple)",
+		title: "GBP/KES rate moved 1.8% above the hedge trigger",
+		sub: "FX · best-execution alert issued",
+		actionLabel: "Review",
+		modal: "transferLimitsModal",
+		page: "FX",
+		pageIcon: "bi-currency-exchange",
+	},
+	{
+		icon: "bi-bank",
+		iconBg: "var(--pm-warning-soft)",
+		iconColor: "var(--pm-warning)",
+		title: "Bank settlement run is waiting for batch confirmation",
+		sub: "Settlement · value at risk KES 486,000",
+		actionLabel: "Confirm",
+		modal: "transferHistoryModal",
+		page: "Settlement",
+		pageIcon: "bi-bank",
+	},
+	{
+		icon: "bi-diagram-3",
+		iconBg: "var(--pm-info-soft)",
+		iconColor: "var(--pm-info)",
+		title: "12 rows in the holding account need manual matching",
+		sub: "Reconciliation · match within 24 hours",
+		actionLabel: "Match",
+		modal: "transferHistoryModal",
+		page: "Reconciliation",
+		pageIcon: "bi-diagram-3",
+	},
+	{
+		icon: "bi-hdd-network",
+		iconBg: "var(--pm-danger-soft)",
+		iconColor: "var(--pm-danger)",
+		title: "M-Pesa adapter is in half-open circuit breaker state",
+		sub: "Payment rails · failures recovered, re-check throughput",
+		actionLabel: "Monitor",
+		modal: "transferAnalyticsModal",
+		page: "Payment rails",
+		pageIcon: "bi-broadcast",
+	},
+	{
+		icon: "bi-phone",
+		iconBg: "var(--pm-warning-soft)",
+		iconColor: "var(--pm-warning)",
+		title: "Agent float below threshold in 8 counties",
+		sub: "Mobile money · top-up suggests available",
+		actionLabel: "View",
+		modal: "transferHistoryModal",
+		page: "Mobile money",
+		pageIcon: "bi-phone",
+	},
+	{
+		icon: "bi-shop",
+		iconBg: "var(--pm-info-soft)",
+		iconColor: "var(--pm-info)",
+		title: "6 merchants awaiting setup approval",
+		sub: "Onboarding · approval waits on beneficial owner",
+		actionLabel: "Review",
+		modal: "manageBeneficiariesModal",
+		page: "Onboarding",
+		pageIcon: "bi-shop",
+	},
+	{
+		icon: "bi-activity",
+		iconBg: "var(--pm-danger-soft)",
+		iconColor: "var(--pm-danger)",
+		title: "P95 latency breached the 300 ms alert threshold",
+		sub: "System health · 4 services affected",
+		actionLabel: "View",
+		modal: "transferAnalyticsModal",
+		page: "System health",
+		pageIcon: "bi-activity",
+	},
+	{
+		icon: "bi-file-earmark-text",
+		iconBg: "var(--pm-warning-soft)",
+		iconColor: "var(--pm-warning)",
+		title: "Withholding tax report is due in 3 days",
+		sub: "KRA government · downloadable summary ready",
+		actionLabel: "Export",
+		modal: "transferHistoryModal",
+		page: "KRA & government",
+		pageIcon: "bi-building",
+	},
+];
+
 /* LEGACY BRIDGE: flow definitions */
 const FLOW_DEFS: Record<string, { labels: string[] }> = {
 	init: { labels: ["Beneficiary", "Amount", "Confirm", "Done"] },
@@ -235,6 +433,9 @@ export default function TransferOverviewModals({
 	active,
 	onClose,
 	onOpen,
+	attention,
+	suggestions,
+	quickActions,
 }: ModalsProps) {
 	const [results, setResults] = useState<Record<string, Result>>({});
 	const [busy, setBusy] = useState<string | null>(null);
@@ -260,6 +461,15 @@ export default function TransferOverviewModals({
 
 	const busyTimer = useRef<number | undefined>(undefined);
 	useEffect(() => () => window.clearTimeout(busyTimer.current), []);
+
+	const drawerCloseRef = useRef<HTMLButtonElement>(null);
+	useEffect(() => {
+		if (active !== "attentionDrawer") return;
+		const frame = window.requestAnimationFrame(() =>
+			drawerCloseRef.current?.focus(),
+		);
+		return () => window.cancelAnimationFrame(frame);
+	}, [active]);
 
 	/* LEGACY BRIDGE: doAction(modalId, msg, ref) */
 	const doAction = (modalId: string, msg: string, ref?: string) => {
@@ -1835,63 +2045,266 @@ export default function TransferOverviewModals({
 		</MBox>
 	);
 
-	const renderAttention = () => (
-		<MBox
-			id="attentionModal"
-			active={active}
-			onClose={onClose}
-			title={
-				<>
-					<i
-						className={`bi bi-exclamation-circle ${styles.iconAmber} ${styles.modalIcon}`}
-					/>
-					All Attention Items
-				</>
-			}
-			footer={
-				<button type="button" className={styles.btnPm} onClick={onClose}>
-					Close
-				</button>
-			}
-		>
-			<div className={styles.sr}>
-				<div>
-					<strong>Scheduled transfer failed</strong>
+	const renderAttentionDrawer = () => {
+		if (active !== "attentionDrawer") return null;
+		const activeTab = tabs.attn ?? "all";
+		const drawerAction = (modal: string) => {
+			onClose();
+			if (modal) onOpen(modal);
+		};
+		const renderDrawerItem = (item: AttentionItem, source = "") => (
+			<div key={`${source}-${item.title}`} className={styles.drawerItem}>
+				<div className={styles.drawerItemMain}>
+					<span
+						className={styles.iconCircle}
+						style={{ background: item.iconBg, color: item.iconColor }}
+					>
+						<i className={`bi ${item.icon.replace(/^bi-/, "")}`} />
+					</span>
+					<div>
+						<strong>{item.title}</strong>
+						<span>{item.sub}</span>
+					</div>
 				</div>
 				<button
 					type="button"
 					className={`${styles.btnPm} ${styles.btnSm}`}
-					onClick={() => onOpen("retryTransferModal")}
+					onClick={() => drawerAction(item.modal)}
 				>
-					Retry
+					{item.actionLabel}
 				</button>
 			</div>
-			<div className={styles.sr}>
-				<div>
-					<strong>3 recurring payments need funding source</strong>
+		);
+
+		const crossPages = Array.from(
+			new Set(CROSS_PAGE_ATTENTION.map((x) => x.page)),
+		);
+		const crossGroups = crossPages.map((page) => ({
+			page,
+			pageIcon:
+				CROSS_PAGE_ATTENTION.find((x) => x.page === page)?.pageIcon ??
+				"bi-grid",
+			items: CROSS_PAGE_ATTENTION.filter((x) => x.page === page),
+		}));
+		const allGroups = [
+			{
+				page: "Transfer overview",
+				pageIcon: "bi-lightning-charge",
+				items: attention,
+			},
+			...crossGroups,
+		];
+		const totalOpen = allGroups.reduce(
+			(sum, group) => sum + group.items.length,
+			0,
+		);
+
+		return (
+			<>
+				<div
+					className={styles.drawerBackdrop}
+					onClick={onClose}
+					aria-hidden="true"
+				/>
+				<div className={styles.drawerWrap}>
+					<div
+						className={styles.drawerPanel}
+						role="dialog"
+						aria-modal="true"
+						aria-labelledby="attentionDrawer-title"
+					>
+						<div className={`${styles.drawerHeader} ${styles.drawerToneAmber}`}>
+							<div className={styles.drawerHeadMain}>
+								<span className={styles.drawerIcon}>
+									<i className="bi bi-exclamation-circle" />
+								</span>
+								<div>
+									<h2 id="attentionDrawer-title" className={styles.drawerTitle}>
+										Attention, suggestions &amp; quick actions
+									</h2>
+									<p className={styles.drawerSub}>
+										Open operational items, AI routing recommendations and the
+										actions treasury uses most — each opens the matching
+										workflow.
+									</p>
+								</div>
+							</div>
+							<span className={`${styles.badge} ${styles.badgeW}`}>
+								{totalOpen} open
+							</span>
+							<button
+								ref={drawerCloseRef}
+								type="button"
+								className={styles.modalClose}
+								onClick={onClose}
+								aria-label="Close drawer"
+							>
+								<i className="bi bi-x-lg" />
+							</button>
+						</div>
+
+						<div className={styles.drawerTabs}>
+							<div className={styles.drawerTabRow}>
+								<button
+									type="button"
+									className={`${styles.drawerTab} ${
+										activeTab === "all" ? styles.drawerTabActive : ""
+									}`}
+									onClick={() => switchTab("attn", "all")}
+								>
+									All attention
+									<span className={styles.drawerTabCount}>{totalOpen}</span>
+								</button>
+								<button
+									type="button"
+									className={`${styles.drawerTab} ${
+										activeTab === "transfer" ? styles.drawerTabActive : ""
+									}`}
+									onClick={() => switchTab("attn", "transfer")}
+								>
+									Transfer overview
+									<span className={styles.drawerTabCount}>
+										{attention.length}
+									</span>
+								</button>
+							</div>
+						</div>
+
+						{activeTab === "all" && (
+							<div className={styles.drawerBody}>
+								<div className={styles.drawerIntro}>
+									<span className={styles.cardKicker}>Cross-page inbox</span>
+									<p>
+										Every item that needs attention across the transaction
+										dashboard, grouped by source page.
+									</p>
+								</div>
+								{allGroups.map((group) => (
+									<section key={group.page} className={styles.drawerGroup}>
+										<div className={styles.drawerGroupHead}>
+											<span className={styles.drawerGroupBadge}>
+												<i
+													className={`bi ${group.pageIcon.replace(/^bi-/, "")}`}
+												/>{" "}
+												{group.page}
+											</span>
+											<span className={`${styles.badge} ${styles.badgeW}`}>
+												{group.items.length} open
+											</span>
+										</div>
+										<div className={styles.drawerList}>
+											{group.items.map((item) =>
+												renderDrawerItem(item, group.page),
+											)}
+											{group.items.length === 0 && (
+												<div className={styles.drawerEmpty}>
+													<i className="bi bi-check2-circle" />
+													<strong>Nothing pending</strong>
+													<span>No items need attention from this page.</span>
+												</div>
+											)}
+										</div>
+									</section>
+								))}
+							</div>
+						)}
+
+						{activeTab === "transfer" && (
+							<div className={styles.drawerBody}>
+								<div className={styles.drawerIntro}>
+									<span className={styles.cardKicker}>This page only</span>
+									<p>
+										Transfer-overview exceptions, smart suggestions and quick
+										workflows.
+									</p>
+								</div>
+
+								<section className={styles.drawerGroup}>
+									<div className={styles.drawerGroupHead}>
+										<span className={styles.drawerGroupBadge}>
+											<i className="bi bi-exclamation-circle" /> Transfer
+											exceptions
+										</span>
+										<span className={`${styles.badge} ${styles.badgeW}`}>
+											{attention.length} open
+										</span>
+									</div>
+									<div className={styles.drawerList}>
+										{attention.map((item) =>
+											renderDrawerItem(item, "transfer"),
+										)}
+										{attention.length === 0 && (
+											<div className={styles.drawerEmpty}>
+												<i className="bi bi-check2-circle" />
+												<strong>All clear</strong>
+												<span>No transfer exceptions need your attention.</span>
+											</div>
+										)}
+									</div>
+								</section>
+
+								<section className={styles.drawerGroup}>
+									<div className={styles.drawerGroupHead}>
+										<span className={styles.drawerGroupBadge}>
+											<i className="bi bi-stars" /> Suggested next moves
+										</span>
+										<span className={`${styles.badge} ${styles.badgeP}`}>
+											{suggestions.length} insights
+										</span>
+									</div>
+									<div className={styles.drawerList}>
+										{suggestions.map((item) =>
+											renderDrawerItem(item, "suggest"),
+										)}
+									</div>
+								</section>
+
+								<section className={styles.drawerGroup}>
+									<div className={styles.drawerGroupHead}>
+										<span className={styles.drawerGroupBadge}>
+											<i className="bi bi-grid-3x3-gap" /> Start a workflow
+										</span>
+										<span className={`${styles.badge} ${styles.badgeI}`}>
+											{quickActions.length} shortcuts
+										</span>
+									</div>
+									<div className={styles.drawerQuickGrid}>
+										{quickActions.map((action) => (
+											<button
+												type="button"
+												key={action.label}
+												className={styles.drawerQuickBtn}
+												onClick={() => drawerAction(action.modal)}
+											>
+												<span style={{ color: action.iconColor }}>
+													<i
+														className={`bi ${action.icon.replace(/^bi-/, "")}`}
+													/>
+												</span>
+												{action.label}
+											</button>
+										))}
+									</div>
+								</section>
+							</div>
+						)}
+
+						<div className={styles.drawerFooter}>
+							<span className={styles.drawerFooterNote}>
+								<i className="bi bi-activity" />
+								{activeTab === "all"
+									? `${allGroups.length} pages · ${totalOpen} items open`
+									: `${attention.length} exceptions · ${suggestions.length} suggestions`}
+							</span>
+							<button type="button" className={styles.btnPm} onClick={onClose}>
+								Close
+							</button>
+						</div>
+					</div>
 				</div>
-				<button
-					type="button"
-					className={`${styles.btnPm} ${styles.btnSm}`}
-					onClick={() => onOpen("manageBeneficiariesModal")}
-				>
-					Update
-				</button>
-			</div>
-			<div className={styles.sr}>
-				<div>
-					<strong>Large transfer pending approval</strong>
-				</div>
-				<button
-					type="button"
-					className={`${styles.btnPm} ${styles.btnSm}`}
-					onClick={() => onOpen("initiateTransferModal")}
-				>
-					Approve
-				</button>
-			</div>
-		</MBox>
-	);
+			</>
+		);
+	};
 
 	const renderDispute = () => (
 		<MBox
@@ -2286,7 +2699,7 @@ export default function TransferOverviewModals({
 			{renderSecurityCheck()}
 			{renderTransferNotif()}
 			{renderProfile()}
-			{renderAttention()}
+			{renderAttentionDrawer()}
 			{renderDispute()}
 			{renderEditBeneficiary()}
 			{renderFeeCalc()}

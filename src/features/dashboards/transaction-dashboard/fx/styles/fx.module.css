@@ -1288,6 +1288,74 @@ input[type="date"].fc { color-scheme: light; }
 .quickActionIntro p { margin: 0.28rem 0 0; color: var(--pm-muted); font-size: 0.71rem; }
 .quickActionIntro > .cardKicker { margin-bottom: 0.2rem; }
 
+.actionCentreCard {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto auto;
+	align-items: center;
+	gap: 1rem;
+}
+.actionCentreIcon {
+	width: 52px;
+	height: 52px;
+	display: grid;
+	place-items: center;
+	border-radius: 14px;
+	background: var(--pm-warning-soft);
+	color: var(--pm-warning);
+	font-size: 1.35rem;
+}
+.actionCentreCopy {
+	min-width: 0;
+}
+.actionCentreCopy h3 {
+	margin: 0.08rem 0 0;
+	color: var(--pm-ink);
+	font-family: var(--pm-font-display);
+	font-size: 0.97rem;
+	font-weight: 700;
+	letter-spacing: -0.015em;
+}
+.actionCentreCopy p {
+	max-width: 660px;
+	margin: 0.26rem 0 0;
+	color: var(--pm-muted);
+	font-size: 0.72rem;
+	line-height: 1.5;
+}
+.actionCentreStats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.45rem;
+}
+.actionCentreStat {
+	min-width: 72px;
+	padding: 0.55rem 0.65rem;
+	border: 1px solid var(--pm-border);
+	border-radius: 11px;
+	background: var(--pm-surface-2);
+	text-align: center;
+}
+.actionCentreStat strong {
+	display: block;
+	color: var(--pm-ink);
+	font-family: var(--pm-font-display);
+	font-size: 1.08rem;
+	letter-spacing: -0.03em;
+}
+.actionCentreStat span {
+	display: block;
+	margin-top: 1px;
+	color: var(--pm-muted);
+	font-size: 0.58rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+.actionCentreActions {
+	display: flex;
+	gap: 0.5rem;
+}
+
 /* ======================= TABLES (card + toolbar) ======================= */
 .tableCard { min-width: 0; padding: 0; overflow: hidden; }
 
@@ -1670,6 +1738,10 @@ input[type="date"].fc { color-scheme: light; }
 	.headerButtonRow > button { flex: 1; justify-content: center; }
 	.attentionGrid { grid-template-columns: 1fr; }
 	.quickActionCard { grid-template-columns: 1fr; }
+	.actionCentreCard { grid-template-columns: auto 1fr; }
+	.actionCentreStats { grid-column: 1 / -1; }
+	.actionCentreActions { grid-column: 1 / -1; }
+	.actionCentreActions .btnPm { width: 100%; justify-content: center; }
 	.quickGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 	.tableToolbar { align-items: stretch; flex-direction: column; }
 	.tableTools { align-items: stretch; flex-wrap: wrap; }

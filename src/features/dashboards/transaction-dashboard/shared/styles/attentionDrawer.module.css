@@ -1,0 +1,493 @@
+/* ============================================================================
+ * attentionDrawer.module.css — shared Action centre drawer
+ * ----------------------------------------------------------------------------
+ * Matches the monitor (PayMo business) drawer language: right-side panel,
+ * amber/blue icon header, tabbed body, grouped rows, quick-action grid and a
+ * sticky summary footer. This is a self-contained module so every
+ * /pm/app/transaction page can reuse it without page-specific overrides.
+ * ========================================================================== */
+
+.drawerBackdrop {
+	position: fixed;
+	inset: 0;
+	background: rgba(11, 19, 34, 0.55);
+	backdrop-filter: blur(3px);
+	-webkit-backdrop-filter: blur(3px);
+	z-index: 1140;
+	animation: drawerFadeIn 0.2s;
+}
+
+.drawerWrap {
+	position: fixed;
+	inset: 0;
+	z-index: 1150;
+	display: flex;
+	justify-content: flex-end;
+	pointer-events: none;
+}
+
+.drawerPanel {
+	width: min(560px, 100vw);
+	height: 100dvh;
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	background: #fff;
+	border-left: 1px solid #e6e9f0;
+	box-shadow: -24px 0 60px -16px rgba(16, 24, 40, 0.28);
+	pointer-events: auto;
+	animation: drawerSlideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drawerHeader {
+	position: sticky;
+	top: 0;
+	z-index: 3;
+	display: flex;
+	align-items: flex-start;
+	gap: 0.75rem;
+	padding: 1rem 1.15rem;
+	border-bottom: 1px solid #e6e9f0;
+	background: rgba(255, 255, 255, 0.96);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+}
+
+.drawerHeadMain {
+	min-width: 0;
+	flex: 1;
+	display: flex;
+	align-items: flex-start;
+	gap: 0.7rem;
+}
+
+.drawerIcon {
+	width: 42px;
+	height: 42px;
+	flex: 0 0 42px;
+	display: grid;
+	place-items: center;
+	border-radius: 11px;
+	background: #fef0c7;
+	color: #f79009;
+	font-size: 1.05rem;
+}
+
+.drawerTitle {
+	margin: 0;
+	color: #101828;
+	font-family: "Sora", "Inter", sans-serif;
+	font-size: 1rem;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	line-height: 1.3;
+}
+
+.drawerSub {
+	margin: 0.18rem 0 0;
+	color: #667085;
+	font-size: 0.73rem;
+	line-height: 1.5;
+}
+
+.drawerClose {
+	width: 34px;
+	height: 34px;
+	flex: 0 0 34px;
+	display: grid;
+	place-items: center;
+	border: 0;
+	border-radius: 9px;
+	background: #f2f4f8;
+	color: #667085;
+	cursor: pointer;
+	transition: all 0.18s;
+}
+
+.drawerClose:hover {
+	background: #e6e9f0;
+	color: #101828;
+}
+
+.drawerTabs {
+	padding: 0.85rem 1.15rem 0.55rem;
+	border-bottom: 1px solid #e6e9f0;
+	background: #fff;
+}
+
+.drawerTabRow {
+	display: flex;
+	gap: 0.35rem;
+	padding: 0.35rem;
+	background: #f2f4f8;
+	border-radius: 10px;
+}
+
+.drawerTab {
+	min-height: 34px;
+	flex: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	padding: 0.48rem 0.65rem;
+	border: 0;
+	border-radius: 8px;
+	background: transparent;
+	color: #667085;
+	font-size: 0.76rem;
+	font-weight: 650;
+	cursor: pointer;
+	transition: all 0.18s;
+	font-family: inherit;
+}
+
+.drawerTab:hover {
+	color: #101828;
+}
+
+.drawerTabActive {
+	background: #fff;
+	color: #101828;
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+	font-weight: 700;
+}
+
+.drawerTabCount {
+	min-width: 20px;
+	height: 20px;
+	padding: 0 0.35rem;
+	border-radius: 999px;
+	background: #eef0f4;
+	color: #667085;
+	font-size: 0.6rem;
+	font-weight: 750;
+	display: inline-grid;
+	place-items: center;
+}
+
+.drawerTabActive .drawerTabCount {
+	background: #fee4e2;
+	color: #d92d20;
+}
+
+.drawerBody {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	padding: 1rem 1.15rem 1.5rem;
+	scrollbar-gutter: stable;
+}
+
+.drawerIntro {
+	margin-bottom: 1rem;
+}
+
+.drawerIntroLabel {
+	display: block;
+	color: #0b8f52;
+	font-size: 0.6rem;
+	font-weight: 750;
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+}
+
+.drawerIntro p {
+	margin: 0.28rem 0 0;
+	color: #667085;
+	font-size: 0.73rem;
+	line-height: 1.5;
+}
+
+.drawerGroup {
+	margin-bottom: 1.2rem;
+}
+
+.drawerGroup:last-child {
+	margin-bottom: 0;
+}
+
+.drawerGroupHead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.6rem;
+	margin-bottom: 0.55rem;
+}
+
+.drawerGroupBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.32rem 0.58rem;
+	border-radius: 8px;
+	background: #f2f4f8;
+	color: #475467;
+	font-size: 0.66rem;
+	font-weight: 750;
+	letter-spacing: 0.055em;
+	text-transform: uppercase;
+}
+
+.drawerGroupBadge i {
+	font-size: 0.75rem;
+}
+
+.drawerList {
+	display: flex;
+	flex-direction: column;
+	padding: 0;
+	overflow: hidden;
+	border: 1px solid #e6e9f0;
+	border-radius: 12px;
+	background: #fff;
+}
+
+.drawerItem {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.8rem;
+	padding: 0.82rem 0.9rem;
+	border-bottom: 1px solid #f0f2f6;
+}
+
+.drawerItem:last-child {
+	border-bottom: 0;
+}
+
+.drawerItem:hover {
+	background: #fafbfd;
+}
+
+.drawerItemMain {
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.7rem;
+}
+
+.drawerItemMain > div {
+	min-width: 0;
+}
+
+.drawerItemMain strong {
+	display: block;
+	overflow: hidden;
+	color: #344054;
+	font-size: 0.76rem;
+	font-weight: 650;
+	line-height: 1.4;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.drawerItemMain span:not(.drawerItemIcon) {
+	display: block;
+	margin-top: 2px;
+	color: #667085;
+	font-size: 0.68rem;
+}
+
+.drawerItemIcon {
+	width: 36px;
+	height: 36px;
+	min-width: 36px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	flex-shrink: 0;
+}
+
+.drawerAction {
+	min-height: 31px;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 12px;
+	border: 1px solid #e6e9f0;
+	border-radius: 8px;
+	background: #fff;
+	color: #475467;
+	font-size: 0.72rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.18s;
+	font-family: inherit;
+	flex-shrink: 0;
+}
+
+.drawerAction:hover {
+	background: #f2f4f8;
+	border-color: #d5d9e2;
+	color: #101828;
+}
+
+.drawerActionPrimary {
+	background: #12b76a;
+	border-color: #12b76a;
+	color: #fff;
+}
+
+.drawerActionPrimary:hover {
+	background: #0b8f52;
+	border-color: #0b8f52;
+	color: #fff;
+}
+
+.drawerQuickGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.55rem;
+	margin-top: 0.35rem;
+}
+
+.drawerQuickBtn {
+	min-height: 62px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	gap: 0.3rem;
+	padding: 0.65rem 0.7rem;
+	border: 1px solid #e6e9f0;
+	border-radius: 10px;
+	background: #fafbfd;
+	text-align: left;
+	font-size: 0.69rem;
+	font-weight: 650;
+	color: #101828;
+	cursor: pointer;
+	transition: all 0.18s;
+	font-family: inherit;
+}
+
+.drawerQuickBtn:hover {
+	border-color: #b7e6cf;
+	background: #e7f8ef;
+	color: #067647;
+	transform: translateY(-1px);
+}
+
+.drawerQuickBtnIcon {
+	font-size: 0.98rem;
+}
+
+.drawerEmpty {
+	min-height: 180px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	padding: 2rem;
+	color: #667085;
+	text-align: center;
+}
+
+.drawerEmpty i {
+	font-size: 1.6rem;
+}
+
+.drawerEmpty strong {
+	color: #344054;
+	font-size: 0.82rem;
+}
+
+.drawerEmpty span {
+	font-size: 0.7rem;
+}
+
+.drawerFooter {
+	position: sticky;
+	bottom: 0;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	padding: 0.85rem 1.15rem;
+	border-top: 1px solid #e6e9f0;
+	background: rgba(255, 255, 255, 0.96);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+}
+
+.drawerFooterNote {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.38rem;
+	color: #667085;
+	font-size: 0.67rem;
+}
+
+.drawerFooterNote i {
+	color: #2e90fa;
+}
+
+.drawerBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 0.32em 0.7em;
+	border-radius: 999px;
+	font-size: 0.7rem;
+	font-weight: 600;
+	white-space: nowrap;
+	letter-spacing: 0.01em;
+}
+
+.drawerBadgeWarn {
+	background: #fef0c7;
+	color: #93370d;
+}
+
+.drawerBadgePurple {
+	background: #f0ebfe;
+	color: #5925dc;
+}
+
+.drawerBadgeBlue {
+	background: #e8f1fe;
+	color: #175cd3;
+}
+
+@keyframes drawerFadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes drawerSlideIn {
+	from {
+		opacity: 0;
+		transform: translateX(36px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@media (max-width: 767.98px) {
+	.drawerPanel {
+		width: 100%;
+		border-left: 0;
+	}
+
+	.drawerHeader,
+	.drawerTabs,
+	.drawerBody,
+	.drawerFooter {
+		padding-inline: 0.85rem;
+	}
+
+	.drawerQuickGrid {
+		grid-template-columns: 1fr;
+	}
+}

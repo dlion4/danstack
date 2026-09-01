@@ -3,6 +3,11 @@ import { Link } from "@tanstack/react-router";
 import { type ReactNode, useMemo, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import type {
+	AttentionItem,
+	QuickActionItem,
+} from "../../shared/data/attentionFeed";
 import FeesModals from "../components/FeesModals";
 import styles from "../styles/fees.module.css";
 
@@ -693,11 +698,47 @@ export default function Fees() {
 	const config = data ?? initialMockData;
 
 	const [activeModal, setActiveModal] = useState<string | null>(null);
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [world, setWorld] = useState<World>("charges");
 	const [biz, setBiz] = useState<BizId>("all");
 
 	const openM = (id: string) => setActiveModal(id);
 	const closeM = () => setActiveModal(null);
+
+	const handleDrawerAction = (modal: string) => {
+		if (modal) openM(modal);
+	};
+
+	const drawerAttention = config.attention.map(
+		(item): AttentionItem => ({
+			icon: item.icon.replace(/^bi-/, ""),
+			iconBg: item.iconBg,
+			iconColor: item.iconColor,
+			title: item.title,
+			sub: item.sub,
+			actionLabel: item.actionLabel,
+			modal: item.modal,
+		}),
+	);
+	const drawerSuggestions = config.suggestions.map(
+		(item): AttentionItem => ({
+			icon: item.icon.replace(/^bi-/, ""),
+			iconBg: item.iconBg,
+			iconColor: item.iconColor,
+			title: item.title,
+			sub: item.sub,
+			actionLabel: item.actionLabel,
+			modal: item.modal,
+		}),
+	);
+	const drawerQuickActions = config.quickActions.map(
+		(action): QuickActionItem => ({
+			icon: action.icon.replace(/^bi-/, ""),
+			iconColor: action.color,
+			label: action.label,
+			modal: action.modal,
+		}),
+	);
 
 	const bizName =
 		biz === "land" ? BIZ_NAMES.land : biz === "co2" ? BIZ_NAMES.co2 : "";
@@ -911,7 +952,7 @@ export default function Fees() {
 						</div>
 					</section>
 
-					{/* ======================= 1.2 ATTENTION & GUIDED ACTIONS ======================= */}
+					{/* ======================= 1.2 ACTION CENTRE ======================= */}
 					<section
 						className={styles.dashboardSection}
 						aria-labelledby="attention-heading"
@@ -919,123 +960,52 @@ export default function Fees() {
 						<SectionHeading
 							id="attention-heading"
 							index="1.2"
-							title="Needs your attention"
-							description="Resolve exceptions and act on intelligent recommendations without leaving the dashboard."
+							title="Action centre"
+							description="Resolve exceptions first, then use guided suggestions to improve transfer outcomes."
 							action={
 								<button
 									type="button"
 									className={styles.btnPm}
-									onClick={() => openM("attentionFullModal")}
+									onClick={() => setDrawerOpen(true)}
 								>
-									<i className="bi bi-list-check" /> Review queue
+									<i className="bi bi-columns-gap" /> Review queue
 								</button>
 							}
 						/>
-						<div className={styles.attentionGrid}>
-							<article className={`${styles.card} ${styles.listCard}`}>
-								<div className={styles.cardHeader}>
-									<div>
-										<span className={styles.cardKicker}>Action center</span>
-										<h3>Fee exceptions</h3>
-									</div>
-									<span className={`${styles.badge} ${styles.badgeW}`}>
-										{config.attention.length} open
-									</span>
-								</div>
-								<div className={styles.listBody}>
-									{config.attention.map((item) => (
-										<div key={item.title} className={styles.actionRow}>
-											<div className={styles.actionRowMain}>
-												<span
-													className={styles.iconCircle}
-													style={{
-														background: item.iconBg,
-														color: item.iconColor,
-													}}
-												>
-													<i className={`bi ${item.icon}`} />
-												</span>
-												<div>
-													<strong>{item.title}</strong>
-													<span>{item.sub}</span>
-												</div>
-											</div>
-											<button
-												type="button"
-												className={`${styles.btnPm} ${styles.btnSm} ${
-													item.actionTone ? styles[item.actionTone] : ""
-												}`}
-												onClick={() => openM(item.modal)}
-											>
-												{item.actionLabel}
-											</button>
-										</div>
-									))}
-								</div>
-							</article>
-
-							<article className={`${styles.card} ${styles.listCard}`}>
-								<div className={styles.cardHeader}>
-									<div>
-										<span className={styles.cardKicker}>Smart guidance</span>
-										<h3>Suggested next moves</h3>
-									</div>
-									<span className={`${styles.badge} ${styles.badgeP}`}>
-										<i className="bi bi-stars" /> Insights
-									</span>
-								</div>
-								<div className={styles.listBody}>
-									{config.suggestions.map((item) => (
-										<div key={item.title} className={styles.actionRow}>
-											<div className={styles.actionRowMain}>
-												<span
-													className={styles.iconCircle}
-													style={{
-														background: item.iconBg,
-														color: item.iconColor,
-													}}
-												>
-													<i className={`bi ${item.icon}`} />
-												</span>
-												<div>
-													<strong>{item.title}</strong>
-													<span>{item.sub}</span>
-												</div>
-											</div>
-											<button
-												type="button"
-												className={`${styles.btnPm} ${styles.btnSm}`}
-												onClick={() => openM(item.modal)}
-											>
-												{item.actionLabel}
-											</button>
-										</div>
-									))}
-								</div>
-							</article>
-						</div>
-
-						<article className={`${styles.card} ${styles.quickActionCard}`}>
-							<div className={styles.quickActionIntro}>
-								<span className={styles.cardKicker}>Shortcuts</span>
-								<h3>Start a workflow</h3>
-								<p>Frequent fee &amp; profit tasks, one click away.</p>
+						<article className={`${styles.card} ${styles.actionCentreCard}`}>
+							<div className={styles.actionCentreIcon}>
+								<i className="bi bi-exclamation-octagon" />
 							</div>
-							<div className={styles.quickGrid}>
-								{config.quickActions.map((action) => (
-									<button
-										type="button"
-										key={action.label}
-										className={styles.quickBtn}
-										onClick={() => openM(action.modal)}
-									>
-										<span style={{ color: action.color }}>
-											<i className={`bi ${action.icon}`} />
-										</span>
-										{action.label}
-										<i className="bi bi-arrow-right" aria-hidden="true" />
-									</button>
-								))}
+							<div className={styles.actionCentreCopy}>
+								<span className={styles.cardKicker}>Action centre</span>
+								<h3>Attention, suggestions &amp; quick actions</h3>
+								<p>
+									Open operational items, AI routing recommendations and the
+									actions treasury uses most — each opens the matching workflow.
+								</p>
+							</div>
+							<div className={styles.actionCentreStats}>
+								<div className={styles.actionCentreStat}>
+									<strong>{config.attention.length}</strong>
+									<span>Attention</span>
+								</div>
+								<div className={styles.actionCentreStat}>
+									<strong>{config.suggestions.length}</strong>
+									<span>Suggestions</span>
+								</div>
+								<div className={styles.actionCentreStat}>
+									<strong>{config.quickActions.length}</strong>
+									<span>Shortcuts</span>
+								</div>
+							</div>
+							<div className={styles.actionCentreActions}>
+								<button
+									type="button"
+									className={`${styles.btnPm} ${styles.btnPmP}`}
+									onClick={() => setDrawerOpen(true)}
+								>
+									<i className="bi bi-columns-gap" /> Open drawer
+								</button>
 							</div>
 						</article>
 					</section>
@@ -1992,6 +1962,17 @@ export default function Fees() {
 			</main>
 
 			{/* ======================= ALL MODALS ======================= */}
+			<AttentionDrawer
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				onAction={handleDrawerAction}
+				pageName="Fees"
+				pageIcon="bi-percent"
+				attention={drawerAttention}
+				suggestions={drawerSuggestions}
+				quickActions={drawerQuickActions}
+				description="Open operational items, AI routing recommendations and the actions treasury uses most — each opens the matching workflow."
+			/>
 			<FeesModals active={activeModal} onClose={closeM} onOpen={openM} />
 		</div>
 	);

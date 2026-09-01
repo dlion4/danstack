@@ -28,8 +28,13 @@
 "use client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { cx } from "@/features/Layouts/shell/data/shellData";
+import AttentionDrawer from "../../shared/components/AttentionDrawer";
+import type {
+	AttentionItem as DrawerAttentionItem,
+	QuickActionItem,
+} from "../../shared/data/attentionFeed";
 import {
 	type ReconciliationData,
 	ReconciliationModals,
@@ -46,14 +51,6 @@ const toneBadge: Record<Tone, string> = {
 	info: s.badgeInfo,
 	purple: s.badgePurple,
 	neutral: s.badgeOutline,
-};
-const toneIcon: Record<Tone, string> = {
-	success: s.toneSuccess,
-	warn: s.toneWarn,
-	danger: s.toneDanger,
-	info: s.toneInfo,
-	purple: s.tonePurple,
-	neutral: s.toneNeutral,
 };
 type ToneColor =
 	| "pri"
@@ -670,6 +667,7 @@ async function fetchReconciliationCenter(): Promise<ReconciliationContent> {
  * ------------------------------------------------------------------------ */
 export default function Reconciliation() {
 	const [modalState, setModalState] = useState<Record<string, boolean>>({});
+	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [biz, setBiz] = useState("all");
 	const [toasts, setToasts] = useState<
 		{ id: number; message: string; variant: "success" | "danger" }[]
@@ -678,6 +676,47 @@ export default function Reconciliation() {
 		setModalState((p) => ({ ...p, [id]: true }));
 	const closeModal = (id: string) =>
 		setModalState((p) => ({ ...p, [id]: false }));
+	const handleDrawerAction = (modal: string) => {
+		if (modal) openModal(modal);
+	};
+	const rowIconTone: Record<Tone, { iconBg: string; iconColor: string }> = {
+		success: {
+			iconBg: "var(--pm-green-soft)",
+			iconColor: "var(--pri)",
+		},
+		warn: {
+			iconBg: "var(--warning-bg)",
+			iconColor: "var(--warning)",
+		},
+		danger: {
+			iconBg: "var(--danger-bg)",
+			iconColor: "var(--danger)",
+		},
+		info: {
+			iconBg: "var(--info-bg)",
+			iconColor: "var(--info)",
+		},
+		purple: {
+			iconBg: "var(--purple-bg)",
+			iconColor: "var(--purple)",
+		},
+		neutral: {
+			iconBg: "var(--pm-green-soft)",
+			iconColor: "var(--ink-500)",
+		},
+	};
+	const toDrawerItem = (item: Row): DrawerAttentionItem => {
+		const tone = rowIconTone[item.tone];
+		return {
+			icon: item.icon.replace(/^bi-/, ""),
+			iconBg: tone.iconBg,
+			iconColor: tone.iconColor,
+			title: item.title,
+			sub: item.sub,
+			actionLabel: item.action,
+			modal: item.modal,
+		};
+	};
 
 	useEffect(() => {
 		if (!toasts.length) return;
@@ -706,6 +745,17 @@ export default function Reconciliation() {
 	// Falls back to initialMockData so the page never breaks.
 	const c = data ?? initialMockData;
 
+	const drawerAttention = c.attention.map(toDrawerItem);
+	const drawerSuggestions = c.suggestions.map(toDrawerItem);
+	const drawerQuickActions = c.quickActions.map(
+		(action): QuickActionItem => ({
+			icon: action.icon.replace(/^bi-/, ""),
+			iconColor: toneColor(action.tone),
+			label: action.label,
+			modal: action.modal,
+		}),
+	);
+
 	const bizName =
 		biz === "land" ? "Land Buyers LTD" : biz === "co2" ? "Company 2" : "";
 	const inScope = (b: string) => biz === "all" || b === bizName;
@@ -720,27 +770,6 @@ export default function Reconciliation() {
 			: biz === "land"
 				? "Land Buyers LTD"
 				: "Company 2";
-
-	const renderRow = (item: Row) => (
-		<div className={s.rowItem} key={item.title}>
-			<div className={s.rowLead}>
-				<div className={cx(s.rowIcon, toneIcon[item.tone])}>
-					<i className={cx("bi", item.icon)} />
-				</div>
-				<div style={{ minWidth: 0 }}>
-					<div className={s.rowTitle}>{item.title}</div>
-					<div className={s.rowSub}>{item.sub}</div>
-				</div>
-			</div>
-			<button
-				type="button"
-				className={cx(s.btn, s.btnSm)}
-				onClick={() => openModal(item.modal)}
-			>
-				{item.action}
-			</button>
-		</div>
-	);
 
 	return (
 		<div className={s.pageRoot} style={{ position: "relative" }}>
@@ -1006,55 +1035,52 @@ export default function Reconciliation() {
 					<SectionHeading
 						index="02"
 						id="rec-sec-queues"
-						title="Attention, suggestions & quick actions"
-						description="Unmatched items, AI-suggested rules and the workflows your reconciliation desk uses most."
+						title="Action centre"
+						description="Resolve exceptions first, then use guided suggestions to improve transfer outcomes."
+						action={
+							<button
+								type="button"
+								className={cx(s.btn, s.btnSm)}
+								onClick={() => setDrawerOpen(true)}
+							>
+								<i className="bi bi-columns-gap" /> Review queue
+							</button>
+						}
 					/>
-					<div className={s.queueGrid}>
-						<div className={cx(s.card, s.queueCard)}>
-							<div className={s.sectionHead}>
-								<h3 className={s.sectionTitle}>Attention Required</h3>
-								<button
-									type="button"
-									className={cx(s.btn, s.btnSm)}
-									onClick={() => openModal("attentionFullModal")}
-								>
-									View all
-								</button>
-							</div>
-							{c.attention.map(renderRow)}
+					<div className={cx(s.card, s.actionCentreCard)}>
+						<div className={s.actionCentreIcon}>
+							<i className="bi bi-exclamation-octagon" />
 						</div>
-						<div className={cx(s.card, s.queueCard)}>
-							<div className={s.sectionHead}>
-								<h3 className={s.sectionTitle}>Smart Suggestions</h3>
-								<span className={cx(s.badge, s.badgePurple)}>
-									<i className="bi bi-stars" /> AI
-								</span>
-							</div>
-							{c.suggestions.map(renderRow)}
+						<div className={s.actionCentreCopy}>
+							<span className={s.cardKicker}>Action centre</span>
+							<h3>Attention, suggestions &amp; quick actions</h3>
+							<p>
+								Open operational items, AI routing recommendations and the
+								actions treasury uses most — each opens the matching workflow.
+							</p>
 						</div>
-						<div className={cx(s.card, s.queueCard)}>
-							<div style={{ marginBottom: 16 }}>
-								<h3 className={s.sectionTitle}>Quick Actions</h3>
-								<p className={s.sectionSub}>
-									Frequent reconciliation workflows
-								</p>
+						<div className={s.actionCentreStats}>
+							<div className={s.actionCentreStat}>
+								<strong>{c.attention.length}</strong>
+								<span>Attention</span>
 							</div>
-							<div className={s.qaGrid}>
-								{c.quickActions.map((qa) => (
-									<button
-										key={qa.label}
-										type="button"
-										className={s.qaBtn}
-										onClick={() => openModal(qa.modal)}
-									>
-										<i
-											className={cx("bi", qa.icon)}
-											style={{ color: toneColor(qa.tone) }}
-										/>
-										{qa.label}
-									</button>
-								))}
+							<div className={s.actionCentreStat}>
+								<strong>{c.suggestions.length}</strong>
+								<span>Suggestions</span>
 							</div>
+							<div className={s.actionCentreStat}>
+								<strong>{c.quickActions.length}</strong>
+								<span>Shortcuts</span>
+							</div>
+						</div>
+						<div className={s.actionCentreActions}>
+							<button
+								type="button"
+								className={cx(s.btn, s.btnSm)}
+								onClick={() => setDrawerOpen(true)}
+							>
+								<i className="bi bi-columns-gap" /> Open drawer
+							</button>
 						</div>
 					</div>
 				</section>
@@ -1894,6 +1920,19 @@ export default function Reconciliation() {
 				</div>
 			)}
 
+			{/* ---------- ACTION CENTRE DRAWER ---------- */}
+			<AttentionDrawer
+				open={drawerOpen}
+				onClose={() => setDrawerOpen(false)}
+				onAction={handleDrawerAction}
+				pageName="Reconciliation"
+				pageIcon="bi-clipboard2-check"
+				attention={drawerAttention}
+				suggestions={drawerSuggestions}
+				quickActions={drawerQuickActions}
+				description="Open operational items, AI routing recommendations and the actions treasury uses most — each opens the matching workflow."
+			/>
+
 			{/* ---------- ALL MODALS (state-driven) ---------- */}
 			<ReconciliationModals
 				modalState={modalState}
@@ -1911,11 +1950,13 @@ function SectionHeading({
 	id,
 	title,
 	description,
+	action,
 }: {
 	index: string;
 	id: string;
 	title: string;
 	description: string;
+	action?: ReactNode;
 }) {
 	return (
 		<div className={s.sectionHeading}>
@@ -1926,6 +1967,7 @@ function SectionHeading({
 				<h2 id={id}>{title}</h2>
 				<p>{description}</p>
 			</div>
+			{action ? <div className={s.sectionAction}>{action}</div> : null}
 		</div>
 	);
 }
